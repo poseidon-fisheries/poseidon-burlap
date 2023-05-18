@@ -44,89 +44,94 @@ public class Slice1HalfSweep {
 
 
         policy("large", new String[]{"big"}, "pessimistic_2");
-        policy("medium", new String[]{"big","medium"}, "pessimistic_2");
-        policy("small10", new String[]{"big","medium","small10"}, "pessimistic_2");
-        policy("all", new String[]{"big","small","medium","small10"}, "pessimistic_2");
+        policy("medium", new String[]{"big", "medium"}, "pessimistic_2");
+        policy("small10", new String[]{"big", "medium", "small10"}, "pessimistic_2");
+        policy("all", new String[]{"big", "small", "medium", "small10"}, "pessimistic_2");
 
 
         policy("large", new String[]{"big"}, "very_pessimistic");
-        policy("medium", new String[]{"big","medium"}, "very_pessimistic");
-        policy("small10", new String[]{"big","medium","small10"}, "very_pessimistic");
-        policy("all", new String[]{"big","small","medium","small10"}, "very_pessimistic");
+        policy("medium", new String[]{"big", "medium"}, "very_pessimistic");
+        policy("small10", new String[]{"big", "medium", "small10"}, "very_pessimistic");
+        policy("all", new String[]{"big", "small", "medium", "small10"}, "very_pessimistic");
 
         // enforcement("all","small","very_pessimistic");
 
     }
 
     public static void policy(
-            String name,
-            String[] modifiedTags, final String filename) throws IOException {
+        String name,
+        String[] modifiedTags, final String filename
+    ) throws IOException {
 
-        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_"+name+".csv").toFile());
+        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_" + name + ".csv").toFile());
         fileWriter.write("run,year,policy,variable,value\n");
         fileWriter.flush();
 
-        for(int maxDaysOut = 200; maxDaysOut>= MIN_DAYS_OUT; maxDaysOut-=10) {
+        for (int maxDaysOut = 200; maxDaysOut >= MIN_DAYS_OUT; maxDaysOut -= 10) {
 
             BatchRunner runner = new BatchRunner(
-                    Paths.get(DIRECTORY,
-                              filename + ".yaml"),
-                    15,
-                    Lists.newArrayList(
-                            "Average Cash-Flow",
-                            "Average Cash-Flow of population0",
-                            "Average Cash-Flow of population1",
-                            "Average Cash-Flow of population2",
-                            "Average Cash-Flow of population3",
-                            "Average Number of Trips of population0",
-                            "Average Number of Trips of population1",
-                            "Average Number of Trips of population2",
-                            "Average Number of Trips of population3",
-                            "Average Distance From Port of population0",
-                            "Average Distance From Port of population1",
-                            "Average Distance From Port of population2",
-                            "Average Distance From Port of population3",
-                            "Average Trip Duration of population0",
-                            "Average Trip Duration of population1",
-                            "Average Trip Duration of population2",
-                            "Average Trip Duration of population3",
-                            "Epinephelus areolatus Landings of population0",
-                            "Pristipomoides multidens Landings of population0",
-                            "Lutjanus malabaricus Landings of population0",
-                            "Lutjanus erythropterus Landings of population0",
-                            "Others Landings of population0",
+                Paths.get(
+                    DIRECTORY,
+                    filename + ".yaml"
+                ),
+                15,
+                Lists.newArrayList(
+                    "Average Cash-Flow",
+                    "Average Cash-Flow of population0",
+                    "Average Cash-Flow of population1",
+                    "Average Cash-Flow of population2",
+                    "Average Cash-Flow of population3",
+                    "Average Number of Trips of population0",
+                    "Average Number of Trips of population1",
+                    "Average Number of Trips of population2",
+                    "Average Number of Trips of population3",
+                    "Average Distance From Port of population0",
+                    "Average Distance From Port of population1",
+                    "Average Distance From Port of population2",
+                    "Average Distance From Port of population3",
+                    "Average Trip Duration of population0",
+                    "Average Trip Duration of population1",
+                    "Average Trip Duration of population2",
+                    "Average Trip Duration of population3",
+                    "Epinephelus areolatus Landings of population0",
+                    "Pristipomoides multidens Landings of population0",
+                    "Lutjanus malabaricus Landings of population0",
+                    "Lutjanus erythropterus Landings of population0",
+                    "Others Landings of population0",
 
-                            "Epinephelus areolatus Landings of population1",
-                            "Pristipomoides multidens Landings of population1",
-                            "Lutjanus malabaricus Landings of population1",
-                            "Lutjanus erythropterus Landings of population1",
-                            "Others Landings of population1",
-                            "Epinephelus areolatus Landings of population2",
-                            "Pristipomoides multidens Landings of population2",
-                            "Lutjanus malabaricus Landings of population2",
-                            "Lutjanus erythropterus Landings of population2",
-                            "Others Landings of population2",
-                         "Epinephelus areolatus Landings of population3",
-                            "Pristipomoides multidens Landings of population3",
-                            "Lutjanus malabaricus Landings of population3",
-                            "Lutjanus erythropterus Landings of population3",
-                            "Others Landings of population3",
+                    "Epinephelus areolatus Landings of population1",
+                    "Pristipomoides multidens Landings of population1",
+                    "Lutjanus malabaricus Landings of population1",
+                    "Lutjanus erythropterus Landings of population1",
+                    "Others Landings of population1",
+                    "Epinephelus areolatus Landings of population2",
+                    "Pristipomoides multidens Landings of population2",
+                    "Lutjanus malabaricus Landings of population2",
+                    "Lutjanus erythropterus Landings of population2",
+                    "Others Landings of population2",
+                    "Epinephelus areolatus Landings of population3",
+                    "Pristipomoides multidens Landings of population3",
+                    "Lutjanus malabaricus Landings of population3",
+                    "Lutjanus erythropterus Landings of population3",
+                    "Others Landings of population3",
 
-                            "Biomass Epinephelus areolatus",
-                            "Biomass Pristipomoides multidens",
-                            "Biomass Lutjanus malabaricus",
-                            "Biomass Lutjanus erythropterus",
-                            "Total Landings of population0",
-                            "Total Landings of population1",
-                            "Total Landings of population2",
-                            "Total Landings of population3"
+                    "Biomass Epinephelus areolatus",
+                    "Biomass Pristipomoides multidens",
+                    "Biomass Lutjanus malabaricus",
+                    "Biomass Lutjanus erythropterus",
+                    "Total Landings of population0",
+                    "Total Landings of population1",
+                    "Total Landings of population2",
+                    "Total Landings of population3"
 
-                    ),
-                    Paths.get(DIRECTORY,
-                              filename),
-                    null,
-                    System.currentTimeMillis(),
-                    -1
+                ),
+                Paths.get(
+                    DIRECTORY,
+                    filename
+                ),
+                null,
+                System.currentTimeMillis(),
+                -1
             );
 
 
@@ -136,45 +141,45 @@ public class Slice1HalfSweep {
             //because I coded "run" poorly, we have to go through this series of pirouettes
             //to get it done right
             runner.setScenarioSetup(
-                    scenario -> {
+                scenario -> {
 
-                        //at year 4, impose regulation
-                        FlexibleScenario flexible = (FlexibleScenario) scenario;
-                        flexible.getPlugins().add(
-                                fishState -> new AdditionalStartable() {
-                                    @Override
-                                    public void start(FishState model) {
+                    //at year 4, impose regulation
+                    FlexibleScenario flexible = (FlexibleScenario) scenario;
+                    flexible.getPlugins().add(
+                        fishState -> new AdditionalStartable() {
+                            @Override
+                            public void start(FishState model) {
 
-                                        model.scheduleOnceAtTheBeginningOfYear(
-                                                (Steppable) simState -> {
-                                                    fisherloop:
-                                                    for (Fisher fisher :
-                                                            ((FishState) simState).getFishers()) {
+                                model.scheduleOnceAtTheBeginningOfYear(
+                                    (Steppable) simState -> {
+                                        fisherloop:
+                                        for (Fisher fisher :
+                                            ((FishState) simState).getFishers()) {
 
-                                                        for (String tag : modifiedTags) {
-                                                            if (fisher.getTags().contains(tag)) {
-                                                                fisher.setRegulation(
-                                                                        new FishingSeason(true, finalMaxDaysOut));
-                                                                continue fisherloop;
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                StepOrder.DAWN,
-                                                4
-                                        );
+                                            for (String tag : modifiedTags) {
+                                                if (fisher.getTags().contains(tag)) {
+                                                    fisher.setRegulation(
+                                                        new FishingSeason(true, finalMaxDaysOut));
+                                                    continue fisherloop;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    StepOrder.DAWN,
+                                    4
+                                );
 
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void turnOff() {
+                            @Override
+                            public void turnOff() {
 
-                                    }
-                                }
-                        );
+                            }
+                        }
+                    );
 
-                    }
+                }
             );
 
 
@@ -196,8 +201,6 @@ public class Slice1HalfSweep {
         }
         fileWriter.close();
     }
-
-
 
 
 }

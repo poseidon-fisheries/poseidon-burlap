@@ -15,61 +15,106 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class NoData718Slice6Policy {
 
     public static final Path CANDIDATES_CSV_FILE =
-            NoData718Slice6.MAIN_DIRECTORY.resolve("successes_lowmk_complete_18.csv");
+        NoData718Slice6.MAIN_DIRECTORY.resolve("successes_lowmk_complete_18.csv");
     public static final int SEED = 0;
     private static final int ADDITIONAL_YEARS_TO_RUN = 30;
+    private static final LinkedList<String> ADDITIONAL_COLUMNS =
+        new LinkedList<>();
+    //additional data collectors
+    private static final List<String> ADDITIONAL_PLUGINS =
+        Lists.newArrayList(
+            "SPR Agent:\n" +
+                "    assumedKParameter: '0.322'\n" +
+                "    assumedLengthAtMaturity: '29.0'\n" +
+                "    assumedLengthBinCm: '5.0'\n" +
+                "    assumedLinf: '59.0'\n" +
+                "    assumedNaturalMortality: '0.495'\n" +
+                "    assumedVarA: '0.0197'\n" +
+                "    assumedVarB: '2.99'\n" +
+                "    simulatedMaxAge: '100.0'\n" +
+                "    simulatedVirginRecruits: '1000.0'\n" +
+                "    speciesName: Lethrinus laticaudis\n" +
+                "    surveyTag: spr_agent1_total\n" +
+                "    probabilityOfSamplingEachBoat: 1",
+            "SPR Agent:\n" +
+                "    assumedKParameter: '0.4438437'\n" +
+                "    assumedLengthAtMaturity: '50.0'\n" +
+                "    assumedLengthBinCm: '5.0'\n" +
+                "    assumedLinf: '86.0'\n" +
+                "    assumedNaturalMortality: '0.3775984'\n" +
+                "    assumedVarA: '0.00853'\n" +
+                "    assumedVarB: '3.137'\n" +
+                "    simulatedMaxAge: '100.0'\n" +
+                "    simulatedVirginRecruits: '1000.0'\n" +
+                "    speciesName: Lutjanus malabaricus\n" +
+                "    surveyTag: spr_agent2_total\n" +
+                "    probabilityOfSamplingEachBoat: 1",
+            "SPR Agent:\n" +
+                "    assumedKParameter: '0.291'\n" +
+                "    assumedLengthAtMaturity: '34.0'\n" +
+                "    assumedLengthBinCm: '5.0'\n" +
+                "    assumedLinf: '68.0'\n" +
+                "    assumedNaturalMortality: '0.447'\n" +
+                "    assumedVarA: '0.0128'\n" +
+                "    assumedVarB: '2.94'\n" +
+                "    simulatedMaxAge: '100.0'\n" +
+                "    simulatedVirginRecruits: '1000.0'\n" +
+                "    speciesName: Atrobucca brevis\n" +
+                "    surveyTag: spr_agent3_total\n" +
+                "    probabilityOfSamplingEachBoat: 1"
+
+
+        );
     private static Path OUTPUT_FOLDER =
 //            NoData718Slice6.MAIN_DIRECTORY.
 //                            resolve("spr_lowmk_arrays_complete_18").resolve("lopt_noentry");
-            NoData718Slice6.MAIN_DIRECTORY.
-                    resolve("spr_lowmk_arrays_complete_18").resolve("adaptive");
+        NoData718Slice6.MAIN_DIRECTORY.
+            resolve("spr_lowmk_arrays_complete_18").resolve("adaptive");
+    private static LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> simulatedPolicies =
+        NoData718Utilities.adaptivelbsprMsePolicies;
 
-
-    private static final LinkedList<String> ADDITIONAL_COLUMNS =
-            new LinkedList<>();
     static {
-        ADDITIONAL_COLUMNS.add( "SPR Lutjanus malabaricus spr_agent_forpolicy");
-        ADDITIONAL_COLUMNS.add( "Mean Length Caught Lutjanus malabaricus spr_agent_forpolicy");
-        ADDITIONAL_COLUMNS.add( "CPUE Lutjanus malabaricus spr_agent_forpolicy");
-        ADDITIONAL_COLUMNS.add( "M/K ratio Lutjanus malabaricus spr_agent_forpolicy");
+        ADDITIONAL_COLUMNS.add("SPR Lutjanus malabaricus spr_agent_forpolicy");
+        ADDITIONAL_COLUMNS.add("Mean Length Caught Lutjanus malabaricus spr_agent_forpolicy");
+        ADDITIONAL_COLUMNS.add("CPUE Lutjanus malabaricus spr_agent_forpolicy");
+        ADDITIONAL_COLUMNS.add("M/K ratio Lutjanus malabaricus spr_agent_forpolicy");
         // ADDITIONAL_COLUMNS.add("LoptEffortPolicy output");
         ADDITIONAL_COLUMNS.add("LBSPREffortPolicy output");
     }
 
-
-    private static LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> simulatedPolicies =
-            NoData718Utilities.adaptivelbsprMsePolicies;
-
-
-
-
-
     public static void main(String[] args) throws IOException {
 
         runPolicyDirectory(
-                CANDIDATES_CSV_FILE.toFile(),
-                OUTPUT_FOLDER,
-                simulatedPolicies, ADDITIONAL_COLUMNS, new LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>>(), null);
+            CANDIDATES_CSV_FILE.toFile(),
+            OUTPUT_FOLDER,
+            simulatedPolicies,
+            ADDITIONAL_COLUMNS,
+            new LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>>(),
+            null
+        );
 
 
     }
 
     public static void runPolicyDirectory(
-            File candidateFile,
-            Path outputFolder,
-            LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
-            final LinkedList<String> additionalColumns,
-            LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
-            List<String> dailyColumnsToPrint) throws IOException {
+        File candidateFile,
+        Path outputFolder,
+        LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
+        final LinkedList<String> additionalColumns,
+        LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
+        List<String> dailyColumnsToPrint
+    ) throws IOException {
         CSVReader reader = new CSVReader(new FileReader(
-                candidateFile
+            candidateFile
         ));
 
         List<String[]> strings = reader.readAll();
@@ -77,71 +122,24 @@ public class NoData718Slice6Policy {
 
             String[] row = strings.get(i);
             runOnePolicySimulation(
-                    Paths.get(row[0]),
-                    Integer.parseInt(row[1]),
-                    Integer.parseInt(row[2]), outputFolder, policies, additionalColumns,
-                    new LinkedList<>(additionalPlugins), dailyColumnsToPrint
+                Paths.get(row[0]),
+                Integer.parseInt(row[1]),
+                Integer.parseInt(row[2]), outputFolder, policies, additionalColumns,
+                new LinkedList<>(additionalPlugins), dailyColumnsToPrint
             );
         }
     }
 
-
-    //additional data collectors
-    private static final List<String> ADDITIONAL_PLUGINS =
-            Lists.newArrayList(
-                    "SPR Agent:\n" +
-                            "    assumedKParameter: '0.322'\n" +
-                            "    assumedLengthAtMaturity: '29.0'\n" +
-                            "    assumedLengthBinCm: '5.0'\n" +
-                            "    assumedLinf: '59.0'\n" +
-                            "    assumedNaturalMortality: '0.495'\n" +
-                            "    assumedVarA: '0.0197'\n" +
-                            "    assumedVarB: '2.99'\n" +
-                            "    simulatedMaxAge: '100.0'\n" +
-                            "    simulatedVirginRecruits: '1000.0'\n" +
-                            "    speciesName: Lethrinus laticaudis\n" +
-                            "    surveyTag: spr_agent1_total\n" +
-                            "    probabilityOfSamplingEachBoat: 1",
-                    "SPR Agent:\n" +
-                            "    assumedKParameter: '0.4438437'\n" +
-                            "    assumedLengthAtMaturity: '50.0'\n" +
-                            "    assumedLengthBinCm: '5.0'\n" +
-                            "    assumedLinf: '86.0'\n" +
-                            "    assumedNaturalMortality: '0.3775984'\n" +
-                            "    assumedVarA: '0.00853'\n" +
-                            "    assumedVarB: '3.137'\n" +
-                            "    simulatedMaxAge: '100.0'\n" +
-                            "    simulatedVirginRecruits: '1000.0'\n" +
-                            "    speciesName: Lutjanus malabaricus\n" +
-                            "    surveyTag: spr_agent2_total\n" +
-                            "    probabilityOfSamplingEachBoat: 1",
-                    "SPR Agent:\n" +
-                            "    assumedKParameter: '0.291'\n" +
-                            "    assumedLengthAtMaturity: '34.0'\n" +
-                            "    assumedLengthBinCm: '5.0'\n" +
-                            "    assumedLinf: '68.0'\n" +
-                            "    assumedNaturalMortality: '0.447'\n" +
-                            "    assumedVarA: '0.0128'\n" +
-                            "    assumedVarB: '2.94'\n" +
-                            "    simulatedMaxAge: '100.0'\n" +
-                            "    simulatedVirginRecruits: '1000.0'\n" +
-                            "    speciesName: Atrobucca brevis\n" +
-                            "    surveyTag: spr_agent3_total\n" +
-                            "    probabilityOfSamplingEachBoat: 1"
-
-
-            );
-
     private static void runOnePolicySimulation(
-            Path scenarioFile,
-            int yearOfPriceShock,
-            int yearOfPolicyShock,
-            Path outputFolder,
-            LinkedHashMap<String, Function<Integer,
-                    Consumer<Scenario>>> policies, final LinkedList<String> policyColumns,
-            LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
-            List<String> dailyColumnsToPrint) throws IOException {
-
+        Path scenarioFile,
+        int yearOfPriceShock,
+        int yearOfPolicyShock,
+        Path outputFolder,
+        LinkedHashMap<String, Function<Integer,
+            Consumer<Scenario>>> policies, final LinkedList<String> policyColumns,
+        LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
+        List<String> dailyColumnsToPrint
+    ) throws IOException {
 
 
         List<String> additionalColumns = new LinkedList<>();
@@ -149,7 +147,7 @@ public class NoData718Slice6Policy {
             final String agent = NoData718Slice2PriceIncrease.speciesToSprAgent.get(species);
             Preconditions.checkNotNull(agent, "species has no agent!");
             additionalColumns.add("SPR " + species + " " + agent + "_small");
-            additionalColumns.add("Exogenous catches of "+species);
+            additionalColumns.add("Exogenous catches of " + species);
 
             additionalColumns.add("SPR " + species + " " + agent + "_total");
         }
@@ -159,54 +157,53 @@ public class NoData718Slice6Policy {
         additionalColumns.add("Others Landings");
         additionalColumns.add("Others Earnings");
         additionalColumns.add("Total Effort");
-        additionalColumns.add("SPR " + "Lutjanus malabaricus" + " " +"total_and_correct");
+        additionalColumns.add("SPR " + "Lutjanus malabaricus" + " " + "total_and_correct");
 
         additionalColumns.addAll(policyColumns);
-
-
 
 
         FishYAML yaml = new FishYAML();
 
 
         final LinkedList<
-                Pair<Integer,
-                        AlgorithmFactory<? extends AdditionalStartable>>>
-                plugins = additionalPlugins;
+            Pair<Integer,
+                AlgorithmFactory<? extends AdditionalStartable>>>
+            plugins = additionalPlugins;
         for (String additionalPlugin : ADDITIONAL_PLUGINS) {
             plugins.add(
-                    new Pair<>(yearOfPolicyShock-1,
-                            yaml.loadAs(additionalPlugin,AlgorithmFactory.class))
+                new Pair<>(
+                    yearOfPolicyShock - 1,
+                    yaml.loadAs(additionalPlugin, AlgorithmFactory.class)
+                )
             );
 
         }
 
 
         plugins.add(
-                new Pair<>(
-                        yearOfPolicyShock-1,
-                        NoData718Utilities.CORRECT_LIFE_HISTORIES_CONSUMER(
-                                yaml.loadAs(new FileReader(scenarioFile.toFile()),Scenario.class)
-                        )
+            new Pair<>(
+                yearOfPolicyShock - 1,
+                NoData718Utilities.CORRECT_LIFE_HISTORIES_CONSUMER(
+                    yaml.loadAs(new FileReader(scenarioFile.toFile()), Scenario.class)
                 )
+            )
         );
 
 
-
         NoData718Slice4PriceIncrease.priceIncreaseOneRun(
-                scenarioFile,
-                yearOfPolicyShock+1, //you want 0 to be still without policy
-                outputFolder,
-                policies,
-                additionalColumns,
-                true, ADDITIONAL_YEARS_TO_RUN,
-                NoData718Slice4PriceIncrease.priceShockAndSeedingGenerator(0).
-                        apply(yearOfPriceShock),
-                plugins,
+            scenarioFile,
+            yearOfPolicyShock + 1, //you want 0 to be still without policy
+            outputFolder,
+            policies,
+            additionalColumns,
+            true, ADDITIONAL_YEARS_TO_RUN,
+            NoData718Slice4PriceIncrease.priceShockAndSeedingGenerator(0).
+                apply(yearOfPriceShock),
+            plugins,
 
 
-                dailyColumnsToPrint);
-
+            dailyColumnsToPrint
+        );
 
 
         // new Consumer<Scenario>() {

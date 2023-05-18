@@ -40,7 +40,7 @@ import uk.ac.ox.oxfish.utility.parameters.DoubleParameter;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedHashMap;
 
 /**
  * Reads the bathymetry file of california and for now not much else.
@@ -54,7 +54,6 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
      * how much should the model biomass/abundance be given the data we read in?
      */
     private double biomassScaling = 1.0;
-
 
 
     private double sablefishDiffusingRate = 0;
@@ -76,69 +75,74 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
     //average diesel retail 2010
     //new FixedDoubleParameter(0.694094345);
     // from https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMD_EPD2D_PTE_SCA_DPG&f=M
-
-
-    {
-        //numbers all come from stock assessment
-        ((GarbageGearFactory) gear).setDelegate(
-                new HeterogeneousGearFactory(
-                        new Pair<>("Dover Sole",
-                                   new DoubleNormalGearFactory(38.953, -1.483, 3.967,
-                                                               -0.764, Double.NaN, -2.259,
-                                                               0d, 50d, 1d, 26.962, 1.065, 0.869,
-                                                               LITERS_OF_GAS_CONSUMED_PER_HOUR, DEFAULT_CATCHABILITY)),
-                        new Pair<>("Longspine Thornyhead",
-                                   new LogisticSelectivityGearFactory(23.5035,
-                                                                      9.03702,
-                                                                      21.8035,
-                                                                      1.7773,
-                                                                      0.992661,
-                                                                      LITERS_OF_GAS_CONSUMED_PER_HOUR,
-                                                                      DEFAULT_CATCHABILITY)),
-                        //todo change this
-                        new Pair<>("Sablefish",
-
-                                   new SablefishGearFactory(DEFAULT_CATCHABILITY,
-                                                            45.5128, 3.12457, 0.910947,
-                                                            LITERS_OF_GAS_CONSUMED_PER_HOUR)
-                        )
-                        ,
-                        new Pair<>("Shortspine Thornyhead",
-                                   new DoubleNormalGearFactory(28.05,-0.3,4.25,
-                                                               4.85,Double.NaN,Double.NaN,
-                                                               0d,75d,1d,23.74,2.42,1d,
-                                                               LITERS_OF_GAS_CONSUMED_PER_HOUR,
-                                                               DEFAULT_CATCHABILITY)),
-                        new Pair<>("Yelloweye Rockfish",
-                                   new LogisticSelectivityGearFactory(36.364, 14.009,
-                                                                      LITERS_OF_GAS_CONSUMED_PER_HOUR,
-                                                                      DEFAULT_CATCHABILITY)
-                        )
-
-                )
-        );
-        //the proportion of garbage comes from DTS data from the catcher vesesl report
-        ((GarbageGearFactory) gear).setGarbageSpeciesName(
-                MultipleSpeciesAbundanceInitializer.FAKE_SPECIES_NAME
-        );
-        ((GarbageGearFactory) gear).setProportionSimulatedToGarbage(
-                new FixedDoubleParameter(0.3221743)
-        );
-    }
-
     private MultipleSpeciesAbundanceInitializer initializer;
-
-
     private boolean fixedRecruitmentDistribution = false;
-
     /**
      * the multiplicative error to recruitment in a year. For now it applies to all species
      */
     private DoubleParameter recruitmentNoise = new FixedDoubleParameter(0);
 
+    {
+        //numbers all come from stock assessment
+        ((GarbageGearFactory) gear).setDelegate(
+            new HeterogeneousGearFactory(
+                new Pair<>(
+                    "Dover Sole",
+                    new DoubleNormalGearFactory(38.953, -1.483, 3.967,
+                        -0.764, Double.NaN, -2.259,
+                        0d, 50d, 1d, 26.962, 1.065, 0.869,
+                        LITERS_OF_GAS_CONSUMED_PER_HOUR, DEFAULT_CATCHABILITY
+                    )
+                ),
+                new Pair<>(
+                    "Longspine Thornyhead",
+                    new LogisticSelectivityGearFactory(
+                        23.5035,
+                        9.03702,
+                        21.8035,
+                        1.7773,
+                        0.992661,
+                        LITERS_OF_GAS_CONSUMED_PER_HOUR,
+                        DEFAULT_CATCHABILITY
+                    )
+                ),
+                //todo change this
+                new Pair<>(
+                    "Sablefish",
 
+                    new SablefishGearFactory(DEFAULT_CATCHABILITY,
+                        45.5128, 3.12457, 0.910947,
+                        LITERS_OF_GAS_CONSUMED_PER_HOUR
+                    )
+                )
+                ,
+                new Pair<>(
+                    "Shortspine Thornyhead",
+                    new DoubleNormalGearFactory(28.05, -0.3, 4.25,
+                        4.85, Double.NaN, Double.NaN,
+                        0d, 75d, 1d, 23.74, 2.42, 1d,
+                        LITERS_OF_GAS_CONSUMED_PER_HOUR,
+                        DEFAULT_CATCHABILITY
+                    )
+                ),
+                new Pair<>(
+                    "Yelloweye Rockfish",
+                    new LogisticSelectivityGearFactory(36.364, 14.009,
+                        LITERS_OF_GAS_CONSUMED_PER_HOUR,
+                        DEFAULT_CATCHABILITY
+                    )
+                )
 
-
+            )
+        );
+        //the proportion of garbage comes from DTS data from the catcher vesesl report
+        ((GarbageGearFactory) gear).setGarbageSpeciesName(
+            MultipleSpeciesAbundanceInitializer.FAKE_SPECIES_NAME
+        );
+        ((GarbageGearFactory) gear).setProportionSimulatedToGarbage(
+            new FixedDoubleParameter(0.3221743)
+        );
+    }
 
 
     public CaliforniaAbundanceScenario() {
@@ -150,14 +154,17 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
     protected GlobalBiology buildBiology(FishState model, LinkedHashMap<String, Path> folderMap) {
         GlobalBiology biology;
         initializer = new MultipleSpeciesAbundanceInitializer(folderMap,
-                                                              biomassScaling,
-                                                              fixedRecruitmentDistribution,
-                                                              !mortalityAt100PercentForOldestFish,
-                                                              true, true);
+            biomassScaling,
+            fixedRecruitmentDistribution,
+            !mortalityAt100PercentForOldestFish,
+            true, true
+        );
         initializer.setCountFileName(countFileName);
 
-        biology = initializer.generateGlobal(model.getRandom(),
-                                             model);
+        biology = initializer.generateGlobal(
+            model.getRandom(),
+            model
+        );
 
 
         model.registerStartable(new CatchAtBinGatherer());
@@ -165,16 +172,15 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
         model.registerStartable(new Startable() {
             @Override
             public void start(FishState model) {
-                for(Species thisSpecies : biology.getSpecies())
-                {
+                for (Species thisSpecies : biology.getSpecies()) {
                     DoubleParameter noise = recruitmentNoise.makeCopy();
                     initializer.getNaturalProcesses(thisSpecies).addNoise(
-                            new NoiseMaker() {
-                                @Override
-                                public Double get() {
-                                    return noise.applyAsDouble(model.getRandom());
-                                }
+                        new NoiseMaker() {
+                            @Override
+                            public Double get() {
+                                return noise.applyAsDouble(model.getRandom());
                             }
+                        }
 
                     );
                 }
@@ -188,8 +194,7 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
 
 
         //diffusing
-        if(sablefishDiffusingRate > 0)
-        {
+        if (sablefishDiffusingRate > 0) {
 
             model.registerStartable(new Startable() {
                 @Override
@@ -197,14 +202,14 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
 
                     Species sablefish = model.getBiology().getSpecie("Sablefish");
                     WeightedAbundanceDiffuser diffuser = new WeightedAbundanceDiffuser(
-                            1,
-                            sablefishDiffusingRate,
-                            initializer.getInitialWeights(sablefish)
+                        1,
+                        sablefishDiffusingRate,
+                        initializer.getInitialWeights(sablefish)
                     );
                     model.scheduleEveryDay(new Steppable() {
                         @Override
                         public void step(SimState simState) {
-                            diffuser.step(sablefish,initializer.getLocals(),model);
+                            diffuser.step(sablefish, initializer.getLocals(), model);
                         }
                     }, StepOrder.BIOLOGY_PHASE);
                 }
@@ -275,7 +280,8 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
 
     @Override
     protected ExogenousCatches turnIntoExogenousCatchesObject(
-            LinkedHashMap<Species, Double> catchesPerSpecies) {
+        LinkedHashMap<Species, Double> catchesPerSpecies
+    ) {
         return new AbundanceDrivenFixedExogenousCatches(catchesPerSpecies);
     }
 
@@ -332,7 +338,6 @@ public class CaliforniaAbundanceScenario extends CaliforniaAbstractScenario {
     public void setCountFileName(String countFileName) {
         this.countFileName = countFileName;
     }
-
 
 
 }

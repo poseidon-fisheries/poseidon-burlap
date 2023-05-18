@@ -41,7 +41,7 @@ public class NoDataSlice2 {
 
 
     final static public Path MAIN_DIRECTORY =
-            Paths.get("docs", "20191025 limited_poseidon", "slice2");
+        Paths.get("docs", "20191025 limited_poseidon", "slice2");
 
     final static public Path SCENARIO_FILE = MAIN_DIRECTORY.resolve("base2.yaml");
 
@@ -57,14 +57,11 @@ public class NoDataSlice2 {
     public static final List<OptimizationParameter> parameters = new LinkedList<>();
     public static final int BATCHES = 10;
     public static final int SCENARIOS_PER_BATCH = 5000;
-
-
+    public static final List<AcceptableRangePredicate> predicates = new LinkedList<>();
+    private static final double MINIMUM_CATCHABILITY = .000001;
+    private static final double MAXIMUM_CATCHABILITY = 0.0001;
     private static String[] validSpecies = new String[]{"Lutjanus malabaricus", "Pristipomoides multidens"};
     private static int NUMBER_OF_POPULATIONS = 2;
-
-    private static final double MINIMUM_CATCHABILITY = .000001;
-
-    private static final double MAXIMUM_CATCHABILITY = 0.0001;
 
     static {
 
@@ -75,23 +72,26 @@ public class NoDataSlice2 {
                 //gear for the two boats
 
                 parameters.add(
-                        new SimpleOptimizationParameter(
-                                "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species +
-                                        ".averageCatchability",
-                                MINIMUM_CATCHABILITY, MAXIMUM_CATCHABILITY)
+                    new SimpleOptimizationParameter(
+                        "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species +
+                            ".averageCatchability",
+                        MINIMUM_CATCHABILITY, MAXIMUM_CATCHABILITY
+                    )
                 );
 
 
                 parameters.add(
-                        new SimpleOptimizationParameter(
-                                "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species + ".selexParameter1",
-                                7, 25)
+                    new SimpleOptimizationParameter(
+                        "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species + ".selexParameter1",
+                        7, 25
+                    )
                 );
 
                 parameters.add(
-                        new SimpleOptimizationParameter(
-                                "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species + ".selexParameter2",
-                                0.2, 1.1)
+                    new SimpleOptimizationParameter(
+                        "fisherDefinitions$" + pop + ".gear.delegate.delegate.gears~" + species + ".selexParameter2",
+                        0.2, 1.1
+                    )
                 );
 
 
@@ -99,51 +99,59 @@ public class NoDataSlice2 {
 
             //max days out!
             parameters.add(
-                    new SimpleOptimizationParameter(
-                            "fisherDefinitions$" + pop + ".departingStrategy.decorated.maxHoursOut",
-                            180 * 24, 240 * 24)
+                new SimpleOptimizationParameter(
+                    "fisherDefinitions$" + pop + ".departingStrategy.decorated.maxHoursOut",
+                    180 * 24, 240 * 24
+                )
             );
 
             //inertia
             parameters.add(
-                    new SimpleOptimizationParameter("fisherDefinitions$" + pop + ".departingStrategy.inertia",
-                                                    1, 5)
+                new SimpleOptimizationParameter("fisherDefinitions$" + pop + ".departingStrategy.inertia",
+                    1, 5
+                )
             );
 
             parameters.add(
-                    new SimpleOptimizationParameter("plugins$" + pop + ".profitRatioToEntrantsMultiplier",
-                                                    2, 20)
+                new SimpleOptimizationParameter("plugins$" + pop + ".profitRatioToEntrantsMultiplier",
+                    2, 20
+                )
             );
         }
 
 
         // market price
         parameters.add(
-                new SimpleOptimizationParameter("market.marketPrice",
-                                                30000, 60000)
+            new SimpleOptimizationParameter("market.marketPrice",
+                30000, 60000
+            )
         );
 
         //recruitment  (different sizes)
 
         parameters.add(
-                new SimpleOptimizationParameter("biologyInitializer.factories$0.virginRecruits",
-                                                7500000, 20000000)
+            new SimpleOptimizationParameter("biologyInitializer.factories$0.virginRecruits",
+                7500000, 20000000
+            )
         );
 
         parameters.add(
-                new SimpleOptimizationParameter("biologyInitializer.factories$1.virginRecruits",
-                                                5000000, 15000000)
+            new SimpleOptimizationParameter("biologyInitializer.factories$1.virginRecruits",
+                5000000, 15000000
+            )
         );
 
 
         for (int species = 0; species < validSpecies.length; species++) {
             parameters.add(
-                    new SimpleOptimizationParameter("biologyInitializer.factories$" + species + ".cumulativePhi",
-                                                    2, 10)
+                new SimpleOptimizationParameter("biologyInitializer.factories$" + species + ".cumulativePhi",
+                    2, 10
+                )
             );
             parameters.add(
-                    new SimpleOptimizationParameter("biologyInitializer.factories$" + species + ".steepness",
-                                                    0.7, 0.95));
+                new SimpleOptimizationParameter("biologyInitializer.factories$" + species + ".steepness",
+                    0.7, 0.95
+                ));
 
 
         }
@@ -151,59 +159,59 @@ public class NoDataSlice2 {
         try {
 
             parameters.add(
-                    new ReadFromCSVOptimizationParameter(
-                            MAIN_DIRECTORY.resolve("inputs").resolve("fish_parameters.csv"),
-                            new String[]{
-                                    "biologyInitializer.factories$0.LInfinity",
-                                    "biologyInitializer.factories$0.k",
-                                    "biologyInitializer.factories$0.lengthAtMaturity",
-                                    "biologyInitializer.factories$0.yearlyMortality",
-                                    "biologyInitializer.factories$0.allometricAlpha",
-                                    "biologyInitializer.factories$0.allometricBeta"
-                            },
-                            true
-                    )
+                new ReadFromCSVOptimizationParameter(
+                    MAIN_DIRECTORY.resolve("inputs").resolve("fish_parameters.csv"),
+                    new String[]{
+                        "biologyInitializer.factories$0.LInfinity",
+                        "biologyInitializer.factories$0.k",
+                        "biologyInitializer.factories$0.lengthAtMaturity",
+                        "biologyInitializer.factories$0.yearlyMortality",
+                        "biologyInitializer.factories$0.allometricAlpha",
+                        "biologyInitializer.factories$0.allometricBeta"
+                    },
+                    true
+                )
             );
 
             parameters.add(
-                    new ReadFromCSVOptimizationParameter(
-                            MAIN_DIRECTORY.resolve("inputs").resolve("multidens_parameters.csv"),
-                            new String[]{
-                                    "biologyInitializer.factories$1.LInfinity",
-                                    "biologyInitializer.factories$1.k",
-                                    "biologyInitializer.factories$1.lengthAtMaturity",
-                                    "biologyInitializer.factories$1.yearlyMortality",
-                                    "biologyInitializer.factories$1.allometricAlpha",
-                                    "biologyInitializer.factories$1.allometricBeta"
-                            },
-                            true
-                    )
+                new ReadFromCSVOptimizationParameter(
+                    MAIN_DIRECTORY.resolve("inputs").resolve("multidens_parameters.csv"),
+                    new String[]{
+                        "biologyInitializer.factories$1.LInfinity",
+                        "biologyInitializer.factories$1.k",
+                        "biologyInitializer.factories$1.lengthAtMaturity",
+                        "biologyInitializer.factories$1.yearlyMortality",
+                        "biologyInitializer.factories$1.allometricAlpha",
+                        "biologyInitializer.factories$1.allometricBeta"
+                    },
+                    true
+                )
             );
 
 
             parameters.add(
-                    new ReadFromCSVOptimizationParameter(
-                            MAIN_DIRECTORY.resolve("inputs").resolve("smaller_boats.csv"),
-                            new String[]{
-                                    "fisherDefinitions$0.hourlyVariableCost.",
-                                    "fisherDefinitions$0.departingStrategy.targetVariable",
-                                    "fisherDefinitions$0.fishingStrategy.daysAtSea",
-                                    "fisherDefinitions$0.holdSize",
-                            },
-                            true
-                    )
+                new ReadFromCSVOptimizationParameter(
+                    MAIN_DIRECTORY.resolve("inputs").resolve("smaller_boats.csv"),
+                    new String[]{
+                        "fisherDefinitions$0.hourlyVariableCost.",
+                        "fisherDefinitions$0.departingStrategy.targetVariable",
+                        "fisherDefinitions$0.fishingStrategy.daysAtSea",
+                        "fisherDefinitions$0.holdSize",
+                    },
+                    true
+                )
             );
             parameters.add(
-                    new ReadFromCSVOptimizationParameter(
-                            MAIN_DIRECTORY.resolve("inputs").resolve("bigger_boats.csv"),
-                            new String[]{
-                                    "fisherDefinitions$1.hourlyVariableCost.",
-                                    "fisherDefinitions$1.departingStrategy.targetVariable",
-                                    "fisherDefinitions$1.fishingStrategy.daysAtSea",
-                                    "fisherDefinitions$1.holdSize",
-                            },
-                            true
-                    )
+                new ReadFromCSVOptimizationParameter(
+                    MAIN_DIRECTORY.resolve("inputs").resolve("bigger_boats.csv"),
+                    new String[]{
+                        "fisherDefinitions$1.hourlyVariableCost.",
+                        "fisherDefinitions$1.departingStrategy.targetVariable",
+                        "fisherDefinitions$1.fishingStrategy.daysAtSea",
+                        "fisherDefinitions$1.holdSize",
+                    },
+                    true
+                )
             );
 
 
@@ -214,48 +222,45 @@ public class NoDataSlice2 {
 
     }
 
+    static {
+        predicates.add(new AcceptableRangePredicate(
+            0.10, 0.21, "SPR " + "Pristipomoides multidens" + " " + "spr_agent"
+        ));
+        predicates.add(new AcceptableRangePredicate(
+            0.002, 0.20, "SPR " + "Lutjanus malabaricus" + " " + "spr_agent"
+        ));
+        predicates.add(new AcceptableRangePredicate(
+            5000000, 10000000, "Lutjanus malabaricus Landings"
+        ));
+        predicates.add(new AcceptableRangePredicate(
+            1000000, 3000000, "Pristipomoides multidens Landings"
+        ));
 
-    public static Pair<Scenario,String[]> setupScenario(Scenario scenario,
-                                                        double[] randomValues,
-                                                        List<OptimizationParameter> parameters) {
+    }
 
-        Preconditions.checkState(parameters.size()==randomValues.length);
+    public static Pair<Scenario, String[]> setupScenario(
+        Scenario scenario,
+        double[] randomValues,
+        List<OptimizationParameter> parameters
+    ) {
+
+        Preconditions.checkState(parameters.size() == randomValues.length);
         String[] values = new String[randomValues.length];
         for (int i = 0; i < randomValues.length; i++) {
 
 
             values[i] =
-                    parameters.get(i).parametrize(scenario,
-                                                  new double[]{randomValues[i]});
+                parameters.get(i).parametrize(
+                    scenario,
+                    new double[]{randomValues[i]}
+                );
 
 
         }
 
 
-        return new Pair<>(scenario,values);
+        return new Pair<>(scenario, values);
     }
-
-
-
-    public static final List<AcceptableRangePredicate> predicates = new LinkedList<>();
-
-
-    static {
-        predicates.add(new AcceptableRangePredicate(
-                0.10,0.21,"SPR " + "Pristipomoides multidens" + " " + "spr_agent"
-        ));
-        predicates.add(new AcceptableRangePredicate(
-                0.002,0.20,"SPR " + "Lutjanus malabaricus" + " " + "spr_agent"
-        ));
-        predicates.add(new AcceptableRangePredicate(
-                5000000,10000000,"Lutjanus malabaricus Landings"
-        ));
-        predicates.add(new AcceptableRangePredicate(
-                1000000,3000000,"Pristipomoides multidens Landings"
-        ));
-
-    }
-
 
     /**
      * like the original runs, but we accept depending only on landings, not SPR
@@ -264,24 +269,23 @@ public class NoDataSlice2 {
 
         predicates.clear();
         predicates.add(new AcceptableRangePredicate(
-                5000000,10000000,"Lutjanus malabaricus Landings"
+            5000000, 10000000, "Lutjanus malabaricus Landings"
         ));
         predicates.add(new AcceptableRangePredicate(
-                1000000,3000000,"Pristipomoides multidens Landings"
+            1000000, 3000000, "Pristipomoides multidens Landings"
         ));
 
-        runDirectory(MAIN_DIRECTORY.resolve("easier").resolve("scenarios").resolve("batch"+ batchNumber), 0);
+        runDirectory(MAIN_DIRECTORY.resolve("easier").resolve("scenarios").resolve("batch" + batchNumber), 0);
 
 
     }
-
 
 
     public static void main(String[] args) throws IOException {
 
         nullRuns(2);
 
-       // buildScenarios();
+        // buildScenarios();
 
 
 //        System.out.println("scenario " + args[0]);
@@ -290,14 +294,14 @@ public class NoDataSlice2 {
     }
 
     private static void buildScenarios() throws IOException {
-        for (int batch = 10; batch < BATCHES+10; batch++)
-        {
+        for (int batch = 10; batch < BATCHES + 10; batch++) {
 
             final Path folder =
-                    MAIN_DIRECTORY.resolve("scenarios").resolve("batch"+batch);
+                MAIN_DIRECTORY.resolve("scenarios").resolve("batch" + batch);
             folder.toFile().mkdirs();
-            produceScenarios(folder, SCENARIOS_PER_BATCH,parameters,
-                             System.currentTimeMillis(),SCENARIO_FILE);
+            produceScenarios(folder, SCENARIOS_PER_BATCH, parameters,
+                System.currentTimeMillis(), SCENARIO_FILE
+            );
 
         }
     }
@@ -322,18 +326,17 @@ public class NoDataSlice2 {
 
             Scenario scenario = yaml.loadAs(new FileReader(scenarioFile), Scenario.class);
             Optional<Integer> result;
-            System.out.println(scenarioFile.getAbsolutePath() );
+            System.out.println(scenarioFile.getAbsolutePath());
 
             try {
                 long start = System.currentTimeMillis();
                 result = runModelOnce(scenario, MAX_YEARS_TO_RUN, seed);
                 long end = System.currentTimeMillis();
-                System.out.println( "Run lasted: " + (end-start)/1000 + " seconds");
-            }
-            catch (OutOfMemoryError e){
+                System.out.println("Run lasted: " + (end - start) / 1000 + " seconds");
+            } catch (OutOfMemoryError e) {
                 result = Optional.of(-1000);
             }
-            System.out.println(scenarioFile.getAbsolutePath() + "," + result.orElse(-1) );
+            System.out.println(scenarioFile.getAbsolutePath() + "," + result.orElse(-1));
             System.out.println("--------------------------------------------------------------");
 
             writer.write(scenarioFile.getAbsolutePath().toString() + ",");
@@ -347,8 +350,10 @@ public class NoDataSlice2 {
     }
 
 
-    public static Optional<Integer> runModelOnce(Scenario scenarioToRun,
-                                                 int maxYearsToRun, long seed){
+    public static Optional<Integer> runModelOnce(
+        Scenario scenarioToRun,
+        int maxYearsToRun, long seed
+    ) {
 
         //run the model
         FishState model = new FishState(seed);
@@ -365,13 +370,14 @@ public class NoDataSlice2 {
 
             boolean valid = true;
             for (AcceptableRangePredicate predicate : predicates) {
-                valid= valid & predicate.test(model,validYear);
+                valid = valid & predicate.test(model, validYear);
             }
             System.out.println(validYear + " -- " + valid);
 
 
-            if(valid)
-                break;;
+            if (valid)
+                break;
+            ;
 
 
         }
@@ -381,10 +387,12 @@ public class NoDataSlice2 {
     }
 
 
-    public static void produceScenarios(Path folder, int numberToProduce,
-                                        List<OptimizationParameter> parameters,
-                                        long originalSeed,
-                                        Path scenarioFile) throws IOException {
+    public static void produceScenarios(
+        Path folder, int numberToProduce,
+        List<OptimizationParameter> parameters,
+        long originalSeed,
+        Path scenarioFile
+    ) throws IOException {
 
         //store all parameters in a master file, for ease of visiting
         FileWriter masterFile = new FileWriter(folder.resolve("masterfile.csv").toFile());
@@ -409,7 +417,7 @@ public class NoDataSlice2 {
             }
             Scenario scenario = yaml.loadAs(new FileReader(scenarioFile.toFile()), Scenario.class);
             final Pair<Scenario, String[]> scenarioPair = setupScenario(scenario, randomValues, parameters);
-            yaml.dump(scenarioPair.getFirst(),new FileWriter(folder.resolve("scenario_" + i + ".yaml").toFile()));
+            yaml.dump(scenarioPair.getFirst(), new FileWriter(folder.resolve("scenario_" + i + ".yaml").toFile()));
 
             for (String value : scenarioPair.getSecond()) {
                 masterFile.write(value);
@@ -419,7 +427,6 @@ public class NoDataSlice2 {
             masterFile.write("\n");
 
             masterFile.flush();
-
 
 
         }

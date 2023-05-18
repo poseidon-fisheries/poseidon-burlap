@@ -48,8 +48,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by carrknight on 2/28/17.
@@ -66,24 +64,25 @@ public class StrategyReplicatorTest {
         Mockito.when(state.getFishers()).thenReturn(fishers);
         MersenneTwisterFast random = new MersenneTwisterFast();
         Mockito.when(state.getRandom()).thenReturn(random);
-        
-        
+
+
         //create 100 fishers
-        for(int i=0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             Fisher f = new Fisher(
-                    i,
-                    Mockito.mock(Port.class),
-                    state.getRandom(),
-                    new Anarchy(),
-                    Mockito.mock(DepartingStrategy.class),
-                    Mockito.mock(DestinationStrategy.class),
-                    Mockito.mock(FishingStrategy.class),
-                    Mockito.mock(GearStrategy.class),
-                    Mockito.mock(DiscardingStrategy.class),
-                    Mockito.mock(WeatherEmergencyStrategy.class),
-                    Mockito.mock(Boat.class),
-                    Mockito.mock(Hold.class), Mockito.mock(Gear.class),
-                    1);
+                i,
+                Mockito.mock(Port.class),
+                state.getRandom(),
+                new Anarchy(),
+                Mockito.mock(DepartingStrategy.class),
+                Mockito.mock(DestinationStrategy.class),
+                Mockito.mock(FishingStrategy.class),
+                Mockito.mock(GearStrategy.class),
+                Mockito.mock(DiscardingStrategy.class),
+                Mockito.mock(WeatherEmergencyStrategy.class),
+                Mockito.mock(Boat.class),
+                Mockito.mock(Hold.class), Mockito.mock(Gear.class),
+                1
+            );
             f.start(state);
             fishers.add(f);
 
@@ -95,34 +94,35 @@ public class StrategyReplicatorTest {
         options.add(new RandomThenBackToPortFactory());
         //utility is index * 10
         ObjectiveFunction<Fisher> objectiveFunction = (observer, observed) ->
-                (((ReplicatorDrivenDestinationStrategy) observed.getDestinationStrategy()).getStrategyIndex()+1) * 10;
+            (((ReplicatorDrivenDestinationStrategy) observed.getDestinationStrategy()).getStrategyIndex() + 1) * 10;
         //give random utility
-        for(Fisher fisher : fishers)
-            fisher.setDestinationStrategy(new ReplicatorDrivenDestinationStrategy(random.nextInt(2), Mockito.mock(DestinationStrategy.class)));
+        for (Fisher fisher : fishers)
+            fisher.setDestinationStrategy(new ReplicatorDrivenDestinationStrategy(
+                random.nextInt(2),
+                Mockito.mock(DestinationStrategy.class)
+            ));
 
         StrategyReplicator replicator = new StrategyReplicator(options, objectiveFunction, .2);
 
         int strategy2Users = 0;
-        for(Fisher fisher : fishers)
-            if(((ReplicatorDrivenDestinationStrategy) fisher.getDestinationStrategy()).getStrategyIndex()==1)
+        for (Fisher fisher : fishers)
+            if (((ReplicatorDrivenDestinationStrategy) fisher.getDestinationStrategy()).getStrategyIndex() == 1)
                 strategy2Users++;
         System.out.println(strategy2Users);
 
-        for(int i=0; i<10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             strategy2Users = 0;
             replicator.step(state);
-            for(Fisher fisher : fishers)
-                if(((ReplicatorDrivenDestinationStrategy) fisher.getDestinationStrategy()).getStrategyIndex()==1)
+            for (Fisher fisher : fishers)
+                if (((ReplicatorDrivenDestinationStrategy) fisher.getDestinationStrategy()).getStrategyIndex() == 1)
                     strategy2Users++;
             System.out.println(strategy2Users);
 
         }
         //this becomes 0 if everbody switches
         //assertEquals(replicator.getLastObservedFitnesses()[0],10,.001);
-        assertEquals(replicator.getLastObservedFitnesses()[1],20,.001);
+        assertEquals(replicator.getLastObservedFitnesses()[1], 20, .001);
         assertTrue(strategy2Users > 90);
-
 
 
     }

@@ -1,12 +1,12 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.base.Preconditions;
-import uk.ac.ox.poseidon.burlap.experiments.indonesia.limited.NoData718Slice6;
 import uk.ac.ox.oxfish.maximization.generic.OptimizationParameter;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.Pair;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.limited.NoData718Slice6;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static uk.ac.ox.poseidon.burlap.experiments.indonesia.limited.NoData718Slice6.MAIN_DIRECTORY;
 import static uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice3.setupScenario;
+import static uk.ac.ox.poseidon.burlap.experiments.indonesia.limited.NoData718Slice6.MAIN_DIRECTORY;
 
 /**
  * trying to make a single run version of slice6 that we can calibrate externally
@@ -32,17 +32,16 @@ public class NoData718Slice6Iterative {
     public static void main(String[] args) throws IOException {
 
 
-
         int scenarioID = Integer.parseInt(args[0]);
         System.out.println("scenarioID: " + scenarioID);
 
 
-        double[] parameters = new double[args.length-1];
+        double[] parameters = new double[args.length - 1];
 
-        Preconditions.checkArgument(parameters.length>0, "no parameter received!");
+        Preconditions.checkArgument(parameters.length > 0, "no parameter received!");
 
         for (int i = 0; i < parameters.length; i++) {
-            parameters[i] = Double.parseDouble(args[i+1]);
+            parameters[i] = Double.parseDouble(args[i + 1]);
         }
         System.out.println("parametrers: " + Arrays.toString(parameters));
 
@@ -50,15 +49,14 @@ public class NoData718Slice6Iterative {
         final Path outputDirectory = MAIN_DIRECTORY.resolve(DIRECTORY).resolve(FishStateUtilities.getComputerName());
         outputDirectory.toFile().mkdirs();
         runOneTime(
-                MAIN_DIRECTORY.resolve("base.yaml"),
-                MAIN_DIRECTORY.resolve("parameters.yaml"),
-                MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
-                outputDirectory,
-                0l,
-                NoData718Slice6.MAX_YEARS_TO_RUN,
-                parameters,
-                scenarioID
-
+            MAIN_DIRECTORY.resolve("base.yaml"),
+            MAIN_DIRECTORY.resolve("parameters.yaml"),
+            MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
+            outputDirectory,
+            0l,
+            NoData718Slice6.MAX_YEARS_TO_RUN,
+            parameters,
+            scenarioID
 
 
         );
@@ -83,32 +81,35 @@ public class NoData718Slice6Iterative {
 //    }
 
 
-
     public static void runOneTime(
-            Path baselineScenarioFile,
-            Path parameterFile,
-            Path listOfColumnsToPrintFile,
-            Path outputDirectory,
-            long seed,
-            int maxYearsToRun,
-            double[] parameterValues,
-            int scenarioID
+        Path baselineScenarioFile,
+        Path parameterFile,
+        Path listOfColumnsToPrintFile,
+        Path outputDirectory,
+        long seed,
+        int maxYearsToRun,
+        double[] parameterValues,
+        int scenarioID
     ) throws IOException {
 
 
         //read infos
         FishYAML yaml = new FishYAML();
         final List<String> columnsToPrint =
-                yaml.loadAs(new FileReader(
-                                listOfColumnsToPrintFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    listOfColumnsToPrintFile.toFile()
+                ),
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                parameterFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    parameterFile.toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
@@ -119,25 +120,25 @@ public class NoData718Slice6Iterative {
         Scenario scenario = yaml.loadAs(new FileReader(baselineScenarioFile.toFile()), Scenario.class);
         final Pair<Scenario, String[]> scenarioPair = setupScenario(scenario, parameterValues, parameters);
         final Path pathToScenario = scenarioDirectory.resolve("scenario_" + scenarioID + ".yaml");
-        yaml.dump(scenarioPair.getFirst(),new FileWriter(pathToScenario.toFile()));
+        yaml.dump(scenarioPair.getFirst(), new FileWriter(pathToScenario.toFile()));
 
         //run scenario
         final StringBuffer tidyOutput = NoData718Slice6.runOneScenario(
-                seed,
-                columnsToPrint,
-                null,
-                pathToScenario,
-                maxYearsToRun
+            seed,
+            columnsToPrint,
+            null,
+            pathToScenario,
+            maxYearsToRun
         );
 
         FileWriter writer = new FileWriter(
-                scenarioDirectory.resolve("scenario_" + scenarioID + ".csv").toFile()
+            scenarioDirectory.resolve("scenario_" + scenarioID + ".csv").toFile()
         );
         writer.write("run,year,policy,variable,value\n");
         writer.write(tidyOutput.toString());
-        writer.flush();;
+        writer.flush();
+        ;
         writer.close();
-
 
 
     }

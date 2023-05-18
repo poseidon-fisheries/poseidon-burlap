@@ -30,8 +30,7 @@ import uk.ac.ox.oxfish.utility.parameters.DoubleParameter;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 
 public class UCB1BanditFactory implements
-        AlgorithmFactory<BanditSupplier>
-{
+    AlgorithmFactory<BanditSupplier> {
 
 
     private DoubleParameter minimumReward = new FixedDoubleParameter(-20);
@@ -50,9 +49,11 @@ public class UCB1BanditFactory implements
         return new BanditSupplier() {
             @Override
             public UCB1BanditAlgorithm apply(BanditAverage banditAverage) {
-                return new UCB1BanditAlgorithm(minimumReward.applyAsDouble(state.getRandom()),
-                                               maximumReward.applyAsDouble(state.getRandom()),
-                                               banditAverage);
+                return new UCB1BanditAlgorithm(
+                    minimumReward.applyAsDouble(state.getRandom()),
+                    maximumReward.applyAsDouble(state.getRandom()),
+                    banditAverage
+                );
             }
         };
     }

@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -18,38 +21,30 @@ import static uk.ac.ox.poseidon.burlap.experiments.indonesia.limited.NoData718Sl
 public class NoData718Slice6PriceIncrease {
 
     private static final String CANDIDATES_CSV_FILE =
-            "price_shock_candidates_min_small2.csv";
-    private static Path OUTPUT_FOLDER =
-            NoData718Slice6.MAIN_DIRECTORY.resolve("price_shock_min_small2");
-
-
+        "price_shock_candidates_min_small2.csv";
     static public LinkedHashMap<String,
-            Function<Integer, Consumer<Scenario>>> slice6PriceJump = new LinkedHashMap();
-
-
-
-
+        Function<Integer, Consumer<Scenario>>> slice6PriceJump = new LinkedHashMap();
+    private static Path OUTPUT_FOLDER =
+        NoData718Slice6.MAIN_DIRECTORY.resolve("price_shock_min_small2");
 
     static {
 
 
         slice6PriceJump.put(
-                "Price Shock plus seeding",
-                priceShockAndSeedingGenerator(0)
+            "Price Shock plus seeding",
+            priceShockAndSeedingGenerator(0)
 
         );
 
 
         slice6PriceJump.put(
-                "BAU",
-                shockYear -> scenario -> {
-                }
+            "BAU",
+            shockYear -> scenario -> {
+            }
 
         );
 
     }
-
-
 
 
     public static void main(String[] args) throws IOException {
@@ -60,23 +55,26 @@ public class NoData718Slice6PriceIncrease {
         otherColumnsToPrint.add("SPR Lethrinus laticaudis spr_agent1_small");
 
         runDirectoryPriceIncrease(OUTPUT_FOLDER,
-                OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE), slice6PriceJump,
-                otherColumnsToPrint);
+            OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE), slice6PriceJump,
+            otherColumnsToPrint
+        );
 
 
     }
 
-    public static void runDirectoryPriceIncrease(Path outputFolder,
-                                                 Path candidateCSVFile,
-                                                 LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
-                                                 List<String> additionalColumnsToPrint) throws IOException {
+    public static void runDirectoryPriceIncrease(
+        Path outputFolder,
+        Path candidateCSVFile,
+        LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
+        List<String> additionalColumnsToPrint
+    ) throws IOException {
         CSVReader reader = new CSVReader(new FileReader(
-                candidateCSVFile.toFile()
+            candidateCSVFile.toFile()
         ));
 
         List<String[]> strings = reader.readAll();
-     //   strings.remove(0);
-      //  Collections.shuffle(strings);
+        //   strings.remove(0);
+        //  Collections.shuffle(strings);
 
         for (int i = 1; i < strings.size(); i++) {
 
@@ -84,17 +82,16 @@ public class NoData718Slice6PriceIncrease {
             System.out.println(Arrays.toString(row));
 
             final Path scenarioPath = Paths.get(row[0]);
-            if(Files.exists(scenarioPath) && Files.size(scenarioPath)>0)
-            {
+            if (Files.exists(scenarioPath) && Files.size(scenarioPath) > 0) {
 
                 priceIncreaseOneRun(
-                        scenarioPath,
-                        Integer.parseInt(row[1]),
-                        outputFolder,
-                        policies, additionalColumnsToPrint,
-                        false, 5,null,null, null);
-            }
-            else {
+                    scenarioPath,
+                    Integer.parseInt(row[1]),
+                    outputFolder,
+                    policies, additionalColumnsToPrint,
+                    false, 5, null, null, null
+                );
+            } else {
                 System.err.println("Couldn't find scenario " + scenarioPath);
             }
         }

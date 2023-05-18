@@ -26,66 +26,21 @@ import java.util.function.Function;
 
 public class NoData718Slice4PriceIncrease {
 
-    private static final String CANDIDATES_CSV_FILE = "price_shock_candidates_max.csv";
-    private static Path OUTPUT_FOLDER =
-            NoData718Slice4.MAIN_DIRECTORY.resolve("price_shock_max");
-
-
     static final public double newCroakerPriceDobo = 80000; //glaudy's report
-
     static final public double newCroakerPriceProbolinggo = 350000; //glaudy's report
-
+    private static final String CANDIDATES_CSV_FILE = "price_shock_candidates_max.csv";
+    private static final long SEED = 0;
+    private static Path OUTPUT_FOLDER =
+        NoData718Slice4.MAIN_DIRECTORY.resolve("price_shock_max");
     static private LinkedHashMap<String,
-            Function<Integer, Consumer<Scenario>>> priceIncreasePolicies = new LinkedHashMap();
-
-
-    /**
-     * adds some longline boats in the far-off port; useful because they might have quit before the price shock;
-     * assuming POPULATION0 is the faroff one
-     * @param shockYear
-     * @return
-     */
-    public static AlgorithmFactory<AdditionalStartable> farOffPortsSeedingEvent(Integer shockYear,
-                                                                                final int minPopulation0Boats) {
-        return new AlgorithmFactory<AdditionalStartable>() {
-            @Override
-            public AdditionalStartable apply(FishState fishState) {
-                return new AdditionalStartable() {
-                    @Override
-                    public void start(FishState model) {
-                        model.scheduleOnceAtTheBeginningOfYear(
-                                new Steppable() {
-                                    @Override
-                                    public void step(SimState simState) {
-                                        int currentNumber = (((FishState) simState).
-                                                getLatestYearlyObservation("Number Of Active Fishers of population0")).intValue();
-                                        int toAdd = minPopulation0Boats - currentNumber;
-                                        System.out.println("adding " + toAdd + " far-off fishers");
-                                        for (int i = 0; i < toAdd; i++) {
-                                            ((FishState) simState).getFisherFactory("population0").buildFisher(((FishState) simState));
-
-                                        }
-
-                                    }
-                                },
-                                StepOrder.DAWN,
-                                shockYear
-                        );
-                    }
-                };
-
-
-            }
-        };
-    }
-
+        Function<Integer, Consumer<Scenario>>> priceIncreasePolicies = new LinkedHashMap();
 
     static {
 
 
         priceIncreasePolicies.put(
-                "Price Shock plus seeding",
-                priceShockAndSeedingGenerator(0)
+            "Price Shock plus seeding",
+            priceShockAndSeedingGenerator(0)
 
         );
 //        priceIncreasePolicies.put(
@@ -101,12 +56,56 @@ public class NoData718Slice4PriceIncrease {
 
 
         priceIncreasePolicies.put(
-                "BAU",
-                shockYear -> scenario -> {
-                }
+            "BAU",
+            shockYear -> scenario -> {
+            }
 
         );
 
+    }
+
+    /**
+     * adds some longline boats in the far-off port; useful because they might have quit before the price shock;
+     * assuming POPULATION0 is the faroff one
+     *
+     * @param shockYear
+     * @return
+     */
+    public static AlgorithmFactory<AdditionalStartable> farOffPortsSeedingEvent(
+        Integer shockYear,
+        final int minPopulation0Boats
+    ) {
+        return new AlgorithmFactory<AdditionalStartable>() {
+            @Override
+            public AdditionalStartable apply(FishState fishState) {
+                return new AdditionalStartable() {
+                    @Override
+                    public void start(FishState model) {
+                        model.scheduleOnceAtTheBeginningOfYear(
+                            new Steppable() {
+                                @Override
+                                public void step(SimState simState) {
+                                    int currentNumber = (((FishState) simState).
+                                        getLatestYearlyObservation("Number Of Active Fishers of population0")).intValue();
+                                    int toAdd = minPopulation0Boats - currentNumber;
+                                    System.out.println("adding " + toAdd + " far-off fishers");
+                                    for (int i = 0; i < toAdd; i++) {
+                                        ((FishState) simState).getFisherFactory("population0")
+                                            .buildFisher(((FishState) simState));
+
+                                    }
+
+                                }
+                            },
+                            StepOrder.DAWN,
+                            shockYear
+                        );
+                    }
+                };
+
+
+            }
+        };
     }
 
     public static Function<Integer, Consumer<Scenario>> priceShockAndSeedingGenerator(final int lead) {
@@ -120,12 +119,14 @@ public class NoData718Slice4PriceIncrease {
                         Preconditions.checkNotNull(scenario);
                         Preconditions.checkNotNull(((FlexibleScenario) scenario).getPlugins());
                         ((FlexibleScenario) scenario).getPlugins().add(
-                                NoData718Slice3PriceIncrease.priceIncreaseEvent(shockYear- lead,
-                                        newCroakerPriceDobo,
-                                        newCroakerPriceProbolinggo)
+                            NoData718Slice3PriceIncrease.priceIncreaseEvent(
+                                shockYear - lead,
+                                newCroakerPriceDobo,
+                                newCroakerPriceProbolinggo
+                            )
                         );
                         ((FlexibleScenario) scenario).getPlugins().add(
-                                farOffPortsSeedingEvent(shockYear- lead,10)
+                            farOffPortsSeedingEvent(shockYear - lead, 10)
                         );
                     }
                 };
@@ -135,32 +136,33 @@ public class NoData718Slice4PriceIncrease {
         };
     }
 
-
     public static void priceIncreaseOneRun(
-            Path scenarioFile, int shockYear,
-            Path outputFolder,
-            LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policyMap,
-            List<String> additionalColumnsToPrint,
-            boolean printYAMLScenario, final int additionalYearsToRun,
-                    Consumer<Scenario> commonPolicy,
-            //the problem with adding plugins through scenario is that they may screw up the seed as the stack has to randomize it
-            //the solution then is simply not to start anything until the right year arrives. This will make the seed
-            //still inconsistent after the startable... starts, but at least until then it's okay
-                    LinkedList<Pair<Integer,
-                            AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
-            List<String> dailyColumnsToPrint) throws IOException {
+        Path scenarioFile,
+        int shockYear,
+        Path outputFolder,
+        LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policyMap,
+        List<String> additionalColumnsToPrint,
+        boolean printYAMLScenario,
+        final int additionalYearsToRun,
+        Consumer<Scenario> commonPolicy,
+        //the problem with adding plugins through scenario is that they may screw up the seed as the stack has to randomize it
+        //the solution then is simply not to start anything until the right year arrives. This will make the seed
+        //still inconsistent after the startable... starts, but at least until then it's okay
+        LinkedList<Pair<Integer,
+            AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
+        List<String> dailyColumnsToPrint
+    ) throws IOException {
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(outputFolder.resolve(filename + ".csv").toFile().exists())
-        {
+        if (outputFolder.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
         }
-        if(printYAMLScenario && !outputFolder.resolve(filename).toFile().exists())
-            Files.copy(scenarioFile,outputFolder.resolve(filename));
+        if (printYAMLScenario && !outputFolder.resolve(filename).toFile().exists())
+            Files.copy(scenarioFile, outputFolder.resolve(filename));
 
 
         FileWriter fileWriter = new FileWriter(outputFolder.resolve(filename + ".csv").toFile());
@@ -168,8 +170,7 @@ public class NoData718Slice4PriceIncrease {
         fileWriter.flush();
         //if needed, set up also a daily writer
         FileWriter dailyFileWriter = null;
-        if(dailyColumnsToPrint!=null)
-        {
+        if (dailyColumnsToPrint != null) {
             dailyFileWriter = new FileWriter(outputFolder.resolve(filename + ".daily").toFile());
             dailyFileWriter.write("run,day,policy,variable,value\n");
             dailyFileWriter.flush();
@@ -181,32 +182,30 @@ public class NoData718Slice4PriceIncrease {
             String policyName = policyRun.getKey();
             //add some information gathering
             Consumer<Scenario> policy = policyRun.getValue().apply(shockYear).andThen(
-                    new Consumer<Scenario>() {
-                        @Override
-                        public void accept(Scenario scenario) {
-                            ((FlexibleScenario) scenario).getPlugins().add(
-                                    new FullSeasonalRetiredDataCollectorsFactory()
-                            );
-                        }
+                new Consumer<Scenario>() {
+                    @Override
+                    public void accept(Scenario scenario) {
+                        ((FlexibleScenario) scenario).getPlugins().add(
+                            new FullSeasonalRetiredDataCollectorsFactory()
+                        );
                     }
+                }
             );
 
-            if(commonPolicy!=null)
+            if (commonPolicy != null)
                 policy = policy.andThen(commonPolicy);
 
 
-
             BatchRunner runner = NoData718Slice2PriceIncrease.setupRunner(scenarioFile,
-                    shockYear+ additionalYearsToRun,
-                    null, SEED, additionalColumnsToPrint);
+                shockYear + additionalYearsToRun,
+                null, SEED, additionalColumnsToPrint
+            );
             runner.setScaleSeedWithRunsDone(false);
-
-
 
 
             //give it the scenario
             runner.setScenarioSetup(policy);
-            if(additionalPlugins!=null)
+            if (additionalPlugins != null)
                 runner.setOutsidePlugins(additionalPlugins);
 
             //remember to output the policy tag
@@ -218,7 +217,7 @@ public class NoData718Slice4PriceIncrease {
             });
 
             //set up daily columns, if needed
-            if(dailyFileWriter!=null) {
+            if (dailyFileWriter != null) {
                 runner.setDailyColumnsToPrint(dailyColumnsToPrint);
                 runner.setTidyDailyDataWriter(new StringBuffer());
             }
@@ -228,8 +227,7 @@ public class NoData718Slice4PriceIncrease {
             fileWriter.flush();
 
             //collect daily columns, if needed
-            if(dailyFileWriter!=null)
-            {
+            if (dailyFileWriter != null) {
                 dailyFileWriter.write(runner.getTidyDailyDataWriter().toString());
                 dailyFileWriter.flush();
             }
@@ -240,15 +238,10 @@ public class NoData718Slice4PriceIncrease {
 
     }
 
-
-    private static final  long SEED = 0;
-
-
-
     public static void main(String[] args) throws IOException {
 
         CSVReader reader = new CSVReader(new FileReader(
-                OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
+            OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -261,25 +254,23 @@ public class NoData718Slice4PriceIncrease {
             System.out.println(Arrays.toString(row));
 
             final Path scenarioPath = Paths.get(row[0]);
-            if(Files.exists(scenarioPath))
-            {
+            if (Files.exists(scenarioPath)) {
 
                 priceIncreaseOneRun(
-                        scenarioPath,
-                        Integer.parseInt(row[1]),
-                        OUTPUT_FOLDER,
-                        priceIncreasePolicies, null,
-                        false, 5,null,
-                        null, null);
-            }
-            else {
+                    scenarioPath,
+                    Integer.parseInt(row[1]),
+                    OUTPUT_FOLDER,
+                    priceIncreasePolicies, null,
+                    false, 5, null,
+                    null, null
+                );
+            } else {
                 System.err.println("Couldn't find scenario " + scenarioPath);
             }
         }
 
 
     }
-
 
 
 }

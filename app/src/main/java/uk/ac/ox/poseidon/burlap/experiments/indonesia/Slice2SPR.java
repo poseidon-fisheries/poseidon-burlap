@@ -44,49 +44,35 @@ public class Slice2SPR {
     public static final String DIRECTORY = "docs/indonesia_hub/runs/712/sclice2/policy/";
 
     public static final String scenarioFileName = "ns_2000_low";
-
-
-    private static final int NUMBER_OF_RUNS = 100;
     public static final int YEARS_TO_RUN = 10;
-
-
-    static private final double assumedLinfAreolatus =45;
+    static public final double assumedLenghtAtMaturityAreolatus = 21;
+    static public final double assumedLenghtAtMaturityMultidens = 50;
+    static public final double assumedLenghtAtMaturityErythropterus = 37;
+    static public final double assumedLenghtAtMaturityMalabaricus = 50.0;
+    public static final int VIRGIN_SPAWNING_BIOMASS_AREOLATUS = 5389362;
+    public static final int VIRGIN_SPAWNING_BIOMASS_MULTIDENS = 40160483;
+    public static final int VIRGIN_SPAWNING_BIOMASS_MALABARICUS = 153988743;
+    private static final int NUMBER_OF_RUNS = 100;
+    static private final double assumedLinfAreolatus = 45;
     static private final double assumedKParameterAreolatus = 0.3300512;
     static private final double assumedNaturalMortalityAreolatus = 0.6011646;
     static private final double assumedVarAAreolatus = 0.01142;
     static private final double assumedVarBAreolatus = 3.048;
-    static public final double assumedLenghtAtMaturityAreolatus = 21 ;
-
-
-
     static private final double assumedLinfMultidens = 86;
     static private final double assumedKParameterMultidens = 0.4438437;
     static private final double assumedNaturalMortalityMultidens = 0.3775984;
     static private final double assumedVarAMultidens = 0.02;
     static private final double assumedVarBMultidens = 2.944;
-    static public final double assumedLenghtAtMaturityMultidens = 50;
-
-
     static private final double assumedLinfErythropterus = 63;
     static private final double assumedKParameterErythropterus = 0.5508334;
     static private final double assumedNaturalMortalityErythropterus = 0.4721429;
     static private final double assumedVarAErythropterus = 0.0244;
     static private final double assumedVarBErythropterus = 2.87;
-    static public final double assumedLenghtAtMaturityErythropterus = 37;
-
-
     static private final double assumedLinfMalabaricus = 86;
     static private final double assumedKParameterMalabaricus = 0.4438437;
     static private final double assumedNaturalMortalityMalabaricus = 0.3775984;
     static private final double assumedVarAMalabaricus = 0.00853;
     static private final double assumedVarBMalabaricus = 3.137;
-    static public final double assumedLenghtAtMaturityMalabaricus = 50.0;
-
-
-    public static final int VIRGIN_SPAWNING_BIOMASS_AREOLATUS = 5389362;
-    public static final int VIRGIN_SPAWNING_BIOMASS_MULTIDENS = 40160483;
-    public static final int VIRGIN_SPAWNING_BIOMASS_MALABARICUS = 153988743;
-
 
     public static void main(String[] args) throws IOException {
         FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, scenarioFileName + "_SPRs.csv").toFile());
@@ -98,55 +84,58 @@ public class Slice2SPR {
         List<String> columnNames = addSPRAgents(mock, new MersenneTwisterFast(0));
 
         ArrayList<String> columnsToPrint = Lists.newArrayList(
-                "Average Cash-Flow",
-                "Epinephelus areolatus Landings of population0",
-                "Pristipomoides multidens Landings of population0",
-                "Lutjanus malabaricus Landings of population0",
-                "Lutjanus erythropterus Landings of population0",
-                "Others Landings of population0",
+            "Average Cash-Flow",
+            "Epinephelus areolatus Landings of population0",
+            "Pristipomoides multidens Landings of population0",
+            "Lutjanus malabaricus Landings of population0",
+            "Lutjanus erythropterus Landings of population0",
+            "Others Landings of population0",
 
-                "Epinephelus areolatus Landings of population1",
-                "Pristipomoides multidens Landings of population1",
-                "Lutjanus malabaricus Landings of population1",
-                "Lutjanus erythropterus Landings of population1",
-                "Others Landings of population1",
-                "Epinephelus areolatus Landings of population2",
-                "Pristipomoides multidens Landings of population2",
-                "Lutjanus malabaricus Landings of population2",
-                "Lutjanus erythropterus Landings of population2",
-                "Others Landings of population2",
+            "Epinephelus areolatus Landings of population1",
+            "Pristipomoides multidens Landings of population1",
+            "Lutjanus malabaricus Landings of population1",
+            "Lutjanus erythropterus Landings of population1",
+            "Others Landings of population1",
+            "Epinephelus areolatus Landings of population2",
+            "Pristipomoides multidens Landings of population2",
+            "Lutjanus malabaricus Landings of population2",
+            "Lutjanus erythropterus Landings of population2",
+            "Others Landings of population2",
 
-                "Biomass Epinephelus areolatus",
-                "Biomass Pristipomoides multidens",
-                "Biomass Lutjanus malabaricus",
-                "Biomass Lutjanus erythropterus",
-                "Total Landings of population0",
-                "Total Landings of population1",
-                "Total Landings of population2"
+            "Biomass Epinephelus areolatus",
+            "Biomass Pristipomoides multidens",
+            "Biomass Lutjanus malabaricus",
+            "Biomass Lutjanus erythropterus",
+            "Total Landings of population0",
+            "Total Landings of population1",
+            "Total Landings of population2"
 
         );
 
         columnsToPrint.addAll(columnNames);
 
-        for(int run=0; run<NUMBER_OF_RUNS; run++)
-        {
+        for (int run = 0; run < NUMBER_OF_RUNS; run++) {
 
             MersenneTwisterFast randomizer = new MersenneTwisterFast();
             BatchRunner runner = new BatchRunner(
-                    Paths.get(DIRECTORY,
-                              scenarioFileName + ".yaml"),
-                    YEARS_TO_RUN,
-                    columnsToPrint,
-                    Paths.get(DIRECTORY,
-                              scenarioFileName),
-                    null,
-                    System.currentTimeMillis(),
-                    -1
+                Paths.get(
+                    DIRECTORY,
+                    scenarioFileName + ".yaml"
+                ),
+                YEARS_TO_RUN,
+                columnsToPrint,
+                Paths.get(
+                    DIRECTORY,
+                    scenarioFileName
+                ),
+                null,
+                System.currentTimeMillis(),
+                -1
             );
             runner.setScenarioSetup(new Consumer<Scenario>() {
                 @Override
                 public void accept(Scenario scenario) {
-                    addSPRAgents(((FlexibleScenario) scenario),randomizer);
+                    addSPRAgents(((FlexibleScenario) scenario), randomizer);
                 }
             });
 
@@ -162,70 +151,69 @@ public class Slice2SPR {
     }
 
 
-
-    private static List<String>  addSPRAgents(FlexibleScenario scenario, MersenneTwisterFast random){
+    private static List<String> addSPRAgents(FlexibleScenario scenario, MersenneTwisterFast random) {
 
         List<String> columns = new LinkedList<>();
-        for(int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             //aereolatus
 
             //add 10, 2% sampler (16 fishers, on average)
-            String surveyTag = "2.5_areolatus_v"+i;
+            String surveyTag = "2.5_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .025, columns);
             //add 10, 5% sampler (40 fishers, on average)
-            surveyTag = "5_areolatus_v"+i;
+            surveyTag = "5_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .05, columns);
             //add 10, 10% sampler (80 fishers, on average)
-            surveyTag = "10_areolatus_v"+i;
+            surveyTag = "10_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .1, columns);
             //add 10, 20% sampler (160 fishers, on average)
-            surveyTag = "20_areolatus_v"+i;
+            surveyTag = "20_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .2, columns);
             //add 10, 40% sampler (160 fishers, on average)
-            surveyTag = "40_areolatus_v"+i;
+            surveyTag = "40_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .4, columns);
             //add 10, 80% sampler
-            surveyTag = "80_areolatus_v"+i;
+            surveyTag = "80_areolatus_v" + i;
             randomAreolatusSampling(scenario, surveyTag, .8, columns);
 
             //multidens
             //add 10, 2% sampler (16 fishers, on average)
-            surveyTag = "2.5_multidens_v"+i;
+            surveyTag = "2.5_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .025, columns);
             //add 10, 5% sampler (40 fishers, on average)
-            surveyTag = "5_multidens_v"+i;
+            surveyTag = "5_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .05, columns);
             //add 10, 10% sampler (80 fishers, on average)
-            surveyTag = "10_multidens_v"+i;
+            surveyTag = "10_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .1, columns);
             //add 10, 20% sampler (160 fishers, on average)
-            surveyTag = "20_multidens_v"+i;
+            surveyTag = "20_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .2, columns);
             //add 10, 40% sampler (160 fishers, on average)
-            surveyTag = "40_multidens_v"+i;
+            surveyTag = "40_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .4, columns);
             //add 10, 80% sampler
-            surveyTag = "80_multidens_v"+i;
+            surveyTag = "80_multidens_v" + i;
             randomMultidensSampling(scenario, surveyTag, .8, columns);
 
             //malabaricus
             //add 10, 2% sampler (16 fishers, on average)
-            surveyTag = "2.5_malabaricus_v"+i;
+            surveyTag = "2.5_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .025, columns);
             //add 10, 5% sampler (40 fishers, on average)
-            surveyTag = "5_malabaricus_v"+i;
+            surveyTag = "5_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .05, columns);
             //add 10, 10% sampler (80 fishers, on average)
-            surveyTag = "10_malabaricus_v"+i;
+            surveyTag = "10_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .1, columns);
             //add 10, 20% sampler (160 fishers, on average)
-            surveyTag = "20_malabaricus_v"+i;
+            surveyTag = "20_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .2, columns);
             //add 10, 40% sampler (160 fishers, on average)
-            surveyTag = "40_malabaricus_v"+i;
+            surveyTag = "40_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .4, columns);
             //add 10, 80% sampler
-            surveyTag = "80_malabaricus_v"+i;
+            surveyTag = "80_malabaricus_v" + i;
             randomMultidensSampling(scenario, surveyTag, .8, columns);
 
         }
@@ -240,45 +228,45 @@ public class Slice2SPR {
 
         //add the oracles
         scenario.getPlugins().add(
-                new AlgorithmFactory<AdditionalStartable>() {
-                    @Override
-                    public AdditionalStartable apply(FishState fishState) {
-                        return new SprOracle(
-                                fishState.getBiology().getSpecie("Epinephelus areolatus"),
-                                assumedLenghtAtMaturityAreolatus,
-                                200,
-                                VIRGIN_SPAWNING_BIOMASS_AREOLATUS
-                        );
-                    }
+            new AlgorithmFactory<AdditionalStartable>() {
+                @Override
+                public AdditionalStartable apply(FishState fishState) {
+                    return new SprOracle(
+                        fishState.getBiology().getSpecie("Epinephelus areolatus"),
+                        assumedLenghtAtMaturityAreolatus,
+                        200,
+                        VIRGIN_SPAWNING_BIOMASS_AREOLATUS
+                    );
                 }
+            }
         );
         columns.add("SPR Oracle - Epinephelus areolatus");
         scenario.getPlugins().add(
-                new AlgorithmFactory<AdditionalStartable>() {
-                    @Override
-                    public AdditionalStartable apply(FishState fishState) {
-                        return new SprOracle(
-                                fishState.getBiology().getSpecie("Pristipomoides multidens"),
-                                assumedLenghtAtMaturityMultidens,
-                                200,
-                                VIRGIN_SPAWNING_BIOMASS_MULTIDENS
-                        );
-                    }
+            new AlgorithmFactory<AdditionalStartable>() {
+                @Override
+                public AdditionalStartable apply(FishState fishState) {
+                    return new SprOracle(
+                        fishState.getBiology().getSpecie("Pristipomoides multidens"),
+                        assumedLenghtAtMaturityMultidens,
+                        200,
+                        VIRGIN_SPAWNING_BIOMASS_MULTIDENS
+                    );
                 }
+            }
         );
         columns.add("SPR Oracle - Pristipomoides multidens");
         scenario.getPlugins().add(
-                new AlgorithmFactory<AdditionalStartable>() {
-                    @Override
-                    public AdditionalStartable apply(FishState fishState) {
-                        return new SprOracle(
-                                fishState.getBiology().getSpecie("Lutjanus malabaricus"),
-                                assumedLenghtAtMaturityMalabaricus,
-                                200,
-                                VIRGIN_SPAWNING_BIOMASS_MALABARICUS
-                        );
-                    }
+            new AlgorithmFactory<AdditionalStartable>() {
+                @Override
+                public AdditionalStartable apply(FishState fishState) {
+                    return new SprOracle(
+                        fishState.getBiology().getSpecie("Lutjanus malabaricus"),
+                        assumedLenghtAtMaturityMalabaricus,
+                        200,
+                        VIRGIN_SPAWNING_BIOMASS_MALABARICUS
+                    );
                 }
+            }
         );
 
         columns.add("SPR Oracle - Lutjanus malabaricus");
@@ -290,46 +278,48 @@ public class Slice2SPR {
     //winning no prizes with this code
 
     public static void randomAreolatusSampling(
-            FlexibleScenario scenario,
-            String surveyTag,
-            double probability,
-                    List<String> columns) {
+        FlexibleScenario scenario,
+        String surveyTag,
+        double probability,
+        List<String> columns
+    ) {
         String speciesName = "Epinephelus areolatus";
 
         scenario.getPlugins().add(
-                new SPRAgentBuilder(
-                        surveyTag,
-                        speciesName,
-                        probability,
-                        assumedLinfAreolatus, assumedKParameterAreolatus, assumedNaturalMortalityAreolatus,
-                        100, 1000, 5,
-                        assumedVarAAreolatus, assumedVarBAreolatus, assumedLenghtAtMaturityAreolatus
-                )
+            new SPRAgentBuilder(
+                surveyTag,
+                speciesName,
+                probability,
+                assumedLinfAreolatus, assumedKParameterAreolatus, assumedNaturalMortalityAreolatus,
+                100, 1000, 5,
+                assumedVarAAreolatus, assumedVarBAreolatus, assumedLenghtAtMaturityAreolatus
+            )
         );
-        if(columns!=null)
-        columns.add("SPR " + speciesName + " " + surveyTag);
+        if (columns != null)
+            columns.add("SPR " + speciesName + " " + surveyTag);
 
 
     }
 
     public static void randomMultidensSampling(
-            FlexibleScenario scenario,
-            String surveyTag,
-            double probability,
-                    List<String> columns) {
+        FlexibleScenario scenario,
+        String surveyTag,
+        double probability,
+        List<String> columns
+    ) {
         String speciesName = "Pristipomoides multidens";
 
         scenario.getPlugins().add(
-                new SPRAgentBuilder(
-                        surveyTag,
-                        speciesName,
-                        probability,
-                        assumedLinfMultidens, assumedKParameterMultidens, assumedNaturalMortalityMultidens,
-                        100, 1000, 5,
-                        assumedVarAMultidens, assumedVarBMultidens, assumedLenghtAtMaturityMultidens
-                )
+            new SPRAgentBuilder(
+                surveyTag,
+                speciesName,
+                probability,
+                assumedLinfMultidens, assumedKParameterMultidens, assumedNaturalMortalityMultidens,
+                100, 1000, 5,
+                assumedVarAMultidens, assumedVarBMultidens, assumedLenghtAtMaturityMultidens
+            )
         );
-        if(columns!=null)
+        if (columns != null)
 
             columns.add("SPR " + speciesName + " " + surveyTag);
 
@@ -338,23 +328,24 @@ public class Slice2SPR {
 
 
     public static void randomErythropterusSampling(
-            FlexibleScenario scenario,
-            String surveyTag,
-            double probability,
-                    List<String> columns) {
+        FlexibleScenario scenario,
+        String surveyTag,
+        double probability,
+        List<String> columns
+    ) {
         String speciesName = "Lutjanus erythropterus";
 
         scenario.getPlugins().add(
-                new SPRAgentBuilder(
-                        surveyTag,
-                        speciesName,
-                        probability,
-                        assumedLinfErythropterus, assumedKParameterErythropterus, assumedNaturalMortalityErythropterus,
-                        100, 1000, 5,
-                        assumedVarAErythropterus, assumedVarBErythropterus, assumedLenghtAtMaturityErythropterus
-                )
+            new SPRAgentBuilder(
+                surveyTag,
+                speciesName,
+                probability,
+                assumedLinfErythropterus, assumedKParameterErythropterus, assumedNaturalMortalityErythropterus,
+                100, 1000, 5,
+                assumedVarAErythropterus, assumedVarBErythropterus, assumedLenghtAtMaturityErythropterus
+            )
         );
-        if(columns!=null)
+        if (columns != null)
 
             columns.add("SPR " + speciesName + " " + surveyTag);
 
@@ -362,30 +353,29 @@ public class Slice2SPR {
     }
 
     public static void randomMalabaricusSampling(
-            FlexibleScenario scenario,
-            String surveyTag,
-            double probability,
-                    List<String> columns) {
+        FlexibleScenario scenario,
+        String surveyTag,
+        double probability,
+        List<String> columns
+    ) {
         String speciesName = "Lutjanus malabaricus";
 
         scenario.getPlugins().add(
-                new SPRAgentBuilder(
-                        surveyTag,
-                        speciesName,
-                        probability,
-                        assumedLinfMalabaricus, assumedKParameterMalabaricus, assumedNaturalMortalityMalabaricus,
-                        100, 1000, 5,
-                        assumedVarAMalabaricus, assumedVarBMalabaricus, assumedLenghtAtMaturityMalabaricus
-                )
+            new SPRAgentBuilder(
+                surveyTag,
+                speciesName,
+                probability,
+                assumedLinfMalabaricus, assumedKParameterMalabaricus, assumedNaturalMortalityMalabaricus,
+                100, 1000, 5,
+                assumedVarAMalabaricus, assumedVarBMalabaricus, assumedLenghtAtMaturityMalabaricus
+            )
         );
-        if(columns!=null)
+        if (columns != null)
 
             columns.add("SPR " + speciesName + " " + surveyTag);
 
 
     }
-
-
 
 
 }

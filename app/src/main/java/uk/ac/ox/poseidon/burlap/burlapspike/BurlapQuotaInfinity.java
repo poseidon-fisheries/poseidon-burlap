@@ -450,7 +450,8 @@ public class BurlapQuotaInfinity {
                     String.valueOf(lastEstimation).getBytes()
                 );
 
-                Files.write(containerPath.resolve(directory).resolve("progression.csv"),
+                Files.write(
+                    containerPath.resolve(directory).resolve("progression.csv"),
                     (i + "," + lastEstimation + "\n").getBytes(),
                     StandardOpenOption.APPEND,
                     StandardOpenOption.CREATE

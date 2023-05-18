@@ -26,10 +26,12 @@ public class SalehBayCalibration {
         final FileWriter writer = new FileWriter(scenarioList.toFile());
         writer.write("scenario,year");
         writer.flush();
-        for (int hotstart = 1; hotstart < SCENARIOS_TO_RUN; hotstart++){
+        for (int hotstart = 1; hotstart < SCENARIOS_TO_RUN; hotstart++) {
             System.out.println(hotstart);
-            final Path optimized = MAIN_DIRECTORY.resolve("calibration").resolve(String.valueOf(hotstart)).resolve("optimized.yaml");
-            if(optimized.toFile().exists()) {
+            final Path optimized = MAIN_DIRECTORY.resolve("calibration")
+                .resolve(String.valueOf(hotstart))
+                .resolve("optimized.yaml");
+            if (optimized.toFile().exists()) {
                 if (checkError(optimized) < 10) {
                     System.out.println("Accepted!");
                     writer.write("\n");
@@ -47,14 +49,14 @@ public class SalehBayCalibration {
     private static void calibration(String[] args) throws IOException {
         int startingScenario = 1;
         int scenariosToRun = SCENARIOS_TO_RUN;
-        if(args.length == 1) {
+        if (args.length == 1) {
             startingScenario = Integer.parseInt(args[0]);
             scenariosToRun = startingScenario + 20;
         }
         //calibration
         for (int hotstart = startingScenario; hotstart < scenariosToRun; hotstart++) {
             MeraOMHotstartsCalibration.calibrate(MAIN_DIRECTORY.resolve(CALIBRATION_DIRECTORY_NAME).
-                    resolve(String.valueOf(hotstart)).resolve("optimization.yaml"), 50, 20, 3);
+                resolve(String.valueOf(hotstart)).resolve("optimization.yaml"), 50, 20, 3);
         }
     }
 

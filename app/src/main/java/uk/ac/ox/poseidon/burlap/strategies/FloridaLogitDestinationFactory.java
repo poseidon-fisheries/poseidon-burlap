@@ -65,6 +65,22 @@ public class FloridaLogitDestinationFactory implements
 
     private boolean automaticallyAvoidWastelands = true;
 
+    public static ObservationExtractor[] longlineFloridaCommonExtractor(
+        final MapDiscretization discretization
+    ) {
+        return new ObservationExtractor[]{
+            //intercept
+            new InterceptExtractor(),
+            //distance
+            new PortDistanceExtractor(),
+            //habit
+            new PeriodHabitBooleanExtractor(discretization, 90),
+            //fuel_price TODO: adjust from gallon
+            new GasPriceExtractor(),
+            //wind_speed TODO: adjust from mph
+            new WindSpeedExtractor()
+        };
+    }
 
     /**
      * Applies this function to the given argument.
@@ -112,23 +128,6 @@ public class FloridaLogitDestinationFactory implements
             state.getRandom(), automaticallyAvoidMPA, automaticallyAvoidWastelands
         );
 
-    }
-
-    public static ObservationExtractor[] longlineFloridaCommonExtractor(
-        final MapDiscretization discretization
-    ) {
-        return new ObservationExtractor[]{
-            //intercept
-            new InterceptExtractor(),
-            //distance
-            new PortDistanceExtractor(),
-            //habit
-            new PeriodHabitBooleanExtractor(discretization, 90),
-            //fuel_price TODO: adjust from gallon
-            new GasPriceExtractor(),
-            //wind_speed TODO: adjust from mph
-            new WindSpeedExtractor()
-        };
     }
 
     public String getCoefficientsFile() {

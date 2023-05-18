@@ -42,12 +42,10 @@ import java.util.List;
 public class NoDataSlice2Iterative extends SimpleProblemDouble {
 
 
-
-    private static final List<OptimizationParameter> parameters =
-            NoDataSlice2.parameters;
-
     public static final List<AcceptableRangePredicate> predicates =
-            NoDataSlice2.predicates;
+        NoDataSlice2.predicates;
+    private static final List<OptimizationParameter> parameters =
+        NoDataSlice2.parameters;
     private static final int MIN_ACCEPTABLE_YEAR = 10;
     private static final int MAX_YEARS_TO_RUN = NoDataSlice2.MAX_YEARS_TO_RUN;
 
@@ -55,39 +53,44 @@ public class NoDataSlice2Iterative extends SimpleProblemDouble {
 
         FishYAML yaml = new FishYAML();
         FlexibleScenario scenario = yaml.loadAs(
-                new FileReader(NoDataSlice2.SCENARIO_FILE.toFile())
-                , FlexibleScenario.class);
+            new FileReader(NoDataSlice2.SCENARIO_FILE.toFile())
+            , FlexibleScenario.class);
 
-        return parametrizeScenario(scenario,randomValues).getFirst();
+        return parametrizeScenario(scenario, randomValues).getFirst();
 
 
     }
 
-    public static Pair<FlexibleScenario,String[]> parametrizeScenario(
-            FlexibleScenario scenario,
-            double[] randomValues) {
+    public static Pair<FlexibleScenario, String[]> parametrizeScenario(
+        FlexibleScenario scenario,
+        double[] randomValues
+    ) {
 
-        Preconditions.checkState(parameters.size()==randomValues.length);
+        Preconditions.checkState(parameters.size() == randomValues.length);
         String[] values = new String[randomValues.length];
         for (int i = 0; i < randomValues.length; i++) {
 
 
             values[i] =
-                    parameters.get(i).parametrize(scenario,
-                                                  new double[]{randomValues[i]});
+                parameters.get(i).parametrize(
+                    scenario,
+                    new double[]{randomValues[i]}
+                );
 
 
         }
 
 
-        return new Pair<>(scenario,values);
+        return new Pair<>(scenario, values);
     }
 
 
-    public static double runModelOnce(Scenario scenarioToRun,
-                                                 int maxYearsToRun,
-                                                 long seed,
-                                                 int minAcceptableYear){
+    public static double runModelOnce(
+        Scenario scenarioToRun,
+        int maxYearsToRun,
+        long seed,
+        int minAcceptableYear
+    ) {
 
         //run the model
         FishState model = new FishState(seed);
@@ -106,20 +109,19 @@ public class NoDataSlice2Iterative extends SimpleProblemDouble {
             double distance = 0;
             boolean valid = true;
             for (AcceptableRangePredicate predicate : predicates) {
-                valid= valid & predicate.test(model,validYear);
-                distance += predicate.distance(model,validYear);
+                valid = valid & predicate.test(model, validYear);
+                distance += predicate.distance(model, validYear);
             }
             System.out.println(validYear + " -- " + valid);
 
-            if(Double.isFinite(distance) && distance < minDistance)
-            {
+            if (Double.isFinite(distance) && distance < minDistance) {
                 minDistance = distance;
             }
 
 
-
-            if(valid)
-                break;;
+            if (valid)
+                break;
+            ;
 
 
         }
@@ -144,10 +146,10 @@ public class NoDataSlice2Iterative extends SimpleProblemDouble {
         double result = Double.NaN;
         try {
             result = runModelOnce(
-                    setupScenario(x),
-                    MAX_YEARS_TO_RUN,
-                    0,
-                    MIN_ACCEPTABLE_YEAR
+                setupScenario(x),
+                MAX_YEARS_TO_RUN,
+                0,
+                MIN_ACCEPTABLE_YEAR
             );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -155,7 +157,7 @@ public class NoDataSlice2Iterative extends SimpleProblemDouble {
         }
 
         return new double[]{
-                result
+            result
 
         };
 

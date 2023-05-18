@@ -30,12 +30,9 @@ import burlap.mdp.core.state.State;
 public class PolynomialBasis implements DenseStateFeatures {
 
 
-
-    private DenseStateFeatures delegate;
-
     private final int order;
-
     private final double intercept;
+    private DenseStateFeatures delegate;
 
 
     public PolynomialBasis(DenseStateFeatures delegate, int order, double intercept) {
@@ -59,13 +56,13 @@ public class PolynomialBasis implements DenseStateFeatures {
     public double[] features(State s) {
 
         double[] delegateFeatures = delegate.features(s);
-        double[] polinomial = new double[delegateFeatures.length*order+1];
+        double[] polinomial = new double[delegateFeatures.length * order + 1];
         //always have an intercept
         polinomial[0] = intercept;
-        int i=1;
-        for(int original = 0; original<delegateFeatures.length; original++) {
+        int i = 1;
+        for (int original = 0; original < delegateFeatures.length; original++) {
             for (int currentOrder = 1; currentOrder <= order; currentOrder++) {
-                polinomial[i++] = Math.pow(delegateFeatures[original],currentOrder);
+                polinomial[i++] = Math.pow(delegateFeatures[original], currentOrder);
             }
         }
         assert i == polinomial.length;

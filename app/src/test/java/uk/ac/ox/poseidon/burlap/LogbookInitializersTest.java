@@ -80,12 +80,11 @@ public class LogbookInitializersTest {
         System.out.println(output);
 
         String[] entries = output.split("\n");
-        assertEquals(entries[0],"id,episode,year,day,option,choice,grid_x,grid_y,intercept");
+        assertEquals(entries[0], "id,episode,year,day,option,choice,grid_x,grid_y,intercept");
         entries[0] = "0,no"; //ignore the header now
-        for(String entry : entries)
-        {
+        for (String entry : entries) {
             //you always pick position 2,3
-            if(entry.endsWith("2.0,3.0,1.0"))
+            if (entry.endsWith("2.0,3.0,1.0"))
                 assertTrue(entry.contains("yes"));
             else
                 assertTrue(entry.contains("no"));
@@ -94,6 +93,6 @@ public class LogbookInitializersTest {
 
         System.out.println(entries.length);
         //there ought to be 20 options per choice!
-        assertEquals((entries.length-1) %20,0,.001);
+        assertEquals((entries.length - 1) % 20, 0, .001);
     }
 }

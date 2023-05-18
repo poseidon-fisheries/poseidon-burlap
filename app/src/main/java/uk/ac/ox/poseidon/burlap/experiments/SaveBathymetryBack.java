@@ -46,24 +46,24 @@ public class SaveBathymetryBack {
 
         state.start();
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("california_final_bathymetry.asc") );
+        BufferedWriter writer = new BufferedWriter(new FileWriter("california_final_bathymetry.asc"));
 
         //only bathymetry
         GeomGridField toConvert = state.getRasterBathymetry();
-        GeomGridField bathymetry = new GeomGridField(new DoubleGrid2D(toConvert.getGridWidth(),toConvert.getGridHeight()));
+        GeomGridField bathymetry = new GeomGridField(new DoubleGrid2D(toConvert.getGridWidth(),
+            toConvert.getGridHeight()));
         bathymetry.setPixelHeight(toConvert.getPixelHeight());
         bathymetry.setPixelWidth(toConvert.getPixelWidth());
         bathymetry.setMBR(toConvert.getMBR());
         double[][] field = ((DoubleGrid2D) bathymetry.getGrid()).field;
 
-        for(int i=0; i<field.length; i++)
-            for(int j=0; j<field[0].length; j++)
-            {
+        for (int i = 0; i < field.length; i++)
+            for (int j = 0; j < field[0].length; j++) {
                 field[i][j] = ((SeaTile) ((ObjectGrid2D) toConvert.getGrid()).field[i][j]).getAltitude();
             }
 
-        assert  bathymetry.getPixelHeight() == toConvert.getPixelHeight();
-        assert  bathymetry.getPixelWidth() == toConvert.getPixelWidth();
+        assert bathymetry.getPixelHeight() == toConvert.getPixelHeight();
+        assert bathymetry.getPixelWidth() == toConvert.getPixelWidth();
         ArcInfoASCGridExporter.write(bathymetry, writer);
         writer.close();
 

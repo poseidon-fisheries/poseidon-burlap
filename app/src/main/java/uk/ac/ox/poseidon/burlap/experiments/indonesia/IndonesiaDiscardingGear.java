@@ -6,27 +6,29 @@ import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.market.factory.ThreePricesMarketFactory;
 import uk.ac.ox.oxfish.model.regs.Anarchy;
 import uk.ac.ox.oxfish.model.regs.FishingSeason;
-import uk.ac.ox.poseidon.burlap.scenarios.IndonesiaScenario;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.scenarios.IndonesiaScenario;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class IndonesiaDiscardingGear {
 
 
-    //boxcar
-    private static final Path DIRECTORY = Paths.get("docs", "20180105 boxcar_gears");
     public static final int MAXIMUM_FINED_BIN = 55;
     public static final int NUMBER_OF_RUNS = 20;
     public static final int NUMBER_OF_YEARS_NO_FISHING = 0;
     public static final int NUMBER_OF_YEARS_FISHING = 5;
-
+    //boxcar
+    private static final Path DIRECTORY = Paths.get("docs", "20180105 boxcar_gears");
 
     public static void main(String[] args) throws IOException {
-       // compareContinuous();
+        // compareContinuous();
         compareDiscrete();
     }
 
@@ -38,8 +40,8 @@ public class IndonesiaDiscardingGear {
         FileWriter writer = IndonesiaDiscarding.prepWriter(outputFile);
         FileWriter timeLine = prepTimelineWriter(timeline);
 
-        double[] juvenilePrices = new double[]{-30,10,0};
-        double[] maturePrices = new double[]{10,30};
+        double[] juvenilePrices = new double[]{-30, 10, 0};
+        double[] maturePrices = new double[]{10, 30};
 
         for (double juvenilePrice : juvenilePrices) {
             for (double maturePrice : maturePrices) {
@@ -48,9 +50,9 @@ public class IndonesiaDiscardingGear {
                     FishState state = new FishState(System.currentTimeMillis());
                     FishYAML yaml = new FishYAML();
                     IndonesiaScenario scenario = yaml.loadAs(
-                            new FileReader(
-                                    scenarioFile.toFile()
-                            ), IndonesiaScenario.class
+                        new FileReader(
+                            scenarioFile.toFile()
+                        ), IndonesiaScenario.class
                     );
                     state.setScenario(scenario);
 
@@ -62,10 +64,10 @@ public class IndonesiaDiscardingGear {
                     market.setPriceBetweenThresholds(new FixedDoubleParameter(maturePrice));
 
                     state.start();
-                    if(NUMBER_OF_YEARS_NO_FISHING>0) {
+                    if (NUMBER_OF_YEARS_NO_FISHING > 0) {
 
                         for (Fisher fisher : state.getFishers()) {
-                            fisher.setRegulation(new FishingSeason(true,0));
+                            fisher.setRegulation(new FishingSeason(true, 0));
                         }
                         while (state.getYear() <= NUMBER_OF_YEARS_NO_FISHING)
                             state.schedule.step(state);
@@ -74,19 +76,17 @@ public class IndonesiaDiscardingGear {
                         fisher.setRegulation(new Anarchy());
                     }
 
-                    while (state.getYear() <= NUMBER_OF_YEARS_FISHING+NUMBER_OF_YEARS_NO_FISHING)
+                    while (state.getYear() <= NUMBER_OF_YEARS_FISHING + NUMBER_OF_YEARS_NO_FISHING)
                         state.schedule.step(state);
 
                     state.schedule.step(state);
                     IndonesiaDiscarding.dumpObservation(writer, run, juvenilePrice, state, maturePrice);
-                    dumpTimeLine(timeLine,run,state,juvenilePrice,maturePrice);
+                    dumpTimeLine(timeLine, run, state, juvenilePrice, maturePrice);
                 }
 
             }
         }
     }
-
-
 
 
     public static FileWriter prepTimelineWriter(File outputFile) throws IOException {
@@ -98,9 +98,14 @@ public class IndonesiaDiscardingGear {
         return writer;
     }
 
-    public static void dumpTimeLine(FileWriter writer, int run,FishState model, double juvenilePrice, double maturePrice) throws IOException {
-        for(int year=0; year<model.getYear(); year++)
-        {
+    public static void dumpTimeLine(
+        FileWriter writer,
+        int run,
+        FishState model,
+        double juvenilePrice,
+        double maturePrice
+    ) throws IOException {
+        for (int year = 0; year < model.getYear(); year++) {
             writer.write(Integer.toString(run));
             writer.write(",");
 
@@ -111,15 +116,18 @@ public class IndonesiaDiscardingGear {
             writer.write(Double.toString(maturePrice));
             writer.write(",");
 
-            writer.write(Double.toString(model.getYearlyDataSet().getColumn("Average Selectivity A Parameter").get(year)));
+            writer.write(Double.toString(model.getYearlyDataSet()
+                .getColumn("Average Selectivity A Parameter")
+                .get(year)));
             writer.write(",");
 
-            writer.write(Double.toString(model.getYearlyDataSet().getColumn("Average Selectivity B Parameter").get(year)));
+            writer.write(Double.toString(model.getYearlyDataSet()
+                .getColumn("Average Selectivity B Parameter")
+                .get(year)));
             writer.write("\n");
         }
         writer.flush();
     }
-
 
 
     public static void compareDiscrete() throws IOException {
@@ -130,8 +138,8 @@ public class IndonesiaDiscardingGear {
         FileWriter writer = IndonesiaDiscarding.prepWriter(outputFile);
         FileWriter timeLine = prepTimelineWriter(timeline);
 
-        double[] juvenilePrices = new double[]{-30,10,0};
-        double[] maturePrices = new double[]{10,30};
+        double[] juvenilePrices = new double[]{-30, 10, 0};
+        double[] maturePrices = new double[]{10, 30};
 
         for (double juvenilePrice : juvenilePrices) {
             for (double maturePrice : maturePrices) {
@@ -140,9 +148,9 @@ public class IndonesiaDiscardingGear {
                     FishState state = new FishState(System.currentTimeMillis());
                     FishYAML yaml = new FishYAML();
                     IndonesiaScenario scenario = yaml.loadAs(
-                            new FileReader(
-                                    scenarioFile.toFile()
-                            ), IndonesiaScenario.class
+                        new FileReader(
+                            scenarioFile.toFile()
+                        ), IndonesiaScenario.class
                     );
                     state.setScenario(scenario);
 
@@ -156,10 +164,10 @@ public class IndonesiaDiscardingGear {
                     state.registerStartable(PeriodicUpdateSelectivityFactory.SELECTIVITY_DATA_GATHERERS);
 
                     state.start();
-                    if(NUMBER_OF_YEARS_NO_FISHING>0) {
+                    if (NUMBER_OF_YEARS_NO_FISHING > 0) {
 
                         for (Fisher fisher : state.getFishers()) {
-                            fisher.setRegulation(new FishingSeason(true,0));
+                            fisher.setRegulation(new FishingSeason(true, 0));
                         }
                         while (state.getYear() <= NUMBER_OF_YEARS_NO_FISHING)
                             state.schedule.step(state);
@@ -168,20 +176,17 @@ public class IndonesiaDiscardingGear {
                         fisher.setRegulation(new Anarchy());
                     }
 
-                    while (state.getYear() <= NUMBER_OF_YEARS_FISHING+NUMBER_OF_YEARS_NO_FISHING)
+                    while (state.getYear() <= NUMBER_OF_YEARS_FISHING + NUMBER_OF_YEARS_NO_FISHING)
                         state.schedule.step(state);
 
                     state.schedule.step(state);
                     IndonesiaDiscarding.dumpObservation(writer, run, juvenilePrice, state, maturePrice);
-                    dumpTimeLine(timeLine,run,state,juvenilePrice,maturePrice);
+                    dumpTimeLine(timeLine, run, state, juvenilePrice, maturePrice);
                 }
 
             }
         }
     }
-
-
-
 
 
 }

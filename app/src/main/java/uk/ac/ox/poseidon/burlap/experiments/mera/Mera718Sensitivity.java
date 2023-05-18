@@ -23,9 +23,7 @@ public class Mera718Sensitivity {
     public static void main(String[] args) throws IOException {
 
 
-
-
-        Path mainDirectory = Paths.get("docs","mera_hub","slice5_yesgeography_twospecies").resolve("results");
+        Path mainDirectory = Paths.get("docs", "mera_hub", "slice5_yesgeography_twospecies").resolve("results");
         // Path mainDirectory = Paths.get("docs","mera_hub","slice5_yesgeography_twospecies").resolve("results");
 
 
@@ -35,7 +33,7 @@ public class Mera718Sensitivity {
 
         final LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> startingPolicies = new LinkedHashMap<>();
         final LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> adjustedPolicies = new LinkedHashMap<>();
-        for(int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
             int finalI = i;
             startingPolicies.put("currentEffort_" + i, new AlgorithmFactory<AdditionalStartable>() {
                 @Override
@@ -56,35 +54,35 @@ public class Mera718Sensitivity {
         //adding additional startables!
         for (Map.Entry<String, AlgorithmFactory<? extends AdditionalStartable>> policyFactory : startingPolicies.entrySet()) {
             adjustedPolicies.put(
-                    policyFactory.getKey(),
-                    new AlgorithmFactory<AdditionalStartable>() {
-                        @Override
-                        public AdditionalStartable apply(FishState fishState) {
-                            //2. pull up delegate regulation for active agents (keep inactive agents off)
-                            for (Fisher fisher : fishState.getFishers()) {
-                                assert fisher.getRegulation() instanceof OffSwitchDecorator;
-                                fisher.setRegulation(new Anarchy());
-                            }
-                            //need to change the factory too...
-                            final AlgorithmFactory<? extends Regulation> newReg =
-                                    new AnarchyFactory();
-                            fishState.getFisherFactory("population0").setRegulations(newReg);
-
-                            AbundanceGathererBuilder builder = new AbundanceGathererBuilder();
-                            builder.setObservationDay(364);
-                            builder.apply(fishState);
-
-                            return policyFactory.getValue().apply(fishState);
-
-
+                policyFactory.getKey(),
+                new AlgorithmFactory<AdditionalStartable>() {
+                    @Override
+                    public AdditionalStartable apply(FishState fishState) {
+                        //2. pull up delegate regulation for active agents (keep inactive agents off)
+                        for (Fisher fisher : fishState.getFishers()) {
+                            assert fisher.getRegulation() instanceof OffSwitchDecorator;
+                            fisher.setRegulation(new Anarchy());
                         }
+                        //need to change the factory too...
+                        final AlgorithmFactory<? extends Regulation> newReg =
+                            new AnarchyFactory();
+                        fishState.getFisherFactory("population0").setRegulations(newReg);
+
+                        AbundanceGathererBuilder builder = new AbundanceGathererBuilder();
+                        builder.setObservationDay(364);
+                        builder.apply(fishState);
+
+                        return policyFactory.getValue().apply(fishState);
+
+
                     }
+                }
             );
         }
         MeraOneSpeciesSlice1.runSetOfScenarios(pathToScenarioFiles,
-                pathToOutput,
-                adjustedPolicies, 50, Mera718Policy.COLUMNS_TO_PRINT, null);
-
+            pathToOutput,
+            adjustedPolicies, 50, Mera718Policy.COLUMNS_TO_PRINT, null
+        );
 
 
     }

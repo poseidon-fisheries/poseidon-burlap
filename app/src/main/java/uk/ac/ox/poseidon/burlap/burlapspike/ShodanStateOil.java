@@ -37,37 +37,6 @@ import java.util.List;
 public class ShodanStateOil implements State {
 
 
-    private double gasPrice;
-
-    private double landings;
-
-    private int monthsLeft;
-
-    private double cumulativeEffort;
-
-    private double averageDistanceToPort;
-
-    private int dayOfTheYear;
-
-    private double averageYearlyLanding;
-
-    private double averageYearlyEfforts;
-
-    private double landingsThisYear;
-
-    private double effortThisYear;
-
-    private double cpue;
-
-    private double yearlyCpue;
-
-    private double biomass;
-
-    private double averageCashflow;
-    private double cashflowThisYear;
-
-    private double monthsClosed;
-
     public static final String GAS_PRICE = "gasPrice";
     public static final String LANDINGS = "landings";
     public static final String MONTHS_LEFT = "monthsLeft";
@@ -85,59 +54,28 @@ public class ShodanStateOil implements State {
     public static final String CASHFLOW_THIS_YEAR = "cashflowThisYear";
     public static final String MONTHS_CLOSED = "monthsClosed";
     static private ArrayList<Object> names = Lists.newArrayList(GAS_PRICE, LANDINGS, MONTHS_LEFT,
-                                                                CUMULATIVE_EFFORT, AVERAGE_DISTANCE_TO_PORT,
-                                                                DAY_OF_THE_YEAR,AVERAGE_YEARLY_LANDINGS,
-                                                                AVERAGE_YEARLY_EFFORTS,CPUE,YEARLY_CPUE, BIOMASS,LANDINGS_THIS_YEAR,EFFORT_THIS_YEAR,
-                                                                AVERAGE_YEARLY_CASHFLOW, CASHFLOW_THIS_YEAR,
-                                                                MONTHS_CLOSED
-                                                                ) ;
-
-
-    /**
-     * Returns the value for the given variable key. Changes to the returned value are not guaranteed to modify
-     * the state.
-     *
-     * @param variableKey the variable key
-     * @return the value for the given variable key
-     */
-    @Override
-    public Object get(Object variableKey) {
-        if(variableKey.equals(GAS_PRICE))
-            return gasPrice;
-        if(variableKey.equals(LANDINGS))
-            return landings;
-        if(variableKey.equals(MONTHS_LEFT))
-            return monthsLeft;
-        if(variableKey.equals(CUMULATIVE_EFFORT))
-            return cumulativeEffort;
-        if(variableKey.equals(AVERAGE_DISTANCE_TO_PORT))
-            return averageDistanceToPort;
-        if(variableKey.equals(DAY_OF_THE_YEAR))
-            return dayOfTheYear;
-        if(variableKey.equals(AVERAGE_YEARLY_LANDINGS))
-            return averageYearlyLanding;
-        if(variableKey.equals(AVERAGE_YEARLY_EFFORTS))
-            return averageYearlyEfforts;
-        if(variableKey.equals(CPUE))
-            return cpue;
-        if(variableKey.equals(YEARLY_CPUE))
-            return yearlyCpue;
-        if(variableKey.equals(BIOMASS))
-            return biomass;
-        if(variableKey.equals(LANDINGS_THIS_YEAR))
-            return landingsThisYear;
-        if(variableKey.equals(EFFORT_THIS_YEAR))
-            return effortThisYear;
-        if(variableKey.equals(AVERAGE_YEARLY_CASHFLOW))
-            return averageCashflow;
-        if(variableKey.equals(CASHFLOW_THIS_YEAR))
-            return cashflowThisYear;
-        if(variableKey.equals(MONTHS_CLOSED))
-            return monthsClosed;
-        throw new UnknownKeyException(variableKey);
-    }
-
-
+        CUMULATIVE_EFFORT, AVERAGE_DISTANCE_TO_PORT,
+        DAY_OF_THE_YEAR, AVERAGE_YEARLY_LANDINGS,
+        AVERAGE_YEARLY_EFFORTS, CPUE, YEARLY_CPUE, BIOMASS, LANDINGS_THIS_YEAR, EFFORT_THIS_YEAR,
+        AVERAGE_YEARLY_CASHFLOW, CASHFLOW_THIS_YEAR,
+        MONTHS_CLOSED
+    );
+    private double gasPrice;
+    private double landings;
+    private int monthsLeft;
+    private double cumulativeEffort;
+    private double averageDistanceToPort;
+    private int dayOfTheYear;
+    private double averageYearlyLanding;
+    private double averageYearlyEfforts;
+    private double landingsThisYear;
+    private double effortThisYear;
+    private double cpue;
+    private double yearlyCpue;
+    private double biomass;
+    private double averageCashflow;
+    private double cashflowThisYear;
+    private double monthsClosed;
 
 
     public ShodanStateOil() {
@@ -145,10 +83,11 @@ public class ShodanStateOil implements State {
 
 
     public ShodanStateOil(
-            double gasPrice, double landings, int monthsLeft, double cumulativeEffort, double averageDistanceToPort,
-            int dayOfTheYear, double averageYearlyLanding, double averageYearlyEfforts, double landingsThisYear,
-            double effortThisYear, double cpue, double yearlyCpue,
-            double biomass, double averageCashflow, double cashflowThisYear, double monthsClosed) {
+        double gasPrice, double landings, int monthsLeft, double cumulativeEffort, double averageDistanceToPort,
+        int dayOfTheYear, double averageYearlyLanding, double averageYearlyEfforts, double landingsThisYear,
+        double effortThisYear, double cpue, double yearlyCpue,
+        double biomass, double averageCashflow, double cashflowThisYear, double monthsClosed
+    ) {
         this.gasPrice = gasPrice;
         this.landings = landings;
         this.monthsLeft = monthsLeft;
@@ -167,131 +106,172 @@ public class ShodanStateOil implements State {
         this.monthsClosed = monthsClosed;
     }
 
-    public static ShodanStateOil fromState(FishState state)
-    {
+    public static ShodanStateOil fromState(FishState state) {
 
         //initially it's all 0
-        if(state.getDay()<29)
+        if (state.getDay() < 29)
             return new ShodanStateOil(state.getPorts().iterator().next().getGasPricePerLiter(),
-                                      0,
-                                      (ShodanEnvironment.YEARS_PER_EPISODE*365)/30+1,
-                                      0d,
-                                      0d,
-                                      0,
-                                      0d, 0d, 0d, 0d    , 0d, 0d,
-                                      state.getTotalBiomass(state.getBiology().getSpecie(0)), 0d,
-                                      0d,
-                                      state.getFishers().get(0).getRegulation().allowedAtSea(null,state) ? 0 : 1d
-                                      );
+                0,
+                (ShodanEnvironment.YEARS_PER_EPISODE * 365) / 30 + 1,
+                0d,
+                0d,
+                0,
+                0d, 0d, 0d, 0d, 0d, 0d,
+                state.getTotalBiomass(state.getBiology().getSpecie(0)), 0d,
+                0d,
+                state.getFishers().get(0).getRegulation().allowedAtSea(null, state) ? 0 : 1d
+            );
 
 
         //landings
         double monthlyLandings = 0;
         Iterator<Double> landings = state.getDailyDataSet().getColumn(
-                "Species 0 Landings").descendingIterator();
-        for(int i=0; i<30; i++)
+            "Species 0 Landings").descendingIterator();
+        for (int i = 0; i < 30; i++)
             monthlyLandings += landings.next();
 
         //distance from port
-        double totalDistance=0;
+        double totalDistance = 0;
         Iterator<Double> distance = state.getDailyDataSet().getColumn(
-                "Average Distance From Port").descendingIterator();
-        for(int i=0; i<30; i++) {
+            "Average Distance From Port").descendingIterator();
+        for (int i = 0; i < 30; i++) {
             Double dayDistance = distance.next();
-            totalDistance += Double.isFinite(dayDistance) ? dayDistance : 0 ;
+            totalDistance += Double.isFinite(dayDistance) ? dayDistance : 0;
         }
-        totalDistance/=30;
+        totalDistance /= 30;
         //cumulative effort
-        double totalEffort=0;
+        double totalEffort = 0;
         Iterator<Double> effort = state.getDailyDataSet().getColumn(
-                "Total Effort").descendingIterator();
+            "Total Effort").descendingIterator();
         while (effort.hasNext())
             totalEffort += effort.next();
 
         //if you ran the model less than 365 days then the average will be over whatever you currently did
-        int yearWindow = Math.min(365,state.getDailyDataSet().getColumn("Species 0 Landings").size());
+        int yearWindow = Math.min(365, state.getDailyDataSet().getColumn("Species 0 Landings").size());
         assert yearWindow > 0;
         landings = state.getDailyDataSet().getColumn(
-                "Species 0 Landings").descendingIterator();
+            "Species 0 Landings").descendingIterator();
         double averageLandings = 0;
-        for(int i=0; i<yearWindow; i++)
+        for (int i = 0; i < yearWindow; i++)
             averageLandings += landings.next();
         averageLandings /= yearWindow;
 
         //average effort
-        double averageEffort=0;
+        double averageEffort = 0;
         double monthlyEffort = 0;
         effort = state.getDailyDataSet().getColumn(
-                "Total Effort").descendingIterator();
-        for(int i=0; i<yearWindow; i++) {
+            "Total Effort").descendingIterator();
+        for (int i = 0; i < yearWindow; i++) {
             Double next = effort.next();
             averageEffort += next;
-            if(i<30)
+            if (i < 30)
                 monthlyEffort += next;
         }
         averageEffort /= yearWindow;
 
 
-        double cpue = monthlyLandings/monthlyEffort;
-        double yearlyCPUE = averageLandings/averageEffort;
+        double cpue = monthlyLandings / monthlyEffort;
+        double yearlyCPUE = averageLandings / averageEffort;
 
 
-        int dayOfTheYear = Math.max(state.getDayOfTheYear()-1,0);
+        int dayOfTheYear = Math.max(state.getDayOfTheYear() - 1, 0);
 
         double landingsSoFarThisYear = 0;
         landings = state.getDailyDataSet().getColumn(
-                "Species 0 Landings").descendingIterator();
-        for(int i=0; i<dayOfTheYear; i++)
+            "Species 0 Landings").descendingIterator();
+        for (int i = 0; i < dayOfTheYear; i++)
             landingsSoFarThisYear += landings.next();
 
         double effortSoFarThisYear = 0;
         effort = state.getDailyDataSet().getColumn(
-                "Total Effort").descendingIterator();
-        for(int i=0; i<dayOfTheYear; i++)
+            "Total Effort").descendingIterator();
+        for (int i = 0; i < dayOfTheYear; i++)
             effortSoFarThisYear += effort.next();
-
 
 
         double cashflowSoFarThisYear = 0;
         Iterator<Double> cashflow = state.getDailyDataSet().getColumn(
-                "Average Cash-Flow").descendingIterator();
-        for(int i=0; i<dayOfTheYear; i++)
+            "Average Cash-Flow").descendingIterator();
+        for (int i = 0; i < dayOfTheYear; i++)
             cashflowSoFarThisYear += cashflow.next();
 
 
         double last365daysOfCashflow = 0;
         cashflow = state.getDailyDataSet().getColumn(
-                "Average Cash-Flow").descendingIterator();
-        for(int i=0; i<yearWindow; i++)
+            "Average Cash-Flow").descendingIterator();
+        for (int i = 0; i < yearWindow; i++)
             last365daysOfCashflow += cashflow.next();
-        last365daysOfCashflow/=yearWindow;
-
+        last365daysOfCashflow /= yearWindow;
 
 
         double monthsClosed = 0;
         Iterator<Double> policy = state.getDailyDataSet().getColumn(
-                "Shodan Policy").descendingIterator();
-        while(policy.hasNext() && policy.next() == 1d) {
+            "Shodan Policy").descendingIterator();
+        while (policy.hasNext() && policy.next() == 1d) {
             monthsClosed++;
         }
-        monthsClosed/=30;
-
+        monthsClosed /= 30;
 
 
         return new ShodanStateOil(state.getPorts().iterator().next().getGasPricePerLiter(),
-                                  monthlyLandings,
-                                  (int)(Math.round((ShodanEnvironment.YEARS_PER_EPISODE*365-state.getDay())/30d))+1,
-                                  totalEffort,
-                                  totalDistance,
-                                  state.getDayOfTheYear(),
-                                  averageLandings,
-                                  averageEffort, landingsSoFarThisYear, effortSoFarThisYear, cpue, yearlyCPUE,
-                                  state.getTotalBiomass(state.getBiology().getSpecie(0)),
-                                  last365daysOfCashflow,
-                                  cashflowSoFarThisYear,
-                                  monthsClosed);
+            monthlyLandings,
+            (int) (Math.round((ShodanEnvironment.YEARS_PER_EPISODE * 365 - state.getDay()) / 30d)) + 1,
+            totalEffort,
+            totalDistance,
+            state.getDayOfTheYear(),
+            averageLandings,
+            averageEffort, landingsSoFarThisYear, effortSoFarThisYear, cpue, yearlyCPUE,
+            state.getTotalBiomass(state.getBiology().getSpecie(0)),
+            last365daysOfCashflow,
+            cashflowSoFarThisYear,
+            monthsClosed
+        );
 
 
+    }
+
+    /**
+     * Returns the value for the given variable key. Changes to the returned value are not guaranteed to modify
+     * the state.
+     *
+     * @param variableKey the variable key
+     * @return the value for the given variable key
+     */
+    @Override
+    public Object get(Object variableKey) {
+        if (variableKey.equals(GAS_PRICE))
+            return gasPrice;
+        if (variableKey.equals(LANDINGS))
+            return landings;
+        if (variableKey.equals(MONTHS_LEFT))
+            return monthsLeft;
+        if (variableKey.equals(CUMULATIVE_EFFORT))
+            return cumulativeEffort;
+        if (variableKey.equals(AVERAGE_DISTANCE_TO_PORT))
+            return averageDistanceToPort;
+        if (variableKey.equals(DAY_OF_THE_YEAR))
+            return dayOfTheYear;
+        if (variableKey.equals(AVERAGE_YEARLY_LANDINGS))
+            return averageYearlyLanding;
+        if (variableKey.equals(AVERAGE_YEARLY_EFFORTS))
+            return averageYearlyEfforts;
+        if (variableKey.equals(CPUE))
+            return cpue;
+        if (variableKey.equals(YEARLY_CPUE))
+            return yearlyCpue;
+        if (variableKey.equals(BIOMASS))
+            return biomass;
+        if (variableKey.equals(LANDINGS_THIS_YEAR))
+            return landingsThisYear;
+        if (variableKey.equals(EFFORT_THIS_YEAR))
+            return effortThisYear;
+        if (variableKey.equals(AVERAGE_YEARLY_CASHFLOW))
+            return averageCashflow;
+        if (variableKey.equals(CASHFLOW_THIS_YEAR))
+            return cashflowThisYear;
+        if (variableKey.equals(MONTHS_CLOSED))
+            return monthsClosed;
+        throw new UnknownKeyException(variableKey);
     }
 
     /**
@@ -308,12 +288,10 @@ public class ShodanStateOil implements State {
     @Override
     public State copy() {
         return new ShodanStateOil(gasPrice, landings, monthsLeft, cumulativeEffort, averageDistanceToPort, dayOfTheYear,
-                                  averageYearlyLanding, averageYearlyEfforts, landingsThisYear, effortThisYear, cpue, yearlyCpue, biomass,
-                                  averageCashflow, cashflowThisYear,monthsClosed);
+            averageYearlyLanding, averageYearlyEfforts, landingsThisYear, effortThisYear, cpue, yearlyCpue, biomass,
+            averageCashflow, cashflowThisYear, monthsClosed
+        );
     }
-
-
-
 
 
     /**

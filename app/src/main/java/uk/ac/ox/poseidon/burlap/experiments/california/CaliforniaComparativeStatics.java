@@ -20,8 +20,6 @@
 
 package uk.ac.ox.poseidon.burlap.experiments.california;
 
-import uk.ac.ox.poseidon.burlap.scenarios.CaliforniaAbundanceScenario;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,13 +30,12 @@ import java.nio.file.Paths;
 public class CaliforniaComparativeStatics {
 
 
+    public static final int NUMBER_OF_RUNS = 30;
     ///home/carrknight/code/oxfish/docs/20170606 cali_catchability_2/policymaking/gas/
     private final static Path outputMainPath =
-            Paths.get("docs", "20170606 cali_catchability_2", "policymaking");
-
+        Paths.get("docs", "20170606 cali_catchability_2", "policymaking");
     private final static Path yamlInput =
-            Paths.get("docs", "20170606 cali_catchability_2", "results", "calicatch_2011_ignoring_narrow_4b.yaml");
-    public static final int NUMBER_OF_RUNS = 30;
+        Paths.get("docs", "20170606 cali_catchability_2", "results", "calicatch_2011_ignoring_narrow_4b.yaml");
 
     /*
     public static void mainGas(String[] args) throws IOException {

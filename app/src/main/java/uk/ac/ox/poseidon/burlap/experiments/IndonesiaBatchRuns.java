@@ -48,77 +48,81 @@ public class IndonesiaBatchRuns {
 
 
         ArrayList<String> columnsToPrint = Lists.newArrayList(
-                "Average Cash-Flow",
-                "Average Cash-Flow of population0",
-                "Average Cash-Flow of population1",
-                "Average Cash-Flow of population2",
-                "Average Number of Trips of population0",
-                "Average Number of Trips of population1",
-                "Average Number of Trips of population2",
-                "Average Distance From Port of population0",
-                "Average Distance From Port of population1",
-                "Average Distance From Port of population2",
-                "Average Trip Duration of population0",
-                "Average Trip Duration of population1",
-                "Average Trip Duration of population2",
-                "Epinephelus areolatus Landings of population0",
-                "Pristipomoides multidens Landings of population0",
-                "Lutjanus malabaricus Landings of population0",
-                "Lutjanus erythropterus Landings of population0",
-                "Others Landings of population0",
+            "Average Cash-Flow",
+            "Average Cash-Flow of population0",
+            "Average Cash-Flow of population1",
+            "Average Cash-Flow of population2",
+            "Average Number of Trips of population0",
+            "Average Number of Trips of population1",
+            "Average Number of Trips of population2",
+            "Average Distance From Port of population0",
+            "Average Distance From Port of population1",
+            "Average Distance From Port of population2",
+            "Average Trip Duration of population0",
+            "Average Trip Duration of population1",
+            "Average Trip Duration of population2",
+            "Epinephelus areolatus Landings of population0",
+            "Pristipomoides multidens Landings of population0",
+            "Lutjanus malabaricus Landings of population0",
+            "Lutjanus erythropterus Landings of population0",
+            "Others Landings of population0",
 
-                "Epinephelus areolatus Landings of population1",
-                "Pristipomoides multidens Landings of population1",
-                "Lutjanus malabaricus Landings of population1",
-                "Lutjanus erythropterus Landings of population1",
-                "Others Landings of population1",
-                "Epinephelus areolatus Landings of population2",
-                "Pristipomoides multidens Landings of population2",
-                "Lutjanus malabaricus Landings of population2",
-                "Lutjanus erythropterus Landings of population2",
-                "Others Landings of population2",
+            "Epinephelus areolatus Landings of population1",
+            "Pristipomoides multidens Landings of population1",
+            "Lutjanus malabaricus Landings of population1",
+            "Lutjanus erythropterus Landings of population1",
+            "Others Landings of population1",
+            "Epinephelus areolatus Landings of population2",
+            "Pristipomoides multidens Landings of population2",
+            "Lutjanus malabaricus Landings of population2",
+            "Lutjanus erythropterus Landings of population2",
+            "Others Landings of population2",
 
-                "Biomass Epinephelus areolatus",
-                "Biomass Pristipomoides multidens",
-                "Biomass Lutjanus malabaricus",
-                "Biomass Lutjanus erythropterus",
-                "Total Landings of population0",
-                "Total Landings of population1",
-                "Total Landings of population2",
-                "SPR " + "Epinephelus areolatus" + " " + "100_areolatus",
-                "SPR " + "Pristipomoides multidens" + " " + "100_multidens",
-                "SPR " + "Lutjanus malabaricus" + " " + "100_malabaricus"
+            "Biomass Epinephelus areolatus",
+            "Biomass Pristipomoides multidens",
+            "Biomass Lutjanus malabaricus",
+            "Biomass Lutjanus erythropterus",
+            "Total Landings of population0",
+            "Total Landings of population1",
+            "Total Landings of population2",
+            "SPR " + "Epinephelus areolatus" + " " + "100_areolatus",
+            "SPR " + "Pristipomoides multidens" + " " + "100_multidens",
+            "SPR " + "Lutjanus malabaricus" + " " + "100_malabaricus"
 
         );
 
-        for(int i=0; i<25; i++) {
+        for (int i = 0; i < 25; i++) {
             columnsToPrint.add("Epinephelus areolatus Catches (kg) - age bin " + i);
             columnsToPrint.add("Pristipomoides multidens Catches (kg) - age bin " + i);
             columnsToPrint.add("Lutjanus malabaricus Catches (kg) - age bin " + i);
             columnsToPrint.add("Epinephelus areolatus Catches (kg) - age bin " + i);
-            columnsToPrint.add("Epinephelus areolatus Abundance 0."+i+" at day " + 200);
-            columnsToPrint.add("Lutjanus malabaricus Abundance 0."+i+" at day " + 200);
-            columnsToPrint.add("Pristipomoides multidens Abundance 0."+i+" at day " + 200);
+            columnsToPrint.add("Epinephelus areolatus Abundance 0." + i + " at day " + 200);
+            columnsToPrint.add("Lutjanus malabaricus Abundance 0." + i + " at day " + 200);
+            columnsToPrint.add("Pristipomoides multidens Abundance 0." + i + " at day " + 200);
 
 
-            columnsToPrint.add("Epinephelus areolatus Catches(#) 0."+i+" 100_areolatus");
-            columnsToPrint.add("Lutjanus malabaricus Catches(#) 0."+i+" 100_malabaricus");
-            columnsToPrint.add("Pristipomoides multidens Catches(#) 0."+i+" 100_multidens");
-            columnsToPrint.add("Lutjanus erythropterus Catches(#) 0."+i+" 100_erythropterus");
+            columnsToPrint.add("Epinephelus areolatus Catches(#) 0." + i + " 100_areolatus");
+            columnsToPrint.add("Lutjanus malabaricus Catches(#) 0." + i + " 100_malabaricus");
+            columnsToPrint.add("Pristipomoides multidens Catches(#) 0." + i + " 100_multidens");
+            columnsToPrint.add("Lutjanus erythropterus Catches(#) 0." + i + " 100_erythropterus");
         }
 //        columnsToPrint.add("SPR Oracle - Epinephelus areolatus");
 //        columnsToPrint.add("SPR Oracle - Pristipomoides multidens");
 //        columnsToPrint.add("SPR Oracle - Lutjanus malabaricus");
         BatchRunner runner = new BatchRunner(
-                Paths.get(DIRECTORY,
-                          FILENAME + ".yaml"),
-                YEARS_TO_RUN,
-                columnsToPrint,
-                Paths.get(DIRECTORY,
-                          FILENAME),
-                null,
-                System.currentTimeMillis(),
-                -1
+            Paths.get(
+                DIRECTORY,
+                FILENAME + ".yaml"
+            ),
+            YEARS_TO_RUN,
+            columnsToPrint,
+            Paths.get(
+                DIRECTORY,
+                FILENAME
+            ),
+            null,
+            System.currentTimeMillis(),
+            -1
         );
 
         //add SPR counters
@@ -136,7 +140,6 @@ public class IndonesiaBatchRuns {
                 Slice2SPR.randomMalabaricusSampling(flexible, surveyTag, 1, null);
                 surveyTag = "100_erythropterus";
                 Slice2SPR.randomErythropterusSampling(flexible, surveyTag, 1, null);
-
 
 
 //                flexible.getPlugins().add(
@@ -184,13 +187,13 @@ public class IndonesiaBatchRuns {
 //                );
 
                 flexible.getPlugins().add(
-                        new AlgorithmFactory<AdditionalStartable>() {
-                            @Override
-                            public AdditionalStartable apply(FishState fishState) {
-                                return new AbundanceGatherers(200);
+                    new AlgorithmFactory<AdditionalStartable>() {
+                        @Override
+                        public AdditionalStartable apply(FishState fishState) {
+                            return new AbundanceGatherers(200);
 
-                            }
                         }
+                    }
                 );
 
             }
@@ -200,7 +203,7 @@ public class IndonesiaBatchRuns {
         fileWriter.write("run,year,variable,value\n");
         fileWriter.flush();
 
-        while(runner.getRunsDone()<100) {
+        while (runner.getRunsDone() < 100) {
 
             StringBuffer tidy = new StringBuffer();
             runner.run(tidy);

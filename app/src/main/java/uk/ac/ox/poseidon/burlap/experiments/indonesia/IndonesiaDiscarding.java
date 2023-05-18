@@ -34,15 +34,15 @@ public class IndonesiaDiscarding {
 //    public static final int NUMBER_OF_YEARS_NO_FISHING = 5;
     //   public static final int NUMBER_OF_YEARS_FISHING = 20;
 
-    //boxcar
-    private static final Path DIRECTORY = Paths.get("docs", "20171214 boxcar_indonesia");
-    private static final Path SCENARIO_FILE = DIRECTORY.resolve("boxcar_indonesia.yaml");
     public static final int DISCARDING_BIN = 56;
     public static final int MAXIMUM_FINED_BIN = 55;
     public static final int EXPECTED_NUMBER_OF_BINS = 100;
     public static final int NUMBER_OF_RUNS = 5;
     public static final int NUMBER_OF_YEARS_NO_FISHING = 0;
     public static final int NUMBER_OF_YEARS_FISHING = 5;
+    //boxcar
+    private static final Path DIRECTORY = Paths.get("docs", "20171214 boxcar_indonesia");
+    private static final Path SCENARIO_FILE = DIRECTORY.resolve("boxcar_indonesia.yaml");
 
     public static void discardingFine(String[] args) throws IOException {
 

@@ -59,7 +59,7 @@ public class Slice1Sweeps {
         //policy("all", new String[]{"big","small","medium"}, "pessimistic_2");
 
 
-       // enforcement("all","small","very_pessimistic");
+        // enforcement("all","small","very_pessimistic");
 
 
 //        policy("large", new String[]{"big"}, "fixed_recruits", 4);
@@ -67,71 +67,76 @@ public class Slice1Sweeps {
 //        policy("all", new String[]{"big","small","medium"}, "fixed_recruits", 4);
 //
         policy("large", new String[]{"big"}, "optimistic_recruits", 1);
-        policy("medium", new String[]{"big","medium"}, "optimistic_recruits", 1);
-        policy("all", new String[]{"big","small","medium"}, "optimistic_recruits", 1);
+        policy("medium", new String[]{"big", "medium"}, "optimistic_recruits", 1);
+        policy("all", new String[]{"big", "small", "medium"}, "optimistic_recruits", 1);
 
 
     }
 
     public static void policy(
-            String name,
-            String[] modifiedTags, final String filename, final int shockYear) throws IOException {
+        String name,
+        String[] modifiedTags, final String filename, final int shockYear
+    ) throws IOException {
 
-        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_"+name+".csv").toFile());
+        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_" + name + ".csv").toFile());
         fileWriter.write("run,year,policy,variable,value\n");
         fileWriter.flush();
 
-        for(int maxDaysOut = 200; maxDaysOut>= MIN_DAYS_OUT; maxDaysOut-=10) {
+        for (int maxDaysOut = 200; maxDaysOut >= MIN_DAYS_OUT; maxDaysOut -= 10) {
 
             BatchRunner runner = new BatchRunner(
-                    Paths.get(DIRECTORY,
-                              filename + ".yaml"),
-                    15,
-                    Lists.newArrayList(
-                            "Average Cash-Flow",
-                            "Average Cash-Flow of population0",
-                            "Average Cash-Flow of population1",
-                            "Average Cash-Flow of population2",
-                            "Average Number of Trips of population0",
-                            "Average Number of Trips of population1",
-                            "Average Number of Trips of population2",
-                            "Average Distance From Port of population0",
-                            "Average Distance From Port of population1",
-                            "Average Distance From Port of population2",
-                            "Average Trip Duration of population0",
-                            "Average Trip Duration of population1",
-                            "Average Trip Duration of population2",
-                            "Epinephelus areolatus Landings of population0",
-                            "Pristipomoides multidens Landings of population0",
-                            "Lutjanus malabaricus Landings of population0",
-                            "Lutjanus erythropterus Landings of population0",
-                            "Others Landings of population0",
+                Paths.get(
+                    DIRECTORY,
+                    filename + ".yaml"
+                ),
+                15,
+                Lists.newArrayList(
+                    "Average Cash-Flow",
+                    "Average Cash-Flow of population0",
+                    "Average Cash-Flow of population1",
+                    "Average Cash-Flow of population2",
+                    "Average Number of Trips of population0",
+                    "Average Number of Trips of population1",
+                    "Average Number of Trips of population2",
+                    "Average Distance From Port of population0",
+                    "Average Distance From Port of population1",
+                    "Average Distance From Port of population2",
+                    "Average Trip Duration of population0",
+                    "Average Trip Duration of population1",
+                    "Average Trip Duration of population2",
+                    "Epinephelus areolatus Landings of population0",
+                    "Pristipomoides multidens Landings of population0",
+                    "Lutjanus malabaricus Landings of population0",
+                    "Lutjanus erythropterus Landings of population0",
+                    "Others Landings of population0",
 
-                            "Epinephelus areolatus Landings of population1",
-                            "Pristipomoides multidens Landings of population1",
-                            "Lutjanus malabaricus Landings of population1",
-                            "Lutjanus erythropterus Landings of population1",
-                            "Others Landings of population1",
-                            "Epinephelus areolatus Landings of population2",
-                            "Pristipomoides multidens Landings of population2",
-                            "Lutjanus malabaricus Landings of population2",
-                            "Lutjanus erythropterus Landings of population2",
-                            "Others Landings of population2",
+                    "Epinephelus areolatus Landings of population1",
+                    "Pristipomoides multidens Landings of population1",
+                    "Lutjanus malabaricus Landings of population1",
+                    "Lutjanus erythropterus Landings of population1",
+                    "Others Landings of population1",
+                    "Epinephelus areolatus Landings of population2",
+                    "Pristipomoides multidens Landings of population2",
+                    "Lutjanus malabaricus Landings of population2",
+                    "Lutjanus erythropterus Landings of population2",
+                    "Others Landings of population2",
 
-                            "Biomass Epinephelus areolatus",
-                            "Biomass Pristipomoides multidens",
-                            "Biomass Lutjanus malabaricus",
-                            "Biomass Lutjanus erythropterus",
-                            "Total Landings of population0",
-                            "Total Landings of population1",
-                            "Total Landings of population2"
+                    "Biomass Epinephelus areolatus",
+                    "Biomass Pristipomoides multidens",
+                    "Biomass Lutjanus malabaricus",
+                    "Biomass Lutjanus erythropterus",
+                    "Total Landings of population0",
+                    "Total Landings of population1",
+                    "Total Landings of population2"
 
-                    ),
-                    Paths.get(DIRECTORY,
-                              filename),
-                    null,
-                    System.currentTimeMillis(),
-                    -1
+                ),
+                Paths.get(
+                    DIRECTORY,
+                    filename
+                ),
+                null,
+                System.currentTimeMillis(),
+                -1
             );
 
 
@@ -141,48 +146,48 @@ public class Slice1Sweeps {
             //because I coded "run" poorly, we have to go through this series of pirouettes
             //to get it done right
             runner.setScenarioSetup(
-                    scenario -> {
+                scenario -> {
 
-                        //at year 4, impose regulation
-                        FlexibleScenario flexible = (FlexibleScenario) scenario;
-                        flexible.getPlugins().add(
-                                fishState -> new AdditionalStartable() {
-                                    @Override
-                                    public void start(FishState model) {
+                    //at year 4, impose regulation
+                    FlexibleScenario flexible = (FlexibleScenario) scenario;
+                    flexible.getPlugins().add(
+                        fishState -> new AdditionalStartable() {
+                            @Override
+                            public void start(FishState model) {
 
-                                        model.scheduleOnceAtTheBeginningOfYear(
-                                                (Steppable) simState -> {
-                                                    fisherloop:
-                                                    for (Fisher fisher :
-                                                            ((FishState) simState).getFishers()) {
+                                model.scheduleOnceAtTheBeginningOfYear(
+                                    (Steppable) simState -> {
+                                        fisherloop:
+                                        for (Fisher fisher :
+                                            ((FishState) simState).getFishers()) {
 
-                                                        for (String tag : modifiedTags) {
-                                                            if (fisher.getTags().contains(tag)) {
-                                                                fisher.setRegulation(
-                                                                        new MaxHoursOutRegulation(
-                                                                                new ProtectedAreasOnly(),
-                                                                                finalMaxDaysOut*24d
-                                                                        ));
-                                                                continue fisherloop;
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                StepOrder.DAWN,
-                                                shockYear
-                                        );
+                                            for (String tag : modifiedTags) {
+                                                if (fisher.getTags().contains(tag)) {
+                                                    fisher.setRegulation(
+                                                        new MaxHoursOutRegulation(
+                                                            new ProtectedAreasOnly(),
+                                                            finalMaxDaysOut * 24d
+                                                        ));
+                                                    continue fisherloop;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    StepOrder.DAWN,
+                                    shockYear
+                                );
 
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void turnOff() {
+                            @Override
+                            public void turnOff() {
 
-                                    }
-                                }
-                        );
+                            }
+                        }
+                    );
 
-                    }
+                }
             );
 
 
@@ -195,7 +200,7 @@ public class Slice1Sweeps {
 
 
             //while (runner.getRunsDone() < 1) {
-            for(int i = 0; i< RUNS_PER_POLICY; i++) {
+            for (int i = 0; i < RUNS_PER_POLICY; i++) {
                 StringBuffer tidy = new StringBuffer();
                 runner.run(tidy);
                 fileWriter.write(tidy.toString());
@@ -206,69 +211,73 @@ public class Slice1Sweeps {
     }
 
 
-
-
     public static void enforcement(
-            String name,
-            String cheatingTag, final String filename) throws IOException {
+        String name,
+        String cheatingTag, final String filename
+    ) throws IOException {
 
-        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_"+name+"_enforcement.csv").toFile());
+        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, filename + "_" + name + "_enforcement.csv")
+            .toFile());
         fileWriter.write("run,year,enforcement,policy,variable,value\n");
         fileWriter.flush();
 
-        for(int maxDaysOut=200; maxDaysOut>=50; maxDaysOut-=10) {
-            for(double probabilityOfCheating = 0; probabilityOfCheating<=1; probabilityOfCheating+=.2) {
+        for (int maxDaysOut = 200; maxDaysOut >= 50; maxDaysOut -= 10) {
+            for (double probabilityOfCheating = 0; probabilityOfCheating <= 1; probabilityOfCheating += .2) {
 
                 probabilityOfCheating = FishStateUtilities.round(probabilityOfCheating);
                 BatchRunner runner = new BatchRunner(
-                        Paths.get(DIRECTORY,
-                                  filename + ".yaml"),
-                        15,
-                        Lists.newArrayList(
-                                "Average Cash-Flow",
-                                "Average Cash-Flow of population0",
-                                "Average Cash-Flow of population1",
-                                "Average Cash-Flow of population2",
-                                "Average Number of Trips of population0",
-                                "Average Number of Trips of population1",
-                                "Average Number of Trips of population2",
-                                "Average Distance From Port of population0",
-                                "Average Distance From Port of population1",
-                                "Average Distance From Port of population2",
-                                "Average Trip Duration of population0",
-                                "Average Trip Duration of population1",
-                                "Average Trip Duration of population2",
-                                "Epinephelus areolatus Landings of population0",
-                                "Pristipomoides multidens Landings of population0",
-                                "Lutjanus malabaricus Landings of population0",
-                                "Lutjanus erythropterus Landings of population0",
-                                "Others Landings of population0",
+                    Paths.get(
+                        DIRECTORY,
+                        filename + ".yaml"
+                    ),
+                    15,
+                    Lists.newArrayList(
+                        "Average Cash-Flow",
+                        "Average Cash-Flow of population0",
+                        "Average Cash-Flow of population1",
+                        "Average Cash-Flow of population2",
+                        "Average Number of Trips of population0",
+                        "Average Number of Trips of population1",
+                        "Average Number of Trips of population2",
+                        "Average Distance From Port of population0",
+                        "Average Distance From Port of population1",
+                        "Average Distance From Port of population2",
+                        "Average Trip Duration of population0",
+                        "Average Trip Duration of population1",
+                        "Average Trip Duration of population2",
+                        "Epinephelus areolatus Landings of population0",
+                        "Pristipomoides multidens Landings of population0",
+                        "Lutjanus malabaricus Landings of population0",
+                        "Lutjanus erythropterus Landings of population0",
+                        "Others Landings of population0",
 
-                                "Epinephelus areolatus Landings of population1",
-                                "Pristipomoides multidens Landings of population1",
-                                "Lutjanus malabaricus Landings of population1",
-                                "Lutjanus erythropterus Landings of population1",
-                                "Others Landings of population1",
-                                "Epinephelus areolatus Landings of population2",
-                                "Pristipomoides multidens Landings of population2",
-                                "Lutjanus malabaricus Landings of population2",
-                                "Lutjanus erythropterus Landings of population2",
-                                "Others Landings of population2",
+                        "Epinephelus areolatus Landings of population1",
+                        "Pristipomoides multidens Landings of population1",
+                        "Lutjanus malabaricus Landings of population1",
+                        "Lutjanus erythropterus Landings of population1",
+                        "Others Landings of population1",
+                        "Epinephelus areolatus Landings of population2",
+                        "Pristipomoides multidens Landings of population2",
+                        "Lutjanus malabaricus Landings of population2",
+                        "Lutjanus erythropterus Landings of population2",
+                        "Others Landings of population2",
 
-                                "Biomass Epinephelus areolatus",
-                                "Biomass Pristipomoides multidens",
-                                "Biomass Lutjanus malabaricus",
-                                "Biomass Lutjanus erythropterus",
-                                "Total Landings of population0",
-                                "Total Landings of population1",
-                                "Total Landings of population2"
+                        "Biomass Epinephelus areolatus",
+                        "Biomass Pristipomoides multidens",
+                        "Biomass Lutjanus malabaricus",
+                        "Biomass Lutjanus erythropterus",
+                        "Total Landings of population0",
+                        "Total Landings of population1",
+                        "Total Landings of population2"
 
-                        ),
-                        Paths.get(DIRECTORY,
-                                  filename),
-                        null,
-                        System.currentTimeMillis(),
-                        -1
+                    ),
+                    Paths.get(
+                        DIRECTORY,
+                        filename
+                    ),
+                    null,
+                    System.currentTimeMillis(),
+                    -1
                 );
 
 
@@ -279,50 +288,50 @@ public class Slice1Sweeps {
                 //to get it done right
                 double finalProbabilityOfCheating = probabilityOfCheating;
                 runner.setScenarioSetup(
-                        scenario -> {
+                    scenario -> {
 
-                            //at year 4, impose regulation
-                            FlexibleScenario flexible = (FlexibleScenario) scenario;
-                            flexible.getPlugins().add(
-                                    fishState -> new AdditionalStartable() {
-                                        @Override
-                                        public void start(FishState model) {
+                        //at year 4, impose regulation
+                        FlexibleScenario flexible = (FlexibleScenario) scenario;
+                        flexible.getPlugins().add(
+                            fishState -> new AdditionalStartable() {
+                                @Override
+                                public void start(FishState model) {
 
-                                            model.scheduleOnceAtTheBeginningOfYear(
-                                                    (Steppable) simState -> {
-                                                        fisherloop:
-                                                        for (Fisher fisher :
-                                                                ((FishState) simState).getFishers()) {
+                                    model.scheduleOnceAtTheBeginningOfYear(
+                                        (Steppable) simState -> {
+                                            fisherloop:
+                                            for (Fisher fisher :
+                                                ((FishState) simState).getFishers()) {
 
-                                                            if (!fisher.getTags().contains(cheatingTag)) {
-                                                                fisher.setRegulation(
-                                                                        new FishingSeason(true, finalMaxDaysOut));
-                                                            } else {
-                                                                if (!model.getRandom().nextBoolean(
-                                                                        finalProbabilityOfCheating))
-                                                                    fisher.setRegulation(
-                                                                            new FishingSeason(true, finalMaxDaysOut));
+                                                if (!fisher.getTags().contains(cheatingTag)) {
+                                                    fisher.setRegulation(
+                                                        new FishingSeason(true, finalMaxDaysOut));
+                                                } else {
+                                                    if (!model.getRandom().nextBoolean(
+                                                        finalProbabilityOfCheating))
+                                                        fisher.setRegulation(
+                                                            new FishingSeason(true, finalMaxDaysOut));
 
-                                                            }
-
-
-                                                        }
-                                                    },
-                                                    StepOrder.DAWN,
-                                                    4
-                                            );
+                                                }
 
 
-                                        }
+                                            }
+                                        },
+                                        StepOrder.DAWN,
+                                        4
+                                    );
 
-                                        @Override
-                                        public void turnOff() {
 
-                                        }
-                                    }
-                            );
+                                }
 
-                        }
+                                @Override
+                                public void turnOff() {
+
+                                }
+                            }
+                        );
+
+                    }
                 );
 
 

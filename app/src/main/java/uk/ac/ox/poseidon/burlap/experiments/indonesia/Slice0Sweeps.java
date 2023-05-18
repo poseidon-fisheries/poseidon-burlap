@@ -42,48 +42,54 @@ public class Slice0Sweeps {
 
 
     public static void main(String[] args) throws IOException {
-        policy("large",true);
+        policy("large", true);
     }
 
-    public static void policy(String name,
-                              boolean onlyLarge) throws IOException {
+    public static void policy(
+        String name,
+        boolean onlyLarge
+    ) throws IOException {
 
-        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, FILENAME + "_"+name+".csv").toFile());
+        FileWriter fileWriter = new FileWriter(Paths.get(DIRECTORY, FILENAME + "_" + name + ".csv").toFile());
         fileWriter.write("run,year,policy,variable,value\n");
         fileWriter.flush();
 
-        for(int maxDaysOut=200; maxDaysOut>=50; maxDaysOut--) {
+        for (int maxDaysOut = 200; maxDaysOut >= 50; maxDaysOut--) {
 
             BatchRunner runner = new BatchRunner(
-                    Paths.get(DIRECTORY,
-                              FILENAME + ".yaml"),
-                    15,
-                    Lists.newArrayList(
-                            "Snapper Landings",
-                            "Snapper Landings of population0",
-                            "Snapper Landings of population1",
-                            "Snapper Landings of population2",
-                            "Average Cash-Flow",
-                            "Average Cash-Flow of population0",
-                            "Average Cash-Flow of population1",
-                            "Average Cash-Flow of population2",
-                            "Average Number of Trips of population0",
-                            "Average Number of Trips of population1",
-                            "Average Number of Trips of population2",
-                            "Average Distance From Port of population0",
-                            "Average Distance From Port of population1",
-                            "Average Distance From Port of population2",
-                            "Average Trip Duration of population0",
-                            "Average Trip Duration of population1",
-                            "Average Trip Duration of population2",
-                            "Biomass Snapper"
+                Paths.get(
+                    DIRECTORY,
+                    FILENAME + ".yaml"
+                ),
+                15,
+                Lists.newArrayList(
+                    "Snapper Landings",
+                    "Snapper Landings of population0",
+                    "Snapper Landings of population1",
+                    "Snapper Landings of population2",
+                    "Average Cash-Flow",
+                    "Average Cash-Flow of population0",
+                    "Average Cash-Flow of population1",
+                    "Average Cash-Flow of population2",
+                    "Average Number of Trips of population0",
+                    "Average Number of Trips of population1",
+                    "Average Number of Trips of population2",
+                    "Average Distance From Port of population0",
+                    "Average Distance From Port of population1",
+                    "Average Distance From Port of population2",
+                    "Average Trip Duration of population0",
+                    "Average Trip Duration of population1",
+                    "Average Trip Duration of population2",
+                    "Biomass Snapper"
 
-                    ),
-                    Paths.get(DIRECTORY,
-                              FILENAME),
-                    null,
-                    System.currentTimeMillis(),
-                    -1
+                ),
+                Paths.get(
+                    DIRECTORY,
+                    FILENAME
+                ),
+                null,
+                System.currentTimeMillis(),
+                -1
             );
 
 
@@ -93,41 +99,41 @@ public class Slice0Sweeps {
             //because I coded "run" poorly, we have to go through this series of pirouettes
             //to get it done right
             runner.setScenarioSetup(
-                    scenario -> {
+                scenario -> {
 
-                        //at year 4, impose regulation
-                        FlexibleScenario flexible = (FlexibleScenario) scenario;
-                        flexible.getPlugins().add(
-                                fishState -> new AdditionalStartable() {
-                                    @Override
-                                    public void start(FishState model) {
+                    //at year 4, impose regulation
+                    FlexibleScenario flexible = (FlexibleScenario) scenario;
+                    flexible.getPlugins().add(
+                        fishState -> new AdditionalStartable() {
+                            @Override
+                            public void start(FishState model) {
 
-                                        model.scheduleOnceAtTheBeginningOfYear(
-                                                (Steppable) simState -> {
-                                                    for (Fisher fisher :
-                                                            ((FishState) simState).getFishers()) {
+                                model.scheduleOnceAtTheBeginningOfYear(
+                                    (Steppable) simState -> {
+                                        for (Fisher fisher :
+                                            ((FishState) simState).getFishers()) {
 
-                                                        if(!onlyLarge || fisher.getTags().contains("big"))
-                                                            fisher.setDepartingStrategy(new MaxHoursPerYearDepartingStrategy(
-                                                                    finalMaxDaysOut *24
-                                                            ));
-                                                    }
-                                                },
-                                                StepOrder.DAWN,
-                                                4
-                                        );
+                                            if (!onlyLarge || fisher.getTags().contains("big"))
+                                                fisher.setDepartingStrategy(new MaxHoursPerYearDepartingStrategy(
+                                                    finalMaxDaysOut * 24
+                                                ));
+                                        }
+                                    },
+                                    StepOrder.DAWN,
+                                    4
+                                );
 
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void turnOff() {
+                            @Override
+                            public void turnOff() {
 
-                                    }
-                                }
-                        );
+                            }
+                        }
+                    );
 
-                    }
+                }
             );
 
 
@@ -149,8 +155,6 @@ public class Slice0Sweeps {
         }
         fileWriter.close();
     }
-
-
 
 
 }

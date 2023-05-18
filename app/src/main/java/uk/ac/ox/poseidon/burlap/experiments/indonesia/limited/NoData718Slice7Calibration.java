@@ -29,27 +29,35 @@ public class NoData718Slice7Calibration {
 
     public static final int POP_SIZE = 200;
     private static final String OPTIMIZATION_FILE = "optimization_with_spr_highmk_lag2_gillnetterpop_mature.yaml";
+    public static Path MAIN_DIRECTORY = Paths.get(
+        "docs",
+        "indonesia_hub/runs/718/slice7limited"
+    );
+    public static Path WARM_START = null; //MAIN_DIRECTORY.resolve("warm_start.csv");
 
     public static void calibrate() throws IOException {
 
         FishYAML yaml = new FishYAML();
         final NoData718Slice6OptimizationProblem optiProblem =
-                yaml.loadAs(new FileReader(
-                                Paths.get("docs", "indonesia_hub/runs/718/slice7limited",
-                                        OPTIMIZATION_FILE).toFile()
-                        ),
-                        NoData718Slice6OptimizationProblem.class);
+            yaml.loadAs(
+                new FileReader(
+                    Paths.get("docs", "indonesia_hub/runs/718/slice7limited",
+                        OPTIMIZATION_FILE
+                    ).toFile()
+                ),
+                NoData718Slice6OptimizationProblem.class
+            );
 
         //  int type = Integer.parseInt();
         int parallelThreads = 2;
         //anonymous class to make sure we initialize the model well
         SimpleProblemWrapper problem;
-        if(WARM_START == null)
+        if (WARM_START == null)
             problem = new SimpleProblemWrapper();
         else {
             System.out.println("we are reading a warm start!");
             CSVReader acceptanceReader = new CSVReader(
-                    new FileReader(WARM_START.toFile())
+                new FileReader(WARM_START.toFile())
             );
             final List<String[]> initialGuesses = acceptanceReader.readAll();
             //anonymous class to make sure we initialize the model well
@@ -67,12 +75,14 @@ public class NoData718Slice7Calibration {
                             convertedLine[i] = Double.parseDouble(line[i]);
                         }
                         final ESIndividualDoubleData individual = new ESIndividualDoubleData(
-                                (ESIndividualDoubleData) population.get(0));
+                            (ESIndividualDoubleData) population.get(0));
                         individual.setDoubleGenotype(convertedLine);
                         individual.setDoublePhenotype(convertedLine);
 
-                        population.replaceIndividualAt(scenarioNumber,
-                                individual);
+                        population.replaceIndividualAt(
+                            scenarioNumber,
+                            individual
+                        );
                     }
                 }
 
@@ -90,14 +100,16 @@ public class NoData718Slice7Calibration {
         opt.setParentSelection(new SelectTournament(12));
         params = OptimizerFactory.makeParams(
 
-                opt,
-                POP_SIZE,
-                problem
+            opt,
+            POP_SIZE,
+            problem
         );
         params.setTerminator(new EvaluationTerminator(50000));
 
-        OptimizerRunnable runnable = new OptimizerRunnable(params,
-                "eva"); //ignored, we are outputting to window
+        OptimizerRunnable runnable = new OptimizerRunnable(
+            params,
+            "eva"
+        ); //ignored, we are outputting to window
         runnable.setOutputFullStatsToText(true);
         runnable.setVerbosityLevel(InterfaceStatisticsParameters.OutputVerbosity.ALL);
         runnable.setOutputTo(InterfaceStatisticsParameters.OutputTo.WINDOW);
@@ -105,9 +117,11 @@ public class NoData718Slice7Calibration {
 
         String name = "additional";
 
-        FileWriter writer = new FileWriter(Paths.get("docs",
-                "indonesia_hub/runs/718/slice7limited").
-                resolve("calibration_log_"+ name+".log").toFile());
+        FileWriter writer = new FileWriter(Paths.get(
+                "docs",
+                "indonesia_hub/runs/718/slice7limited"
+            ).
+            resolve("calibration_log_" + name + ".log").toFile());
         runnable.setTextListener(new InterfaceTextListener() {
             @Override
             public void print(String str) {
@@ -137,14 +151,6 @@ public class NoData718Slice7Calibration {
         runnable.run();
 
     }
-
-    public static Path MAIN_DIRECTORY = Paths.get("docs",
-            "indonesia_hub/runs/718/slice7limited");
-
-
-
-    public static Path WARM_START = null; //MAIN_DIRECTORY.resolve("warm_start.csv");
-
 
     public static void main(String[] args) throws IOException {
 

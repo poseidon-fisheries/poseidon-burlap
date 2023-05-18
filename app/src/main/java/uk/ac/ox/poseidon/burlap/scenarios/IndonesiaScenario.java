@@ -57,9 +57,9 @@ import uk.ac.ox.oxfish.utility.AlgorithmFactory;
 import uk.ac.ox.oxfish.utility.BoatColors;
 import uk.ac.ox.oxfish.utility.FixedMap;
 import uk.ac.ox.oxfish.utility.Pair;
-import uk.ac.ox.poseidon.burlap.strategies.SimplePortAdaptation;
 import uk.ac.ox.oxfish.utility.parameters.DoubleParameter;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
+import uk.ac.ox.poseidon.burlap.strategies.SimplePortAdaptation;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

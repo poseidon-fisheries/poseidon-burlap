@@ -28,7 +28,6 @@ import uk.ac.ox.oxfish.geography.discretization.MapDiscretizer;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
 import uk.ac.ox.oxfish.utility.Locker;
-import uk.ac.ox.poseidon.burlap.LogisticLogbookInitializer;
 
 import java.util.ArrayList;
 

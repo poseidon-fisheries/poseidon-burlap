@@ -42,11 +42,12 @@ public class LogitWithLaggedExtractorsDestinationStrategy extends LogitDestinati
     private final boolean fleetWide;
 
 
-    private final List<TripLaggedExtractor>  extractorsToStart;
+    private final List<TripLaggedExtractor> extractorsToStart;
 
 
     /**
      * remember that the tripLaggedExtractors need to appear both in the tripLaggedExtractors argument AND in the covariates
+     *
      * @param betas                        table of all the betas (some might be ignored if the map doesn't cover them)
      * @param covariates                   table of all hte observation extractors (generate x on the spot)
      * @param rowNames                     column that assign to each row of betas the group it belongs to
@@ -59,14 +60,16 @@ public class LogitWithLaggedExtractorsDestinationStrategy extends LogitDestinati
      * @param extractorsToStart
      */
     public LogitWithLaggedExtractorsDestinationStrategy(
-            double[][] betas, ObservationExtractor[][] covariates,
-            List<Integer> rowNames, MapDiscretization discretization,
-            FavoriteDestinationStrategy delegate, MersenneTwisterFast random, boolean automaticallyAvoidMPA,
-            boolean automaticallyAvoidWastelands,
+        double[][] betas, ObservationExtractor[][] covariates,
+        List<Integer> rowNames, MapDiscretization discretization,
+        FavoriteDestinationStrategy delegate, MersenneTwisterFast random, boolean automaticallyAvoidMPA,
+        boolean automaticallyAvoidWastelands,
 
-            boolean fleetWide, List<TripLaggedExtractor> extractorsToStart) {
+        boolean fleetWide, List<TripLaggedExtractor> extractorsToStart
+    ) {
         super(betas, covariates, rowNames, discretization, delegate, random, automaticallyAvoidMPA,
-              automaticallyAvoidWastelands);
+            automaticallyAvoidWastelands
+        );
         this.fleetWide = fleetWide;
         this.extractorsToStart = extractorsToStart;
     }
@@ -76,8 +79,11 @@ public class LogitWithLaggedExtractorsDestinationStrategy extends LogitDestinati
     public void start(FishState model, Fisher fisher) {
         super.start(model, fisher);
         for (TripLaggedExtractor extractor : extractorsToStart) {
-            if(!fleetWide) {
-                Preconditions.checkArgument(extractor.getFisherTracked()==null, "I am trying to link this extractor to this fisher, but it seems like another fisher has already activated it!");
+            if (!fleetWide) {
+                Preconditions.checkArgument(
+                    extractor.getFisherTracked() == null,
+                    "I am trying to link this extractor to this fisher, but it seems like another fisher has already activated it!"
+                );
                 extractor.setFisherTracked(fisher);
             }
             extractor.start(model);

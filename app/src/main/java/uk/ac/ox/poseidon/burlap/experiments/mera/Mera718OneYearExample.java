@@ -19,7 +19,8 @@ import java.util.List;
 public class Mera718OneYearExample {
 
 
-    private final static Path MAIN_FILE= Paths.get("docs/mera_hub/slice3_yesgeography_onespecies/hotstarts/1/optimized.yaml");
+    private final static Path MAIN_FILE = Paths.get(
+        "docs/mera_hub/slice3_yesgeography_onespecies/hotstarts/1/optimized.yaml");
     private final static Path OUTPUT_FOLDER = MAIN_FILE.getParent().resolve("oneyearexample");
 
     public static void main(String[] args) throws IOException {
@@ -29,27 +30,31 @@ public class Mera718OneYearExample {
         FishYAML yaml = new FishYAML();
         for (int seed = 0; seed < 100; seed++) {
             Path scenarioToRun = OUTPUT_FOLDER.resolve("inputs").resolve(seed + ".yaml");
-            Files.copy(MAIN_FILE,
-                    scenarioToRun);
+            Files.copy(
+                MAIN_FILE,
+                scenarioToRun
+            );
 
             LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> policyMap = new LinkedHashMap<>();
             policyMap.put("nothing_" + seed, state -> model -> {
 
             });
             RejectionSampling.runOneAcceptedScenario(
-                    scenarioToRun,
-                    0,
-                    1,
-                    seed,
-                    OUTPUT_FOLDER,
-                    policyMap,
-                    yaml.loadAs(new FileReader(
-                                    MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve("full_columns_to_print.yaml").toFile()),
-                            List.class),
-                            false,
-                            null,
-                            null
-                    );
+                scenarioToRun,
+                0,
+                1,
+                seed,
+                OUTPUT_FOLDER,
+                policyMap,
+                yaml.loadAs(
+                    new FileReader(
+                        MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve("full_columns_to_print.yaml").toFile()),
+                    List.class
+                ),
+                false,
+                null,
+                null
+            );
         }
 
 

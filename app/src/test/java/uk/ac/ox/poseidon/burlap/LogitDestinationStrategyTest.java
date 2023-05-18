@@ -53,9 +53,33 @@ import static org.mockito.Mockito.*;
  * The logit regression has come to town.
  * Created by carrknight on 12/6/16.
  */
-public class LogitDestinationStrategyTest
-{
+public class LogitDestinationStrategyTest {
 
+
+    public static FishState generateSimple4x4Map() {
+        final ObjectGrid2D grid2D = new ObjectGrid2D(4, 4);
+        //2x2, first column sea, second  column land
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                grid2D.field[i][j] = new SeaTile(i, j, -100, new TileHabitat(0d));
+
+        final GeomGridField rasterBathymetry = new GeomGridField(grid2D);
+        rasterBathymetry.setMBR(new Envelope(0, 1, 0, 1));
+
+        //great
+        final NauticalMap map = new NauticalMap(rasterBathymetry, new GeomVectorField(),
+            new EquirectangularDistance(0.0, 1), new StraightLinePathfinder()
+        );
+        return initModel(map);
+    }
+
+    private static FishState initModel(final NauticalMap map) {
+        final FishState model = mock(FishState.class, RETURNS_DEEP_STUBS);
+        when(model.getMap()).thenReturn(map);
+        when(model.getStepsPerDay()).thenReturn(1);
+        when(model.getHoursPerStep()).thenReturn(24d);
+        return model;
+    }
 
     @Test
     public void logitDestinationStrategy() throws Exception {
@@ -65,60 +89,58 @@ public class LogitDestinationStrategyTest
         MersenneTwisterFast random = new MersenneTwisterFast();
 
         FishState state = generateSimple4x4Map();
-        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0,1));
+        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0, 1));
         discretization.discretize(state.getMap());
         //make sure the discretization is correct
         assertTrue(discretization.isValid(0));
         assertTrue(discretization.isValid(1));
-        assertEquals(2,discretization.getNumberOfGroups());
-        for(int i=0; i<100; i++) {
+        assertEquals(2, discretization.getNumberOfGroups());
+        for (int i = 0; i < 100; i++) {
             SeaTile tile = discretization.getGroup(0).get(random.nextInt(discretization.getGroup(0).size()));
-            assertTrue(tile.getGridX()<=1);
+            assertTrue(tile.getGridX() <= 1);
         }
 
         //create the logistic
         //give it more betas than necessary, it will be okay
         //0 has about 75% of being selected  compared to 1
         double[][] beta = new double[3][];
-        beta[0]=new double[]{1};
-        beta[1]=new double[]{0};
-        beta[2]=new double[]{-1}; //should get ignored
+        beta[0] = new double[]{1};
+        beta[1] = new double[]{0};
+        beta[2] = new double[]{-1}; //should get ignored
 
         ObservationExtractor[][] extractors = new ObservationExtractor[3][];
-        extractors[0]= new ObservationExtractor[]{
-                new InterceptExtractor(1d)
+        extractors[0] = new ObservationExtractor[]{
+            new InterceptExtractor(1d)
         };
-        extractors[1]=extractors[0];
-        extractors[2]= null;
+        extractors[1] = extractors[0];
+        extractors[2] = null;
 
         LogitDestinationStrategy strategy = new LogitDestinationStrategy(
-                beta, extractors,
-                Lists.newArrayList(0,1,2),
-                discretization,
-                new FavoriteDestinationStrategy(state.getMap().getSeaTile(3,3)),
-                random,
-                false, false);
+            beta, extractors,
+            Lists.newArrayList(0, 1, 2),
+            discretization,
+            new FavoriteDestinationStrategy(state.getMap().getSeaTile(3, 3)),
+            random,
+            false, false
+        );
 
         int counter = 0;
-        for(int i=0; i<1000; i++)
-        {
+        for (int i = 0; i < 1000; i++) {
             Fisher fisher = mock(Fisher.class);
             when(fisher.isAllowedAtSea()).thenReturn(true);
 
             strategy.adapt(state, random, fisher);
             SeaTile tile = strategy.getCurrentTarget();
-            if(tile.getGridX()<=1)
+            if (tile.getGridX() <= 1)
                 counter++;
         }
 
         System.out.println(counter);
-        assertTrue(counter>600);
-        assertTrue(counter<900);
-
+        assertTrue(counter > 600);
+        assertTrue(counter < 900);
 
 
     }
-
 
     @Test
     public void avoidWastelands() throws Exception {
@@ -130,15 +152,15 @@ public class LogitDestinationStrategyTest
         MersenneTwisterFast random = new MersenneTwisterFast();
 
         FishState state = generateSimple4x4Map();
-        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0,1));
+        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0, 1));
         discretization.discretize(state.getMap());
         //make sure the discretization is correct
         assertTrue(discretization.isValid(0));
         assertTrue(discretization.isValid(1));
-        assertEquals(2,discretization.getNumberOfGroups());
-        for(int i=0; i<100; i++) {
+        assertEquals(2, discretization.getNumberOfGroups());
+        for (int i = 0; i < 100; i++) {
             SeaTile tile = discretization.getGroup(0).get(random.nextInt(discretization.getGroup(0).size()));
-            assertTrue(tile.getGridX()<=1);
+            assertTrue(tile.getGridX() <= 1);
         }
 
 
@@ -152,40 +174,39 @@ public class LogitDestinationStrategyTest
         //give it more betas than necessary, it will be okay
         //0 has about 75% of being selected  compared to 1
         double[][] beta = new double[3][];
-        beta[0]=new double[]{1};
-        beta[1]=new double[]{0};
-        beta[2]=new double[]{-1}; //should get ignored
+        beta[0] = new double[]{1};
+        beta[1] = new double[]{0};
+        beta[2] = new double[]{-1}; //should get ignored
 
         ObservationExtractor[][] extractors = new ObservationExtractor[3][];
-        extractors[0]= new ObservationExtractor[]{
-                new InterceptExtractor(1d)
+        extractors[0] = new ObservationExtractor[]{
+            new InterceptExtractor(1d)
         };
-        extractors[1]=extractors[0];
-        extractors[2]= null;
+        extractors[1] = extractors[0];
+        extractors[2] = null;
 
         LogitDestinationStrategy strategy = new LogitDestinationStrategy(
-                beta, extractors,
-                Lists.newArrayList(0,1,2),
-                discretization,
-                new FavoriteDestinationStrategy(state.getMap().getSeaTile(3,3)),
-                random,
-                false, true);
+            beta, extractors,
+            Lists.newArrayList(0, 1, 2),
+            discretization,
+            new FavoriteDestinationStrategy(state.getMap().getSeaTile(3, 3)),
+            random,
+            false, true
+        );
 
         int counter = 0;
-        for(int i=0; i<1000; i++)
-        {
+        for (int i = 0; i < 1000; i++) {
             Fisher fisher = mock(Fisher.class);
             when(fisher.isAllowedAtSea()).thenReturn(true);
 
             strategy.adapt(state, random, fisher);
             SeaTile tile = strategy.getCurrentTarget();
-            if(tile.getGridX()<=1)
+            if (tile.getGridX() <= 1)
                 counter++;
         }
 
         System.out.println(counter);
-        assertEquals(counter,0);
-
+        assertEquals(counter, 0);
 
 
     }
@@ -220,18 +241,19 @@ public class LogitDestinationStrategyTest
 
         ObservationExtractor[][] extractors = new ObservationExtractor[3][];
         extractors[0] = new ObservationExtractor[]{
-                new InterceptExtractor(1d)
+            new InterceptExtractor(1d)
         };
         extractors[1] = extractors[0];
         extractors[2] = null;
 
         LogitDestinationStrategy strategy = new LogitDestinationStrategy(
-                beta, extractors,
-                Lists.newArrayList(1, 0, 2),
-                discretization,
-                new FavoriteDestinationStrategy(state.getMap().getSeaTile(3, 3)),
-                random,
-                false, false);
+            beta, extractors,
+            Lists.newArrayList(1, 0, 2),
+            discretization,
+            new FavoriteDestinationStrategy(state.getMap().getSeaTile(3, 3)),
+            random,
+            false, false
+        );
 
         int counter = 0;
         for (int i = 0; i < 10000; i++) {
@@ -256,79 +278,54 @@ public class LogitDestinationStrategyTest
         MersenneTwisterFast random = new MersenneTwisterFast();
 
         FishState state = generateSimple4x4Map();
-        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0,1));
+        MapDiscretization discretization = new MapDiscretization(new SquaresMapDiscretizer(0, 1));
         discretization.discretize(state.getMap());
         //make sure the discretization is correct
         assertTrue(discretization.isValid(0));
         assertTrue(discretization.isValid(1));
-        assertEquals(2,discretization.getNumberOfGroups());
-        for(int i=0; i<100; i++) {
+        assertEquals(2, discretization.getNumberOfGroups());
+        for (int i = 0; i < 100; i++) {
             SeaTile tile = discretization.getGroup(0).get(random.nextInt(discretization.getGroup(0).size()));
-            assertTrue(tile.getGridX()<=1);
+            assertTrue(tile.getGridX() <= 1);
         }
 
         //create the logistic
         //give it more betas than necessary, it will be okay
         //0 is unlikely to be chosen
         double[][] beta = new double[3][];
-        beta[0]=new double[]{1};
-        beta[1]=new double[]{1};
-        beta[2]=new double[]{-1}; //should get ignored
+        beta[0] = new double[]{1};
+        beta[1] = new double[]{1};
+        beta[2] = new double[]{-1}; //should get ignored
 
         ObservationExtractor[][] extractors = new ObservationExtractor[3][];
-        extractors[0]= new ObservationExtractor[]{
-                new GridXExtractor()
+        extractors[0] = new ObservationExtractor[]{
+            new GridXExtractor()
         };
-        extractors[1]=extractors[0];
-        extractors[2]= null;
+        extractors[1] = extractors[0];
+        extractors[2] = null;
 
         int counter = 0;
 
         LogitDestinationStrategy strategy = new LogitDestinationStrategy(
-                beta, extractors,
-                Lists.newArrayList(1,0,2),
-                discretization,
-                new FavoriteDestinationStrategy(state.getMap().getSeaTile(3,3)),
-                random,
-                false, false);
+            beta, extractors,
+            Lists.newArrayList(1, 0, 2),
+            discretization,
+            new FavoriteDestinationStrategy(state.getMap().getSeaTile(3, 3)),
+            random,
+            false, false
+        );
 
-        for(int i=0; i<1000; i++)
-        {
+        for (int i = 0; i < 1000; i++) {
             Fisher fisher = mock(Fisher.class);
             when(fisher.isAllowedAtSea()).thenReturn(true);
-            strategy.adapt(state,random,fisher);
+            strategy.adapt(state, random, fisher);
             SeaTile tile = strategy.getCurrentTarget();
-            if(tile.getGridX()<=1)
+            if (tile.getGridX() <= 1)
                 counter++;
         }
 
         System.out.println(counter);
-        assertTrue(counter>50);
-        assertTrue(counter<200);
-    }
-
-    public static FishState generateSimple4x4Map() {
-        final ObjectGrid2D grid2D = new ObjectGrid2D(4, 4);
-        //2x2, first column sea, second  column land
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                grid2D.field[i][j] = new SeaTile(i, j, -100, new TileHabitat(0d));
-
-        final GeomGridField rasterBathymetry = new GeomGridField(grid2D);
-        rasterBathymetry.setMBR(new Envelope(0, 1, 0, 1));
-
-        //great
-        final NauticalMap map = new NauticalMap(rasterBathymetry, new GeomVectorField(),
-            new EquirectangularDistance(0.0, 1), new StraightLinePathfinder()
-        );
-        return initModel(map);
-    }
-
-    private static FishState initModel(final NauticalMap map) {
-        final FishState model = mock(FishState.class, RETURNS_DEEP_STUBS);
-        when(model.getMap()).thenReturn(map);
-        when(model.getStepsPerDay()).thenReturn(1);
-        when(model.getHoursPerStep()).thenReturn(24d);
-        return model;
+        assertTrue(counter > 50);
+        assertTrue(counter < 200);
     }
 }

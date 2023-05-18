@@ -22,23 +22,23 @@ public class ISlopeSlice2 {
 
 
     final static public Path MAIN_DIRECTORY =
-            Paths.get("docs", "20200604 islope",
-                    "last_catch_tac");
+        Paths.get("docs", "20200604 islope",
+            "last_catch_tac"
+        );
 
 
     final static public int MAX_YEARS_TO_RUN = 40;
 
 
-
     public static void main(String[] args) throws IOException {
 
         runSlice(
-                MAIN_DIRECTORY.resolve("base.yaml"),
-                MAIN_DIRECTORY.resolve("parameters.yaml"),
-                MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
-                MAIN_DIRECTORY,
-                0L,
-                MAX_YEARS_TO_RUN, 5000
+            MAIN_DIRECTORY.resolve("base.yaml"),
+            MAIN_DIRECTORY.resolve("parameters.yaml"),
+            MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
+            MAIN_DIRECTORY,
+            0L,
+            MAX_YEARS_TO_RUN, 5000
 
 
         );
@@ -46,41 +46,43 @@ public class ISlopeSlice2 {
 
 
     public static void runSlice(
-            Path baselineScenarioFile,
-            Path parameterFile,
-            Path listOfColumnsToPrintFile,
-            Path mainDirectory, long seed, int maxYearsToRun,
-            int totalRunsToMake
+        Path baselineScenarioFile,
+        Path parameterFile,
+        Path listOfColumnsToPrintFile,
+        Path mainDirectory, long seed, int maxYearsToRun,
+        int totalRunsToMake
     ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         final List<String> columnsToPrint =
-                yaml.loadAs(new FileReader(
-                                listOfColumnsToPrintFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    listOfColumnsToPrintFile.toFile()
+                ),
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                parameterFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    parameterFile.toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
         MersenneTwisterFast random = new MersenneTwisterFast();
-        int directoryIndex =  random.nextInt(999999);
-        Path scenarioDirectory = mainDirectory.resolve("scenarios").resolve(computerName+"_"+directoryIndex);
+        int directoryIndex = random.nextInt(999999);
+        Path scenarioDirectory = mainDirectory.resolve("scenarios").resolve(computerName + "_" + directoryIndex);
         scenarioDirectory.toFile().mkdirs();
         Path summaryDirectory = scenarioDirectory.resolve("summaries");
         summaryDirectory.toFile().mkdir();
 
 
-
-
         FileWriter summaryStatisticsWriter =
-                new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
+            new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
         summaryStatisticsWriter.write("run,year,scenario,variable,value\n");
         summaryStatisticsWriter.flush();
 
@@ -90,51 +92,49 @@ public class ISlopeSlice2 {
         FileWriter parameterMasterFile = initializeParameterMasterFile(summaryDirectory, parameters);
 
 
-        for(int i = 0; i< totalRunsToMake; i++) {
-            final Path writtenScenario = writeToFileOneScenario(scenarioDirectory,
-                    parameters,
-                    baselineScenarioFile,
-                    parameterMasterFile,
-                    new MersenneTwisterFast(),
-                    i
+        for (int i = 0; i < totalRunsToMake; i++) {
+            final Path writtenScenario = writeToFileOneScenario(
+                scenarioDirectory,
+                parameters,
+                baselineScenarioFile,
+                parameterMasterFile,
+                new MersenneTwisterFast(),
+                i
             );
             runOneScenario(
-                    seed,
-                    columnsToPrint,
-                    summaryStatisticsWriter,
-                    writtenScenario,
-                    maxYearsToRun
+                seed,
+                columnsToPrint,
+                summaryStatisticsWriter,
+                writtenScenario,
+                maxYearsToRun
             );
         }
 
     }
 
 
-
-
-
-
-    public static void runOneScenario(long randomSeed,
-                                      List<String> columns,
-                                      FileWriter summaryStatisticsWriter,
-                                      Path scenarioFile,
-                                      int maxYearsToRun
+    public static void runOneScenario(
+        long randomSeed,
+        List<String> columns,
+        FileWriter summaryStatisticsWriter,
+        Path scenarioFile,
+        int maxYearsToRun
     ) throws IOException {
 
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
 
         try {
             long start = System.currentTimeMillis();
 
 
             final BatchRunner batchRunner = new BatchRunner(
-                    scenarioFile,
-                    maxYearsToRun,
-                    columns,
-                    null,
-                    null,
-                    randomSeed,
-                    -1
+                scenarioFile,
+                maxYearsToRun,
+                columns,
+                null,
+                null,
+                randomSeed,
+                -1
             );
             StringBuffer tidy = new StringBuffer();
 
@@ -150,20 +150,21 @@ public class ISlopeSlice2 {
             summaryStatisticsWriter.flush();
 
             long end = System.currentTimeMillis();
-            System.out.println( "Run lasted: " + (end-start)/1000 + " seconds");
+            System.out.println("Run lasted: " + (end - start) / 1000 + " seconds");
+        } catch (OutOfMemoryError e) {
         }
-        catch (OutOfMemoryError e){
-        }
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
         System.out.println("--------------------------------------------------------------");
     }
 
-    public static Path writeToFileOneScenario(Path destinationFolder,
-                                              List<OptimizationParameter> parameters,
-                                              Path pathToBaselineScenario,
-                                              FileWriter parameterMasterFileWriter,
-                                              MersenneTwisterFast randomizer,
-                                              int scenarioID) throws IOException {
+    public static Path writeToFileOneScenario(
+        Path destinationFolder,
+        List<OptimizationParameter> parameters,
+        Path pathToBaselineScenario,
+        FileWriter parameterMasterFileWriter,
+        MersenneTwisterFast randomizer,
+        int scenarioID
+    ) throws IOException {
         FishYAML yaml = new FishYAML();
 
         double[] randomValues = new double[parameters.size()];
@@ -185,28 +186,35 @@ public class ISlopeSlice2 {
         parameterMasterFileWriter.flush();
         return pathToScenario;
     }
-    public static Pair<Scenario,String[]> setupScenario(Scenario scenario,
-                                                        double[] randomValues,
-                                                        List<OptimizationParameter> parameters) {
 
-        Preconditions.checkState(parameters.size()==randomValues.length);
+    public static Pair<Scenario, String[]> setupScenario(
+        Scenario scenario,
+        double[] randomValues,
+        List<OptimizationParameter> parameters
+    ) {
+
+        Preconditions.checkState(parameters.size() == randomValues.length);
         String[] values = new String[randomValues.length];
         for (int i = 0; i < randomValues.length; i++) {
 
 
             values[i] =
-                    parameters.get(i).parametrize(scenario,
-                            new double[]{randomValues[i]});
+                parameters.get(i).parametrize(
+                    scenario,
+                    new double[]{randomValues[i]}
+                );
 
 
         }
 
 
-        return new Pair<>(scenario,values);
+        return new Pair<>(scenario, values);
     }
 
-    public static FileWriter initializeParameterMasterFile(Path folder,
-                                                           List<OptimizationParameter> parameters) throws IOException {
+    public static FileWriter initializeParameterMasterFile(
+        Path folder,
+        List<OptimizationParameter> parameters
+    ) throws IOException {
         FileWriter masterFile = new FileWriter(folder.resolve("masterfile.csv").toFile());
         for (OptimizationParameter parameter : parameters) {
             masterFile.write(parameter.getName());

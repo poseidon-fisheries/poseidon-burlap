@@ -32,8 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class LogisticMultiClassifierTest {
 
     @Test
-    public void logistic() throws Exception
-    {
+    public void logistic() throws Exception {
 
         double[][] beta = new double[2][2];
         beta[0][0] = 1;
@@ -42,35 +41,36 @@ public class LogisticMultiClassifierTest {
         beta[1][1] = 0;
 
 
-
         LogisticMultiClassifier logit = new LogisticMultiClassifier(beta);
 
 
         double[][] input = {new double[]{1, 1}, new double[]{1, 1}};
 
-        assertEquals(0.731058, logit.getProbability(0,
-                                                    input), .001);
-        assertEquals(1d-0.731058, logit.getProbability(
-                1, input), .001);
+        assertEquals(0.731058, logit.getProbability(
+            0,
+            input
+        ), .001);
+        assertEquals(1d - 0.731058, logit.getProbability(
+            1, input), .001);
 
 
         beta[1][0] = 1;
-        assertEquals(0.5,logit.getProbability(
-                0,input),.001);
-        assertEquals(0.5,logit.getProbability(
-                1,input),.001);
+        assertEquals(0.5, logit.getProbability(
+            0, input), .001);
+        assertEquals(0.5, logit.getProbability(
+            1, input), .001);
 
         MersenneTwisterFast random = new MersenneTwisterFast();
         int chosen1 = 0;
-        for(int i=0; i<1000; i++) {
-            if(logit.choose(
-                    input, random)==1)
+        for (int i = 0; i < 1000; i++) {
+            if (logit.choose(
+                input, random) == 1)
                 chosen1++;
         }
 
         System.out.println(chosen1);
-        assertTrue(chosen1>200);
-        assertTrue(chosen1<800);
+        assertTrue(chosen1 > 200);
+        assertTrue(chosen1 < 800);
 
     }
 }

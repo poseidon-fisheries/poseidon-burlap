@@ -40,89 +40,86 @@ import java.util.function.Consumer;
 public class AllocatorSlice0 {
 
 
+    public static final int RUNS_PER_POLICY = 10;
     private static final int YEARS_TO_RUN = 15;
     private static final String SCENARIO_NAME = "base";
-    private static final Path MAIN_DIRECTORY = Paths.get("docs","20191004 allocator");
-    public static final int RUNS_PER_POLICY = 10;
+    private static final Path MAIN_DIRECTORY = Paths.get("docs", "20191004 allocator");
     private static final String OUTPUT_FOLDER = "slice0";
-
 
 
     public static void main(String[] args) throws IOException {
 
 
         maxHoldSizeExperiment("all",
-                              new String[]{"population0","population1"},
-                              SCENARIO_NAME,
-                              15000,
-                              1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
+            new String[]{"population0", "population1"},
+            SCENARIO_NAME,
+            15000,
+            1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
         );
 
         maxHoldSizeExperiment("small",
-                              new String[]{"population0"},
-                              SCENARIO_NAME,
-                              15000,
-                              1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
+            new String[]{"population0"},
+            SCENARIO_NAME,
+            15000,
+            1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
         );
 
         maxHoldSizeExperiment("large",
-                              new String[]{"population1"},
-                              SCENARIO_NAME,
-                              15000,
-                              1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
+            new String[]{"population1"},
+            SCENARIO_NAME,
+            15000,
+            1000, MAIN_DIRECTORY, MAIN_DIRECTORY.resolve(OUTPUT_FOLDER), "Species 0", RUNS_PER_POLICY
         );
 
     }
 
 
-
-
-
     public static void maxHoldSizeExperiment(
-            String name,
-            String[] modifiedTags,
-            final String scenarioFileName,
-            final double maxHoldSize, // 15000
-            final double stepSize,
-            final Path inputDirectory,
-            final Path outputDirectory, final String speciesName, final int runsPerPolicy) throws IOException {
+        String name,
+        String[] modifiedTags,
+        final String scenarioFileName,
+        final double maxHoldSize, // 15000
+        final double stepSize,
+        final Path inputDirectory,
+        final Path outputDirectory, final String speciesName, final int runsPerPolicy
+    ) throws IOException {
 
         FileWriter fileWriter = new FileWriter(outputDirectory.resolve(
-                                                         scenarioFileName + "_"+name+".csv").toFile());
+            scenarioFileName + "_" + name + ".csv").toFile());
 
         fileWriter.write("run,year,policy,variable,value\n");
         fileWriter.flush();
 
         double currentHoldSize = maxHoldSize;
-        while (currentHoldSize>0)
-        {
+        while (currentHoldSize > 0) {
 
             BatchRunner runner = setupRunner(scenarioFileName,
-                                             YEARS_TO_RUN, 2,
-                                             inputDirectory,
-                                             outputDirectory, speciesName);
+                YEARS_TO_RUN, 2,
+                inputDirectory,
+                outputDirectory, speciesName
+            );
 
             int finalHoldSize = (int) currentHoldSize;
 
             runner.setScenarioSetup(
-                    new Consumer<Scenario>() {
-                        @Override
-                        public void accept(Scenario scenario) {
-                            FlexibleScenario flexible = (FlexibleScenario) scenario;
-                            OnOffSwitchAllocatorFactory regulator = new OnOffSwitchAllocatorFactory();
+                new Consumer<Scenario>() {
+                    @Override
+                    public void accept(Scenario scenario) {
+                        FlexibleScenario flexible = (FlexibleScenario) scenario;
+                        OnOffSwitchAllocatorFactory regulator = new OnOffSwitchAllocatorFactory();
 
-                            regulator.setTagsOfParticipants(Strings.join(modifiedTags,","));
+                        regulator.setTagsOfParticipants(Strings.join(modifiedTags, ","));
 
 
-                            MaxHoldSizeRandomAllocationPolicyFactory policy =
-                                    new MaxHoldSizeRandomAllocationPolicyFactory();
-                            regulator.setPermitPolicy(policy);
-                            policy.setYearlyHoldSizeLimit(new FixedDoubleParameter(finalHoldSize));
-                            flexible.getPlugins().add(
-                                    regulator
-                            );
-                        }
+                        MaxHoldSizeRandomAllocationPolicyFactory policy =
+                            new MaxHoldSizeRandomAllocationPolicyFactory();
+                        regulator.setPermitPolicy(policy);
+                        policy.setYearlyHoldSizeLimit(new FixedDoubleParameter(finalHoldSize));
+                        flexible.getPlugins().add(
+                            regulator
+                        );
                     }
+                }
             );
 
             runner.setColumnModifier(new BatchRunner.ColumnModifier() {
@@ -134,7 +131,7 @@ public class AllocatorSlice0 {
 
 
             //while (runner.getRunsDone() < 1) {
-            for(int i = 0; i< runsPerPolicy; i++) {
+            for (int i = 0; i < runsPerPolicy; i++) {
                 StringBuffer tidy = new StringBuffer();
                 runner.run(tidy);
                 fileWriter.write(tidy.toString());
@@ -142,45 +139,44 @@ public class AllocatorSlice0 {
             }
 
 
-            currentHoldSize-=stepSize;
+            currentHoldSize -= stepSize;
             currentHoldSize = Math.round(currentHoldSize);
         }
-
-
-
 
 
     }
 
 
     private static BatchRunner setupRunner(
-            String filename, final int yearsToRun,
-            final int populations, final Path inputDirectory, final Path outputDirectory, final String speciesName) {
+        String filename, final int yearsToRun,
+        final int populations, final Path inputDirectory, final Path outputDirectory, final String speciesName
+    ) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(
 
-                "Actual Average Cash-Flow",
-                speciesName + " Landings",
-                speciesName + " Earnings",
-                "Average Distance From Port",
-                "Actual Average Hours Out",
-                "Number Of Active Fishers",
-                "Biomass " + speciesName);
+            "Actual Average Cash-Flow",
+            speciesName + " Landings",
+            speciesName + " Earnings",
+            "Average Distance From Port",
+            "Actual Average Hours Out",
+            "Number Of Active Fishers",
+            "Biomass " + speciesName
+        );
         for (int i = 0; i < populations; i++) {
-            columnsToPrint.add("Total Landings of population"+i);
-            columnsToPrint.add("Actual Average Cash-Flow of population"+i);
-            columnsToPrint.add("Number Of Active Fishers of population"+i);
+            columnsToPrint.add("Total Landings of population" + i);
+            columnsToPrint.add("Actual Average Cash-Flow of population" + i);
+            columnsToPrint.add("Number Of Active Fishers of population" + i);
 
         }
 
         return new BatchRunner(
-                inputDirectory.resolve(
-                          filename + ".yaml"),
-                yearsToRun,
-                columnsToPrint,
-                outputDirectory.resolve(filename),
-                null,
-                System.currentTimeMillis(),
-                -1
+            inputDirectory.resolve(
+                filename + ".yaml"),
+            yearsToRun,
+            columnsToPrint,
+            outputDirectory.resolve(filename),
+            null,
+            System.currentTimeMillis(),
+            -1
         );
     }
 

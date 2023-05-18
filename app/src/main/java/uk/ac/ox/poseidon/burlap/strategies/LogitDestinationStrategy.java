@@ -27,17 +27,17 @@ import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.fisher.actions.Action;
 import uk.ac.ox.oxfish.fisher.heatmap.regression.extractors.ObservationExtractor;
 import uk.ac.ox.oxfish.fisher.heatmap.regression.numerical.LogisticInputMaker;
-import uk.ac.ox.oxfish.fisher.strategies.destination.DestinationStrategy;
-import uk.ac.ox.oxfish.fisher.strategies.destination.FavoriteDestinationStrategy;
-import uk.ac.ox.poseidon.burlap.LogisticMultiClassifier;
 import uk.ac.ox.oxfish.fisher.log.DiscretizedLocationMemory;
 import uk.ac.ox.oxfish.fisher.log.LogisticLog;
+import uk.ac.ox.oxfish.fisher.strategies.destination.DestinationStrategy;
+import uk.ac.ox.oxfish.fisher.strategies.destination.FavoriteDestinationStrategy;
 import uk.ac.ox.oxfish.geography.SeaTile;
 import uk.ac.ox.oxfish.geography.discretization.MapDiscretization;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.adaptation.Adaptation;
 import uk.ac.ox.oxfish.utility.bandit.BanditSwitch;
+import uk.ac.ox.poseidon.burlap.LogisticMultiClassifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,96 +73,9 @@ public class LogitDestinationStrategy implements DestinationStrategy {
     private final FavoriteDestinationStrategy delegate;
 
     private final DiscretizedLocationMemory memory;
-
-
-    private LogisticLog log;
-
-
-    private boolean started = false;
-
-    private Fisher fisher;
-    private FishState model;
-
     private final boolean automaticallyAvoidMPA;
-
     private final boolean automaticallyAvoidWastelands;
-
-
-    /**
-     *  @param betas table of all the betas (some might be ignored if the map doesn't cover them)
-     * @param covariates table of all hte observation extractors (generate x on the spot)
-     * @param rowNames column that assign to each row of betas the group it belongs to
-     * @param discretization the discretization map
-     * @param automaticallyAvoidMPA automatically avoid not allowed areas
-     * @param automaticallyAvoidWastelands automatically avoid areas where fish can't grow
-     */
-    public LogitDestinationStrategy(
-            double[][] betas, ObservationExtractor[][] covariates,
-            List<Integer> rowNames,
-            MapDiscretization discretization,
-            FavoriteDestinationStrategy delegate,
-            MersenneTwisterFast random,
-            boolean automaticallyAvoidMPA, boolean automaticallyAvoidWastelands)
-    {
-        this.automaticallyAvoidMPA = automaticallyAvoidMPA;
-        this.automaticallyAvoidWastelands = automaticallyAvoidWastelands;
-
-        Preconditions.checkArgument(rowNames.size()==betas.length,"Row names do not match number of betas");
-        Preconditions.checkArgument(rowNames.size()==covariates.length,"Row names do not match number of covariates");
-
-        this.delegate = delegate;
-        this.discretization = discretization;
-
-        //only model arms for which we have both at least a tile in the map AND is listed in the input file
-        switcher = new BanditSwitch(discretization.getNumberOfGroups(),
-                                    integer -> discretization.isValid(integer) && rowNames.contains(integer));
-
-        //here we store only the betas which have a model arm associated to it
-        ArrayList<double[]> effectiveBetas = new ArrayList<>();
-        ArrayList<ObservationExtractor[]> effectiveCovariates = new ArrayList<>();
-        for(int i=0; i<discretization.getNumberOfGroups(); i++)
-        {
-            int rowNumber = rowNames.indexOf(i);
-            if(rowNumber<0)
-                continue;
-            Integer arm = switcher.getArm(i);
-            if(arm==null) //there might not be anything in the map associated with this arm, ignore it then!
-                continue;
-            effectiveBetas.add(betas[rowNumber]);
-            effectiveCovariates.add(covariates[rowNumber]);
-        }
-        //the numbers should all match
-        assert effectiveBetas.size() == effectiveCovariates.size();
-        assert effectiveBetas.size() == switcher.getNumberOfArms();
-
-
-        this.input = new LogisticInputMaker(
-                effectiveCovariates.toArray(new ObservationExtractor[effectiveCovariates.size()][]),
-                arm -> {
-                    List<SeaTile> group = discretization.getGroup(switcher.getGroup(arm));
-                    return FishStateUtilities.getValidSeatileFromGroup(random,
-                                                                       group,
-                                                                       this.automaticallyAvoidMPA,
-                                                                       fisher,
-                                                                       model,
-                                                                       this.automaticallyAvoidWastelands,
-                                                                       50);
-                }
-        );
-        this.classifier = new LogisticMultiClassifier(
-                effectiveBetas.toArray(new double[effectiveBetas.size()][]));
-
-
-        this.memory = new DiscretizedLocationMemory(discretization);
-
-
-
-
-
-
-
-    }
-
+    private LogisticLog log;
     /**
      * delegate object that re-routes adaptation back to this function
      */
@@ -183,14 +96,88 @@ public class LogitDestinationStrategy implements DestinationStrategy {
             //nothing
         }
     };
+    private boolean started = false;
+    private Fisher fisher;
+    private FishState model;
+
+    /**
+     * @param betas                        table of all the betas (some might be ignored if the map doesn't cover them)
+     * @param covariates                   table of all hte observation extractors (generate x on the spot)
+     * @param rowNames                     column that assign to each row of betas the group it belongs to
+     * @param discretization               the discretization map
+     * @param automaticallyAvoidMPA        automatically avoid not allowed areas
+     * @param automaticallyAvoidWastelands automatically avoid areas where fish can't grow
+     */
+    public LogitDestinationStrategy(
+        double[][] betas, ObservationExtractor[][] covariates,
+        List<Integer> rowNames,
+        MapDiscretization discretization,
+        FavoriteDestinationStrategy delegate,
+        MersenneTwisterFast random,
+        boolean automaticallyAvoidMPA, boolean automaticallyAvoidWastelands
+    ) {
+        this.automaticallyAvoidMPA = automaticallyAvoidMPA;
+        this.automaticallyAvoidWastelands = automaticallyAvoidWastelands;
+
+        Preconditions.checkArgument(rowNames.size() == betas.length, "Row names do not match number of betas");
+        Preconditions.checkArgument(rowNames.size() == covariates.length,
+            "Row names do not match number of covariates");
+
+        this.delegate = delegate;
+        this.discretization = discretization;
+
+        //only model arms for which we have both at least a tile in the map AND is listed in the input file
+        switcher = new BanditSwitch(
+            discretization.getNumberOfGroups(),
+            integer -> discretization.isValid(integer) && rowNames.contains(integer)
+        );
+
+        //here we store only the betas which have a model arm associated to it
+        ArrayList<double[]> effectiveBetas = new ArrayList<>();
+        ArrayList<ObservationExtractor[]> effectiveCovariates = new ArrayList<>();
+        for (int i = 0; i < discretization.getNumberOfGroups(); i++) {
+            int rowNumber = rowNames.indexOf(i);
+            if (rowNumber < 0)
+                continue;
+            Integer arm = switcher.getArm(i);
+            if (arm == null) //there might not be anything in the map associated with this arm, ignore it then!
+                continue;
+            effectiveBetas.add(betas[rowNumber]);
+            effectiveCovariates.add(covariates[rowNumber]);
+        }
+        //the numbers should all match
+        assert effectiveBetas.size() == effectiveCovariates.size();
+        assert effectiveBetas.size() == switcher.getNumberOfArms();
 
 
+        this.input = new LogisticInputMaker(
+            effectiveCovariates.toArray(new ObservationExtractor[effectiveCovariates.size()][]),
+            arm -> {
+                List<SeaTile> group = discretization.getGroup(switcher.getGroup(arm));
+                return FishStateUtilities.getValidSeatileFromGroup(
+                    random,
+                    group,
+                    this.automaticallyAvoidMPA,
+                    fisher,
+                    model,
+                    this.automaticallyAvoidWastelands,
+                    50
+                );
+            }
+        );
+        this.classifier = new LogisticMultiClassifier(
+            effectiveBetas.toArray(new double[effectiveBetas.size()][]));
 
+
+        this.memory = new DiscretizedLocationMemory(discretization);
+
+
+    }
 
     @Override
     public void start(FishState model, Fisher fisher) {
 
-        Preconditions.checkState(!started,"Already started!");
+        Preconditions.checkState(!started, "Already started!");
         started = true;
         this.model = model;
         this.fisher = fisher;
@@ -198,17 +185,18 @@ public class LogitDestinationStrategy implements DestinationStrategy {
         fisher.addPerTripAdaptation(adaptation);
         //keep in memory the last time the arm was chosen
         fisher.setDiscretizedLocationMemory(memory);
-        adaptation.adapt(fisher,model,fisher.grabRandomizer());
+        adaptation.adapt(fisher, model, fisher.grabRandomizer());
     }
 
     /**
      * calls the multi-logit regression to choose a new arm then pick at random from that group
-     * @param state the model
+     *
+     * @param state  the model
      * @param random the randomizer
      * @param fisher the agent making the choie
      */
     public void adapt(FishState state, MersenneTwisterFast random, Fisher fisher) {
-        if(!fisher.isAllowedAtSea())
+        if (!fisher.isAllowedAtSea())
             return;
 
         SeaTile destination = null;
@@ -216,29 +204,29 @@ public class LogitDestinationStrategy implements DestinationStrategy {
         double[][] input = this.input.getRegressionInput(fisher, state);
         if (log != null)
             log.recordInput(input);
-        int armChosen = - 1;
-        while(destination == null) {
+        int armChosen = -1;
+        while (destination == null) {
 
             armChosen = classifier.choose(input, random);
 
 
-
             destination = this.input.getLastExtraction().get(armChosen);
-            if(destination!=null && destination.isLand())
-                destination=null;
-            if(numberOfTrials++>100) {
+            if (destination != null && destination.isLand())
+                destination = null;
+            if (numberOfTrials++ > 100) {
                 Log.warn("Failed to compute any valid logit here, failed to adapt");
                 return;
             }
 
         }
         if (log != null)
-            log.recordChoice(armChosen,
-                    state.getYear(),
-                    state.getDayOfTheYear());
+            log.recordChoice(
+                armChosen,
+                state.getYear(),
+                state.getDayOfTheYear()
+            );
 
         delegate.setFavoriteSpot(destination);
-
 
 
     }
@@ -247,7 +235,7 @@ public class LogitDestinationStrategy implements DestinationStrategy {
     @Override
     public void turnOff(Fisher fisher) {
 
-        if(started)
+        if (started)
             fisher.removePerTripAdaptation(adaptation);
         delegate.turnOff(fisher);
     }
@@ -262,7 +250,8 @@ public class LogitDestinationStrategy implements DestinationStrategy {
      */
     @Override
     public SeaTile chooseDestination(
-            Fisher fisher, MersenneTwisterFast random, FishState model, Action currentAction) {
+        Fisher fisher, MersenneTwisterFast random, FishState model, Action currentAction
+    ) {
         return delegate.chooseDestination(fisher, random, model, currentAction);
     }
 

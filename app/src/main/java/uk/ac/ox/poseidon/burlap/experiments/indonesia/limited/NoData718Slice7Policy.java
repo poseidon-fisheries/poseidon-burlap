@@ -631,8 +631,10 @@ public class NoData718Slice7Policy {
                         }
 
                         Species correctSpecies = model.getSpecies(speciesName);
-                        MaximumOfFilters vulnerability = new MaximumOfFilters(Iterables.toArray(fleetFilters,
-                            LogisticSimpleFilter.class));
+                        MaximumOfFilters vulnerability = new MaximumOfFilters(Iterables.toArray(
+                            fleetFilters,
+                            LogisticSimpleFilter.class
+                        ));
                         FishingMortalityAgent newAgent = new FishingMortalityAgent(vulnerability, correctSpecies, true);
                         model.registerStartable(newAgent);
 

@@ -41,29 +41,27 @@ import java.util.List;
 
 /**
  * Uses a simple SOFTMAX rule to force each agent to change its destination strategy as if evolving.
- *
+ * <p>
  * Created by carrknight on 2/28/17.
  */
-public class StrategyReplicator implements Startable,Steppable{
+public class StrategyReplicator implements Startable, Steppable {
 
 
     private final List<AlgorithmFactory<? extends DestinationStrategy>> options;
 
     private final double lastObservedFitnesses[];
-    private double temperature = 1;
-
     private final ObjectiveFunction<Fisher> objectiveFunction;
-    private Stoppable stoppable;
-
-
     /**
      * individual probability of not replicating
      */
-    private final double inertia ;
+    private final double inertia;
+    private double temperature = 1;
+    private Stoppable stoppable;
 
     public StrategyReplicator(
-            List<AlgorithmFactory<? extends DestinationStrategy>> options,
-            ObjectiveFunction<Fisher> objectiveFunction, double inertia) {
+        List<AlgorithmFactory<? extends DestinationStrategy>> options,
+        ObjectiveFunction<Fisher> objectiveFunction, double inertia
+    ) {
         this.options = options;
         this.lastObservedFitnesses = new double[options.size()];
         this.objectiveFunction = objectiveFunction;
@@ -86,14 +84,16 @@ public class StrategyReplicator implements Startable,Steppable{
 
     private void evolve(FishState model) {
         //softmax selector
-        BoltzmannDistribution distribution = new BoltzmannDistribution(lastObservedFitnesses,temperature);
-        for(Fisher fisher : (model).getFishers()) {
+        BoltzmannDistribution distribution = new BoltzmannDistribution(lastObservedFitnesses, temperature);
+        for (Fisher fisher : (model).getFishers()) {
             //inertia can block you as well as regulations
-            if(!model.getRandom().nextBoolean(inertia) && fisher.isAllowedAtSea() && fisher.getHoursAtPort() < 48) {
+            if (!model.getRandom().nextBoolean(inertia) && fisher.isAllowedAtSea() && fisher.getHoursAtPort() < 48) {
                 int newStrategy = distribution.sample();
                 fisher.setDestinationStrategy(
-                        new ReplicatorDrivenDestinationStrategy(newStrategy,
-                                                                options.get(newStrategy).apply(model)));
+                    new ReplicatorDrivenDestinationStrategy(
+                        newStrategy,
+                        options.get(newStrategy).apply(model)
+                    ));
             }
         }
     }
@@ -101,17 +101,15 @@ public class StrategyReplicator implements Startable,Steppable{
     private void updateFitnesses(FishState simState) {
         ObservableList<Fisher> fishers = simState.getFishers();
         DoubleSummaryStatistics statistics[] =
-                new DoubleSummaryStatistics[lastObservedFitnesses.length];
+            new DoubleSummaryStatistics[lastObservedFitnesses.length];
         Arrays.setAll(statistics, value -> new DoubleSummaryStatistics());
         //get each fishers' utility
-        for(Fisher fisher : fishers)
-        {
+        for (Fisher fisher : fishers) {
 
             int index = ((ReplicatorDrivenDestinationStrategy) fisher.getDestinationStrategy()).getStrategyIndex();
             statistics[index].accept(objectiveFunction.computeCurrentFitness(fisher, fisher));
         }
-        for(int i=0; i<options.size(); i++)
-        {
+        for (int i = 0; i < options.size(); i++) {
             lastObservedFitnesses[i] = statistics[i].getAverage();
 
 
@@ -127,7 +125,7 @@ public class StrategyReplicator implements Startable,Steppable{
     @Override
     public void start(FishState model) {
 
-        Preconditions.checkArgument(stoppable==null);
+        Preconditions.checkArgument(stoppable == null);
         //schedule yourself
         stoppable = model.scheduleEveryXDay(this, StepOrder.POLICY_UPDATE, 60);
     }
@@ -137,7 +135,7 @@ public class StrategyReplicator implements Startable,Steppable{
      */
     @Override
     public void turnOff() {
-        if(stoppable!=null)
+        if (stoppable != null)
             stoppable.stop();
 
     }

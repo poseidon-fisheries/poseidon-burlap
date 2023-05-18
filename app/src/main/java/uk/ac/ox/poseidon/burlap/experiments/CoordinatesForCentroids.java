@@ -32,16 +32,14 @@ import java.util.List;
 /**
  * Created by carrknight on 8/7/17.
  */
-public class CoordinatesForCentroids
-{
+public class CoordinatesForCentroids {
 
 
-    private final static int[] groupNames = new int[]{50,51,61,62,63,73,85,86,97,98,109,110,122,134,135,147,148,160,161,173,174,186,187,198,199,200,212,213,225,226,237,238};
+    private final static int[] groupNames = new int[]{50, 51, 61, 62, 63, 73, 85, 86, 97, 98, 109, 110, 122, 134, 135, 147, 148, 160, 161, 173, 174, 186, 187, 198, 199, 200, 212, 213, 225, 226, 237, 238};
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
-        CaliforniaAbundanceScenario scenario  = new CaliforniaAbundanceScenario();
+        CaliforniaAbundanceScenario scenario = new CaliforniaAbundanceScenario();
         FishState state = new FishState(0l);
         state.setScenario(scenario);
         state.start();
@@ -54,18 +52,16 @@ public class CoordinatesForCentroids
 
         List<SeaTile>[] groups = discretizer.discretize(state.getMap());
         System.out.println(groups.length);
-        for(int i=0; i<groups.length; i++)
-        {
-            for(SeaTile tile : groups[i]) {
+        for (int i = 0; i < groups.length; i++) {
+            for (SeaTile tile : groups[i]) {
                 Coordinate coordinates = state.getMap().getCoordinates(tile);
-                System.out.println(coordinates.x +","+coordinates.y + "," + groupNames[i]);
-              //  System.out.println(tile.getGridX() +","+tile.getGridY() + "," + i);
+                System.out.println(coordinates.x + "," + coordinates.y + "," + groupNames[i]);
+                //  System.out.println(tile.getGridX() +","+tile.getGridY() + "," + i);
             }
         }
 
 
     }
-
 
 
 }

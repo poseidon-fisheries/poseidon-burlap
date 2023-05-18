@@ -31,8 +31,9 @@ public class BarebonesContinuousDestinationFactory extends BarebonesLogitDestina
 
     @Override
     public ObservationExtractor buildHabitExtractor(
-            MapDiscretization discretization, int period) {
-        return new PeriodHabitContinuousExtractor(discretization,period);
+        MapDiscretization discretization, int period
+    ) {
+        return new PeriodHabitContinuousExtractor(discretization, period);
 
     }
 }

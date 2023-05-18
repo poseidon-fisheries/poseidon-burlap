@@ -1,16 +1,13 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.opencsv.CSVReader;
 import ec.util.MersenneTwisterFast;
-import org.checkerframework.checker.units.qual.C;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.fisher.equipment.gear.factory.HeterogeneousGearFactory;
 import uk.ac.ox.oxfish.fisher.equipment.gear.factory.SimpleLogisticGearFactory;
-import uk.ac.ox.oxfish.fisher.strategies.departing.MonthlyDepartingDecorator;
 import uk.ac.ox.oxfish.model.AdditionalStartable;
 import uk.ac.ox.oxfish.model.BatchRunner;
 import uk.ac.ox.oxfish.model.FishState;
@@ -18,11 +15,9 @@ import uk.ac.ox.oxfish.model.StepOrder;
 import uk.ac.ox.oxfish.model.market.AbstractMarket;
 import uk.ac.ox.oxfish.model.plugins.FullSeasonalRetiredDataCollectorsFactory;
 import uk.ac.ox.oxfish.model.regs.FishingSeason;
-import uk.ac.ox.oxfish.model.regs.TemporaryRegulation;
 import uk.ac.ox.oxfish.model.scenario.FlexibleScenario;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
-import uk.ac.ox.oxfish.utility.Season;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
 
@@ -38,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class NoDataTachiuoSlice1Policy {
 
@@ -46,24 +40,19 @@ public class NoDataTachiuoSlice1Policy {
     public static final int SEED = 0;
     public static final int YEARS_FROM_POLICY_TO_RUN = 15;
     private static Path OUTPUT_FOLDER =
-            Paths.get("docs", "20200425 abc_example","slice4").resolve("outputs_opt");
-
+        Paths.get("docs", "20200425 abc_example", "slice4").resolve("outputs_opt");
 
 
     static private LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies = new LinkedHashMap();
 
 
-
     static {
 
 
-
-
-
         policies.put(
-                "BAU",
-                integer -> scenario -> {
-                }
+            "BAU",
+            integer -> scenario -> {
+            }
 
 
         );
@@ -176,59 +165,63 @@ public class NoDataTachiuoSlice1Policy {
 
     }
 
-    private static Consumer<Scenario> gearGeneration(Integer shockYear, final double selex1Multiplier,
-                                                     final double selex2Multiplier) {
+    private static Consumer<Scenario> gearGeneration(
+        Integer shockYear, final double selex1Multiplier,
+        final double selex2Multiplier
+    ) {
         return new Consumer<Scenario>() {
             @Override
             public void accept(Scenario scenario) {
                 final HeterogeneousGearFactory gear =
-                        (HeterogeneousGearFactory) ((FlexibleScenario) scenario).getFisherDefinitions().get(0).getGear();
+                    (HeterogeneousGearFactory) ((FlexibleScenario) scenario).getFisherDefinitions().get(0).getGear();
                 //make a copy through YAML
                 final FishYAML yaml = new FishYAML();
-                final HeterogeneousGearFactory futureGear = yaml.loadAs(yaml.dump(gear), HeterogeneousGearFactory.class);
+                final HeterogeneousGearFactory futureGear = yaml.loadAs(
+                    yaml.dump(gear),
+                    HeterogeneousGearFactory.class
+                );
                 final SimpleLogisticGearFactory タチウオ = (SimpleLogisticGearFactory) futureGear.getGears().get("タチウオ");
                 タチウオ.setSelexParameter2(
-                        new FixedDoubleParameter(
-                                タチウオ.getSelexParameter2().applyAsDouble(new MersenneTwisterFast()) * selex2Multiplier));
+                    new FixedDoubleParameter(
+                        タチウオ.getSelexParameter2().applyAsDouble(new MersenneTwisterFast()) * selex2Multiplier));
                 タチウオ.setSelexParameter1(
-                        new FixedDoubleParameter(
-                                タチウオ.getSelexParameter1().applyAsDouble(new MersenneTwisterFast()) * selex1Multiplier));
-
+                    new FixedDoubleParameter(
+                        タチウオ.getSelexParameter1().applyAsDouble(new MersenneTwisterFast()) * selex1Multiplier));
 
 
                 ((FlexibleScenario) scenario).getPlugins().add(
-                        new AlgorithmFactory<AdditionalStartable>() {
-                            @Override
-                            public AdditionalStartable apply(FishState fishState) {
+                    new AlgorithmFactory<AdditionalStartable>() {
+                        @Override
+                        public AdditionalStartable apply(FishState fishState) {
 
-                                return new AdditionalStartable() {
-                                    @Override
-                                    public void start(FishState model) {
-                                        model.scheduleOnceAtTheBeginningOfYear(
-                                                new Steppable() {
-                                                    @Override
-                                                    public void step(SimState simState) {
+                            return new AdditionalStartable() {
+                                @Override
+                                public void start(FishState model) {
+                                    model.scheduleOnceAtTheBeginningOfYear(
+                                        new Steppable() {
+                                            @Override
+                                            public void step(SimState simState) {
 
-                                                        for (Fisher fisher : ((FishState) simState).getFishers()) {
+                                                for (Fisher fisher : ((FishState) simState).getFishers()) {
 
-                                                            fisher.setGear(
-                                                                    futureGear.apply(((FishState) simState))
-                                                            );
+                                                    fisher.setGear(
+                                                        futureGear.apply(((FishState) simState))
+                                                    );
 
-                                                        }
-
-
-                                                    }
-                                                },
-                                                StepOrder.DAWN,
-                                                shockYear
-                                        );
+                                                }
 
 
-                                    }
-                                };
-                            }
+                                            }
+                                        },
+                                        StepOrder.DAWN,
+                                        shockYear
+                                    );
+
+
+                                }
+                            };
                         }
+                    }
                 );
             }
         };
@@ -239,36 +232,36 @@ public class NoDataTachiuoSlice1Policy {
             @Override
             public void accept(Scenario scenario) {
                 ((FlexibleScenario) scenario).getPlugins().add(
-                        new AlgorithmFactory<AdditionalStartable>() {
-                            @Override
-                            public AdditionalStartable apply(FishState fishState) {
+                    new AlgorithmFactory<AdditionalStartable>() {
+                        @Override
+                        public AdditionalStartable apply(FishState fishState) {
 
-                                return new AdditionalStartable() {
-                                    @Override
-                                    public void start(FishState model) {
-                                        model.scheduleOnceAtTheBeginningOfYear(
-                                                new Steppable() {
-                                                    @Override
-                                                    public void step(SimState simState) {
+                            return new AdditionalStartable() {
+                                @Override
+                                public void start(FishState model) {
+                                    model.scheduleOnceAtTheBeginningOfYear(
+                                        new Steppable() {
+                                            @Override
+                                            public void step(SimState simState) {
 
-                                                        for (Fisher fisher : ((FishState) simState).getFishers()) {
-                                                            fisher.setRegulation(
-                                                                    new FishingSeason(true, daysOpened)
-                                                            );
-                                                        }
-
-
-                                                    }
-                                                },
-                                                StepOrder.DAWN,
-                                                shockYear
-                                        );
+                                                for (Fisher fisher : ((FishState) simState).getFishers()) {
+                                                    fisher.setRegulation(
+                                                        new FishingSeason(true, daysOpened)
+                                                    );
+                                                }
 
 
-                                    }
-                                };
-                            }
+                                            }
+                                        },
+                                        StepOrder.DAWN,
+                                        shockYear
+                                    );
+
+
+                                }
+                            };
                         }
+                    }
                 );
             }
         };
@@ -277,7 +270,7 @@ public class NoDataTachiuoSlice1Policy {
     public static void main(String[] args) throws IOException {
 
         CSVReader reader = new CSVReader(new FileReader(
-                OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
+            OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -285,8 +278,8 @@ public class NoDataTachiuoSlice1Policy {
 
             String[] row = strings.get(i);
             runOnePolicySimulation(
-                    Paths.get(row[0]),
-                    Integer.parseInt(row[1])
+                Paths.get(row[0]),
+                Integer.parseInt(row[1])
             );
         }
 
@@ -294,20 +287,20 @@ public class NoDataTachiuoSlice1Policy {
     }
 
 
-    private static void runOnePolicySimulation(Path scenarioFile,
-                                               int yearOfPolicyShock) throws IOException {
+    private static void runOnePolicySimulation(
+        Path scenarioFile,
+        int yearOfPolicyShock
+    ) throws IOException {
 
-        if(!Files.exists(scenarioFile))
-        {
-            System.err.println(scenarioFile+ " does not exist!");
+        if (!Files.exists(scenarioFile)) {
+            System.err.println(scenarioFile + " does not exist!");
             return;
         }
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists())
-        {
+        if (OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
@@ -323,18 +316,20 @@ public class NoDataTachiuoSlice1Policy {
 
             //add policy!
             final Consumer<Scenario> totalConsumer =
-                    policyRun.getValue().apply(yearOfPolicyShock)
-                            .andThen(
-                                    //collect full-time vs part-time stuff
-                                    scenario -> ((FlexibleScenario) scenario).getPlugins().add(
-                                            new FullSeasonalRetiredDataCollectorsFactory()
-                                    )
-                            );;
+                policyRun.getValue().apply(yearOfPolicyShock)
+                    .andThen(
+                        //collect full-time vs part-time stuff
+                        scenario -> ((FlexibleScenario) scenario).getPlugins().add(
+                            new FullSeasonalRetiredDataCollectorsFactory()
+                        )
+                    );
+            ;
 
-            BatchRunner runner =  setupRunner(scenarioFile,
-                    yearOfPolicyShock+ YEARS_FROM_POLICY_TO_RUN,
-                    null, SEED,
-                    null);
+            BatchRunner runner = setupRunner(scenarioFile,
+                yearOfPolicyShock + YEARS_FROM_POLICY_TO_RUN,
+                null, SEED,
+                null
+            );
 
             //give it the scenario
             runner.setScenarioSetup(totalConsumer);
@@ -359,53 +354,48 @@ public class NoDataTachiuoSlice1Policy {
     }
 
 
-
-
-
-
     public static BatchRunner setupRunner(
-            Path scenarioFile,
-            final int yearsToRun,
-            Path outputFolder, long seed,
-                    List<String> additionalColumnsToPrint) {
+        Path scenarioFile,
+        final int yearsToRun,
+        Path outputFolder, long seed,
+        List<String> additionalColumnsToPrint
+    ) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(
-                "SPR タチウオ spr_agent"
-                ,"タチウオ Landings"
-                ,"Total Hours Out of population0"
-                ,"Number Of Active Fishers"
-                ,"Actual Average Cash-Flow"
-                ,"Exogenous catches of タチウオ"
-                ,"Biomass タチウオ",
-                "Actual Average Cash Balance",
-                "タチウオ" + " " + AbstractMarket.EARNINGS_COLUMN_NAME,
-                "Average Trip Earnings",
-                "Average Trip Variable Costs",
-                //"Average Hours Out",
-                "Actual Average Hours Out",
-                "Total Effort",
-                "Actual Median Trip Profits",
-                "Total Number of Trips"
+            "SPR タチウオ spr_agent"
+            , "タチウオ Landings"
+            , "Total Hours Out of population0"
+            , "Number Of Active Fishers"
+            , "Actual Average Cash-Flow"
+            , "Exogenous catches of タチウオ"
+            , "Biomass タチウオ",
+            "Actual Average Cash Balance",
+            "タチウオ" + " " + AbstractMarket.EARNINGS_COLUMN_NAME,
+            "Average Trip Earnings",
+            "Average Trip Variable Costs",
+            //"Average Hours Out",
+            "Actual Average Hours Out",
+            "Total Effort",
+            "Actual Median Trip Profits",
+            "Total Number of Trips"
 
 
-
-                );
+        );
 
 
         columnsToPrint.add("Bt/K " + "タチウオ");
         columnsToPrint.add("タチウオ" + " Recruits");
-        columnsToPrint.add("Percentage Mature Catches " + "タチウオ" + " "+ "spr_agent");
-        columnsToPrint.add("Percentage Lopt Catches "  + "タチウオ" + " "+ "spr_agent");
-
+        columnsToPrint.add("Percentage Mature Catches " + "タチウオ" + " " + "spr_agent");
+        columnsToPrint.add("Percentage Lopt Catches " + "タチウオ" + " " + "spr_agent");
 
 
         return new BatchRunner(
-                scenarioFile,
-                yearsToRun,
-                columnsToPrint,
-                outputFolder,
-                null,
-                seed,
-                -1
+            scenarioFile,
+            yearsToRun,
+            columnsToPrint,
+            outputFolder,
+            null,
+            seed,
+            -1
         );
     }
 }

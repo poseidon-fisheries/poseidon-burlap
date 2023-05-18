@@ -28,19 +28,19 @@ import com.google.common.base.Preconditions;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
-import uk.ac.ox.oxfish.model.regs.ExternalOpenCloseSeason;
-import uk.ac.ox.poseidon.burlap.burlapspike.ShodanEnvironment;
-import uk.ac.ox.poseidon.burlap.burlapspike.ShodanStateOil;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.Startable;
 import uk.ac.ox.oxfish.model.StepOrder;
 import uk.ac.ox.oxfish.model.data.Gatherer;
+import uk.ac.ox.oxfish.model.regs.ExternalOpenCloseSeason;
+import uk.ac.ox.poseidon.burlap.burlapspike.ShodanEnvironment;
+import uk.ac.ox.poseidon.burlap.burlapspike.ShodanStateOil;
 
 /**
  * A method that is stepped every month and opens/close a season with given QProvider
  * Created by carrknight on 1/3/17.
  */
-public class ShodanController implements Steppable,Startable{
+public class ShodanController implements Steppable, Startable {
 
 
     /**
@@ -70,25 +70,24 @@ public class ShodanController implements Steppable,Startable{
 
     /**
      * open or close the world
+     *
      * @param simState
      */
     @Override
-    public void step(SimState simState)
-    {
+    public void step(SimState simState) {
 
         //ask the policy what should be done
         ShodanStateOil state = ShodanStateOil.fromState((FishState) simState);
         Action action = policy.action(state);
         StringBuilder qvalues = new StringBuilder();
-        for(QValue qValue : qfunction.qValues(state))
+        for (QValue qValue : qfunction.qValues(state))
             qvalues.append(qValue.a.actionName()).append(" -> ").append(qValue.q).append(" | ");
 
-        System.out.println("shodan says: " +action + " , " + qvalues.toString());
+        System.out.println("shodan says: " + action + " , " + qvalues.toString());
         //actuate to the fishstate
-        if(action.actionName().equals(ShodanEnvironment.ACTION_OPEN))
+        if (action.actionName().equals(ShodanEnvironment.ACTION_OPEN))
             regulation.setOpen(true);
-        else
-            {
+        else {
             assert action.actionName().equals(ShodanEnvironment.ACTION_CLOSE);
             regulation.setOpen(false);
         }
@@ -104,20 +103,22 @@ public class ShodanController implements Steppable,Startable{
      */
     @Override
     public void start(FishState model) {
-        Preconditions.checkState(stoppable==null, "shodan has already started");
+        Preconditions.checkState(stoppable == null, "shodan has already started");
         //schedule yourself every month (but skip the first day since you need 30 days of data each step)
         model.scheduleEveryXDay(ShodanController.this, StepOrder.AFTER_DATA, 30);
 
         step(model);
         //add daily gatherer for policy
-        model.getDailyDataSet().registerGatherer("Shodan Policy",
-                                                  new Gatherer<FishState>() {
-                                                      @Override
-                                                      public Double apply(FishState state) {
-                                                          return regulation.isOpen() ? 0d : 1d;
-                                                      }
-                                                  },
-                                                  regulation.isOpen() ? 0d : 1d);
+        model.getDailyDataSet().registerGatherer(
+            "Shodan Policy",
+            new Gatherer<FishState>() {
+                @Override
+                public Double apply(FishState state) {
+                    return regulation.isOpen() ? 0d : 1d;
+                }
+            },
+            regulation.isOpen() ? 0d : 1d
+        );
     }
 
 
@@ -126,7 +127,7 @@ public class ShodanController implements Steppable,Startable{
      */
     @Override
     public void turnOff() {
-        Preconditions.checkArgument(stoppable==null);
+        Preconditions.checkArgument(stoppable == null);
         stoppable.stop();
     }
 

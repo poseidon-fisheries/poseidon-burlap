@@ -434,7 +434,8 @@ public class BurlapShodan {
         resultObject.put("order", order);
         resultObject.put("normalized", true);
         //run sarsa, return last fitness
-        final double fitness = runSarsa(new PolynomialBasis(inputFeatures, order, 1),
+        final double fitness = runSarsa(
+            new PolynomialBasis(inputFeatures, order, 1),
             name,
             discount,
             learningRate,
@@ -956,7 +957,8 @@ public class BurlapShodan {
         resultObject.put("normalized", false);
 
         //lspiRun sarsa, return last fitness
-        final double fitness = runSarsa(new PolynomialBasis(inputFeatures, order, 1),
+        final double fitness = runSarsa(
+            new PolynomialBasis(inputFeatures, order, 1),
             name,
             discount,
             learningRate,

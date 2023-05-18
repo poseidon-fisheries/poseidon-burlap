@@ -25,15 +25,35 @@ import java.util.Map;
 public class Mera718Policy {
 
 
-    public static final Path COLUMNS_TO_PRINT = MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve("full_columns_to_print.yaml");
+    public static final Path COLUMNS_TO_PRINT = MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve(
+        "full_columns_to_print.yaml");
+    public static final AdditionalStartable PRICE_CHANGE = new AdditionalStartable() {
+        @Override
+        public void start(FishState model) {
+
+            for (Port port : model.getPorts()) {
+                for (Market market : port.getDefaultMarketMap().getMarkets()) {
+                    final FlexibleAbundanceMarket castMarket = (FlexibleAbundanceMarket) ((MarketProxy) market).getDelegate();
+
+                    castMarket.setPricingStrategy(
+                        new ThresholdWeightPrice(
+                            castMarket.getMarginalPrice(),
+                            0,
+                            0.5
+                        )
+                    );
+                }
+            }
+        }
+    };
     static private LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> selectedPolicies =
-            new LinkedHashMap<>();
+        new LinkedHashMap<>();
+
     static {
 
 
-
         String[] otherPolicies = {
-                "MRreal"
+            "MRreal"
 //                "BAU",
 //                "multi_lastcatch_qb",
 //                "multi_lastcatch_70_qb",
@@ -53,13 +73,13 @@ public class Mera718Policy {
         };
 
 
-        for(String
-                policy : otherPolicies){
+        for (String
+            policy : otherPolicies) {
             final AlgorithmFactory<? extends AdditionalStartable> factory = MeraOneSpeciesSlice1.ALL_OF_THEM.get(policy);
-            Preconditions.checkArgument(factory!=null,policy);
+            Preconditions.checkArgument(factory != null, policy);
             selectedPolicies.put(
-                    policy,
-                    factory
+                policy,
+                factory
             );
         }
 
@@ -76,41 +96,20 @@ public class Mera718Policy {
 //                }
 //        );
         selectedPolicies.put(
-                "0_days",
-                fishState -> {
-                    return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(0, true);
-                }
+            "0_days",
+            fishState -> {
+                return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(0, true);
+            }
         );
-
-
 
 
     }
 
-    public static final AdditionalStartable PRICE_CHANGE = new AdditionalStartable() {
-        @Override
-        public void start(FishState model) {
-
-            for (Port port : model.getPorts()) {
-                for (Market market : port.getDefaultMarketMap().getMarkets()) {
-                    final FlexibleAbundanceMarket castMarket = (FlexibleAbundanceMarket) ((MarketProxy) market).getDelegate();
-
-                    castMarket.setPricingStrategy(
-                            new ThresholdWeightPrice(
-                                    castMarket.getMarginalPrice(),
-                                    0,
-                                    0.5
-                            )
-                    );
-                }
-            }
-        }
-    };
-
-
-    public static void run(Path mainDirectory, Path pathToOutput, String scenarioListName,
-                           final LinkedHashMap<String,
-                                   AlgorithmFactory<? extends AdditionalStartable>> policies) throws IOException {
+    public static void run(
+        Path mainDirectory, Path pathToOutput, String scenarioListName,
+        final LinkedHashMap<String,
+            AlgorithmFactory<? extends AdditionalStartable>> policies
+    ) throws IOException {
 
         pathToOutput.toFile().mkdirs();
 
@@ -119,34 +118,35 @@ public class Mera718Policy {
         //adding additional startables!
         for (Map.Entry<String, AlgorithmFactory<? extends AdditionalStartable>> policyFactory : policies.entrySet()) {
             adjustedPolicies.put(
-                    policyFactory.getKey(),
-                    new AlgorithmFactory<AdditionalStartable>() {
-                        @Override
-                        public AdditionalStartable apply(FishState fishState) {
-                            //2. pull up delegate regulation for active agents (keep inactive agents off)
-                            for (Fisher fisher : fishState.getFishers()) {
-                                assert fisher.getRegulation() instanceof OffSwitchDecorator;
-                                fisher.setRegulation(new Anarchy());
-                            }
-                            //need to change the factory too...
-                            final AlgorithmFactory<? extends Regulation> newReg =
-                                    new AnarchyFactory();
-                            fishState.getFisherFactory("population0").setRegulations(newReg);
-
-                            AbundanceGathererBuilder builder = new AbundanceGathererBuilder();
-                            builder.setObservationDay(364);
-                            builder.apply(fishState);
-
-                            return policyFactory.getValue().apply(fishState);
-
-
+                policyFactory.getKey(),
+                new AlgorithmFactory<AdditionalStartable>() {
+                    @Override
+                    public AdditionalStartable apply(FishState fishState) {
+                        //2. pull up delegate regulation for active agents (keep inactive agents off)
+                        for (Fisher fisher : fishState.getFishers()) {
+                            assert fisher.getRegulation() instanceof OffSwitchDecorator;
+                            fisher.setRegulation(new Anarchy());
                         }
+                        //need to change the factory too...
+                        final AlgorithmFactory<? extends Regulation> newReg =
+                            new AnarchyFactory();
+                        fishState.getFisherFactory("population0").setRegulations(newReg);
+
+                        AbundanceGathererBuilder builder = new AbundanceGathererBuilder();
+                        builder.setObservationDay(364);
+                        builder.apply(fishState);
+
+                        return policyFactory.getValue().apply(fishState);
+
+
                     }
+                }
             );
         }
         MeraOneSpeciesSlice1.runSetOfScenarios(pathToScenarioFiles,
-                                               pathToOutput,
-                                               adjustedPolicies, 50, COLUMNS_TO_PRINT, null);
+            pathToOutput,
+            adjustedPolicies, 50, COLUMNS_TO_PRINT, null
+        );
 
     }
 
@@ -171,15 +171,15 @@ public class Mera718Policy {
 //            selectedPolicies
 //            );
 //
-        run(Paths.get("docs", "mera_hub", "slice2_nogeography_onespecies").resolve("results"),
-            Paths.get("docs","mera_hub","additional_runs","slice2"),
+        run(
+            Paths.get("docs", "mera_hub", "slice2_nogeography_onespecies").resolve("results"),
+            Paths.get("docs", "mera_hub", "additional_runs", "slice2"),
             "scenario_list.csv",
             selectedPolicies
-            );
+        );
 
 
     }
-
 
 
 //

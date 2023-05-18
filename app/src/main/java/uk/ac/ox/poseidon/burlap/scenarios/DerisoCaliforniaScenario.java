@@ -40,15 +40,21 @@ import java.util.Map;
 public class DerisoCaliforniaScenario extends CaliforniaAbstractScenario {
 
 
-
     private MultipleSpeciesDerisoInitializer initializer;
 
 
     private String derisoFileNames = "deriso_2007.yaml";
 
-    private HashMap<String,String> movement = new HashMap<>();
+    private HashMap<String, String> movement = new HashMap<>();
+
     {
-        movement.put("Sablefish","0.0001");
+        movement.put("Sablefish", "0.0001");
+    }
+
+    {
+
+        super.setMainDirectory(Paths.get("inputs", "simple_california"));
+        super.setUsePremadeInput(false);
     }
 
     /**
@@ -60,17 +66,20 @@ public class DerisoCaliforniaScenario extends CaliforniaAbstractScenario {
      */
     @Override
     protected GlobalBiology buildBiology(
-            FishState model, LinkedHashMap<String, Path> folderMap) {
-        initializer = new MultipleSpeciesDerisoInitializer(folderMap,true);
+        FishState model, LinkedHashMap<String, Path> folderMap
+    ) {
+        initializer = new MultipleSpeciesDerisoInitializer(folderMap, true);
         initializer.setDerisoYamlFileName(derisoFileNames);
 
 
-        GlobalBiology biology = initializer.generateGlobal(model.getRandom(),
-                                             model);
+        GlobalBiology biology = initializer.generateGlobal(
+            model.getRandom(),
+            model
+        );
 
-        LinkedHashMap<Species,Double>  recast = new LinkedHashMap<>();
+        LinkedHashMap<Species, Double> recast = new LinkedHashMap<>();
         for (Map.Entry<String, String> exogenous : movement.entrySet()) {
-            recast.put(biology.getSpecie(exogenous.getKey()),Double.parseDouble(exogenous.getValue()));
+            recast.put(biology.getSpecie(exogenous.getKey()), Double.parseDouble(exogenous.getValue()));
         }
         initializer.setMovementRate(recast);
 
@@ -86,17 +95,11 @@ public class DerisoCaliforniaScenario extends CaliforniaAbstractScenario {
 
     @Override
     protected ExogenousCatches turnIntoExogenousCatchesObject(
-            LinkedHashMap<Species, Double> recast) {
+        LinkedHashMap<Species, Double> recast
+    ) {
 
-            return new BiomassDrivenFixedExogenousCatches(recast, false);
+        return new BiomassDrivenFixedExogenousCatches(recast, false);
 
-    }
-
-
-    {
-
-        super.setMainDirectory(Paths.get("inputs","simple_california"));
-        super.setUsePremadeInput(false);
     }
 
     /**

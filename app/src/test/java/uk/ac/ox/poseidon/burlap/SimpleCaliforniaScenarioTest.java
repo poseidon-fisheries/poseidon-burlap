@@ -47,13 +47,11 @@ import static org.junit.Assert.assertEquals;
 public class SimpleCaliforniaScenarioTest {
 
 
-
     //if there is no fishing from the model, the biomass ought to go to about the right level
 
 
     @Test
     public void replicateTestSablefishTS() throws Exception {
-
 
 
         SimpleCaliforniaScenario scenario = new SimpleCaliforniaScenario();
@@ -66,16 +64,16 @@ public class SimpleCaliforniaScenarioTest {
         FishState state = new FishState(System.currentTimeMillis());
         state.setScenario(scenario);
         state.start();
-        while (state.getYear()<10) {
+        while (state.getYear() < 10) {
 
             state.schedule.step(state);
-            if(state.getDayOfTheYear()==1)
-                System.out.println(state.getTotalBiomass(state.getSpecies().get(0))/1000);
+            if (state.getDayOfTheYear() == 1)
+                System.out.println(state.getTotalBiomass(state.getSpecies().get(0)) / 1000);
         }
         state.schedule.step(state);
         double finalBiomass = state.getLatestYearlyObservation("Biomass Sablefish");
-        System.out.println(finalBiomass/1000);
-        Assert.assertEquals(finalBiomass/1000,364137.4,1);
+        System.out.println(finalBiomass / 1000);
+        Assert.assertEquals(finalBiomass / 1000, 364137.4, 1);
     }
 
 
@@ -85,13 +83,14 @@ public class SimpleCaliforniaScenarioTest {
 
         FishYAML yaml = new FishYAML();
         DerisoCaliforniaScenario scenario = yaml.loadAs(
-                new FileReader(
-                Paths.get("inputs","tests","deriso_comparison.yaml").toFile()),
-                DerisoCaliforniaScenario.class
-        ) ;
-        scenario.setDerisoFileNames("deriso.yaml");;
+            new FileReader(
+                Paths.get("inputs", "tests", "deriso_comparison.yaml").toFile()),
+            DerisoCaliforniaScenario.class
+        );
+        scenario.setDerisoFileNames("deriso.yaml");
+        ;
         LinkedHashMap<String, String> exogenousCatches = new LinkedHashMap<>();
-        exogenousCatches.put("Sablefish","8000000");
+        exogenousCatches.put("Sablefish", "8000000");
         scenario.setExogenousCatches(exogenousCatches);
         scenario.setRegulationPreReset(new FishingSeasonFactory(0, true));
         scenario.setResetBiologyAtYear1(false);
@@ -100,21 +99,20 @@ public class SimpleCaliforniaScenarioTest {
         FishState state = new FishState(System.currentTimeMillis());
         state.setScenario(scenario);
         state.start();
-        while (state.getYear()<10) {
+        while (state.getYear() < 10) {
 
             state.schedule.step(state);
-            if(state.getDayOfTheYear()==1)
-                System.out.println(state.getTotalBiomass(state.getSpecies().get(0))/1000);
+            if (state.getDayOfTheYear() == 1)
+                System.out.println(state.getTotalBiomass(state.getSpecies().get(0)) / 1000);
         }
         state.schedule.step(state);
         double finalBiomass = state.getLatestYearlyObservation("Biomass Sablefish");
-        System.out.println(finalBiomass/1000);
-        Assert.assertEquals(finalBiomass/1000,364137.4,1);
+        System.out.println(finalBiomass / 1000);
+        Assert.assertEquals(finalBiomass / 1000, 364137.4, 1);
     }
 
     @Test
     public void replicateTestYelloweye() throws Exception {
-
 
 
         SimpleCaliforniaScenario scenario = new SimpleCaliforniaScenario();
@@ -127,16 +125,16 @@ public class SimpleCaliforniaScenarioTest {
         FishState state = new FishState(System.currentTimeMillis());
         state.setScenario(scenario);
         state.start();
-        while (state.getYear()<10) {
+        while (state.getYear() < 10) {
 
             state.schedule.step(state);
-            if(state.getDayOfTheYear()==1)
-                System.out.println(state.getTotalBiomass(state.getSpecies().get(1))/1000);
+            if (state.getDayOfTheYear() == 1)
+                System.out.println(state.getTotalBiomass(state.getSpecies().get(1)) / 1000);
         }
         state.schedule.step(state);
         double finalBiomass = state.getLatestYearlyObservation("Biomass Yelloweye Rockfish");
-        System.out.println(finalBiomass/1000);
-        Assert.assertEquals(finalBiomass/1000,3092.21,.01);
+        System.out.println(finalBiomass / 1000);
+        Assert.assertEquals(finalBiomass / 1000, 3092.21, .01);
     }
 
 
@@ -155,14 +153,13 @@ public class SimpleCaliforniaScenarioTest {
 
         state.setScenario(scenario);
         state.start();
-        while(state.getYear()<2)
+        while (state.getYear() < 2)
             state.schedule.step(state);
         state.schedule.step(state);
 
         Double trades = state.getLatestYearlyObservation("ITQ Volume Of Yelloweye Rockfish");
         System.out.println(trades);
-        Assert.assertTrue(trades >0);
-
+        Assert.assertTrue(trades > 0);
 
 
     }
@@ -176,14 +173,16 @@ public class SimpleCaliforniaScenarioTest {
         state.start();
 
         for (int i = 0; i < 366; i++) {
-            double landings=0;
+            double landings = 0;
             state.schedule.step(state);
-            for(int age=0; age<60; age++) {
+            for (int age = 0; age < 60; age++) {
                 // System.out.println(age);
-                landings+=state.getDailyDataSet().getLatestObservation( "Sablefish " + FisherDailyTimeSeries.CATCHES_COLUMN_NAME + FlexibleAbundanceMarket.AGE_BIN_PREFIX + age);
+                landings += state.getDailyDataSet()
+                    .getLatestObservation("Sablefish " + FisherDailyTimeSeries.CATCHES_COLUMN_NAME + FlexibleAbundanceMarket.AGE_BIN_PREFIX + age);
             }
-            assertEquals(landings,
-                state.getDailyDataSet().getLatestObservation("Sablefish "+FisherDailyTimeSeries.CATCHES_COLUMN_NAME),
+            assertEquals(
+                landings,
+                state.getDailyDataSet().getLatestObservation("Sablefish " + FisherDailyTimeSeries.CATCHES_COLUMN_NAME),
                 .001
             );
 
@@ -192,15 +191,19 @@ public class SimpleCaliforniaScenarioTest {
         double sumHours = 0;
         double sumTrips = 0;
         double sumDuration = 0;
-        for(Fisher fisher : state.getFishers()) {
-            double hours = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.HOURS_OUT); sumHours+=hours;
-            double trips = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIPS); sumTrips+=trips;
-            double duration = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIP_DURATION); sumDuration+=duration;
-            System.out.println(hours + " " + trips + " " + duration + " --> " + (hours/trips) );
-            assertEquals(hours/trips,duration,.0001);
+        for (Fisher fisher : state.getFishers()) {
+            double hours = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.HOURS_OUT);
+            sumHours += hours;
+            double trips = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIPS);
+            sumTrips += trips;
+            double duration = fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIP_DURATION);
+            sumDuration += duration;
+            System.out.println(hours + " " + trips + " " + duration + " --> " + (hours / trips));
+            assertEquals(hours / trips, duration, .0001);
         }
         System.out.println("===========================================================");
-        System.out.println(sumHours + " " + sumTrips + " " + sumDuration/state.getFishers().size() + " --> " + (sumHours/sumTrips) );
+        System.out.println(sumHours + " " + sumTrips + " " + sumDuration / state.getFishers()
+            .size() + " --> " + (sumHours / sumTrips));
 
         //they might not be equal because you need to reweigh them!
 
@@ -210,8 +213,8 @@ public class SimpleCaliforniaScenarioTest {
         double hours = state.getLatestYearlyObservation("Average Hours Out");
         double trips = state.getLatestYearlyObservation("Average Number of Trips");
         double duration = state.getLatestYearlyObservation("Average Trip Duration");
-        System.out.println(hours + " " + trips + " " + duration + " --> " + (hours/trips) );
-        assertEquals(hours/trips,duration,.0001);
+        System.out.println(hours + " " + trips + " " + duration + " --> " + (hours / trips));
+        assertEquals(hours / trips, duration, .0001);
 
     }
 

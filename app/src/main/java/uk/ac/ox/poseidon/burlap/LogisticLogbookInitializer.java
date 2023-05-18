@@ -29,11 +29,11 @@ import uk.ac.ox.oxfish.fisher.log.LogisticLog;
 import uk.ac.ox.oxfish.fisher.log.LogisticLogs;
 import uk.ac.ox.oxfish.fisher.log.PseudoLogisticLogger;
 import uk.ac.ox.oxfish.fisher.log.initializers.LogbookInitializer;
-import uk.ac.ox.poseidon.burlap.strategies.LogitDestinationStrategy;
 import uk.ac.ox.oxfish.geography.discretization.MapDiscretization;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.StepOrder;
 import uk.ac.ox.oxfish.model.data.DiscretizationHistogrammer;
+import uk.ac.ox.poseidon.burlap.strategies.LogitDestinationStrategy;
 
 /**
  * Creates a logistic logbook
@@ -47,46 +47,43 @@ public class LogisticLogbookInitializer implements LogbookInitializer {
     private final ObservationExtractor[] commonExtractor;
 
     private final String[] extractorNames;
-
-
+    private final int histogrammerStartYear;
+    /**
+     * useful to discriminate between multiple outputs
+     */
+    private final String identifier;
     /**
      * the object doing the actual logbooking (actually a container for the individual logbook makers)
      */
     private LogisticLogs logger;
-
-    private final int histogrammerStartYear;
-
     /**
      * an additional output of the simulation, a histogram of trips to each spot
      */
     private DiscretizationHistogrammer histogrammer;
 
-    /**
-     * useful to discriminate between multiple outputs
-     */
-    private final String identifier;
-
 
     public LogisticLogbookInitializer(
-            MapDiscretization discretization,
-            ObservationExtractor[] commonExtractor,
-            String[] extractorNames, int histogrammerStartYear) {
-       this(discretization, commonExtractor, extractorNames, histogrammerStartYear, "");
+        MapDiscretization discretization,
+        ObservationExtractor[] commonExtractor,
+        String[] extractorNames, int histogrammerStartYear
+    ) {
+        this(discretization, commonExtractor, extractorNames, histogrammerStartYear, "");
     }
 
 
-
     public LogisticLogbookInitializer(
-            MapDiscretization discretization,
-            ObservationExtractor[] commonExtractor,
-            String[] extractorNames,
-            int histogrammerStartYear, String identifier) {
+        MapDiscretization discretization,
+        ObservationExtractor[] commonExtractor,
+        String[] extractorNames,
+        int histogrammerStartYear, String identifier
+    ) {
         this.discretization = discretization;
         this.commonExtractor = commonExtractor;
         this.extractorNames = extractorNames;
         this.histogrammerStartYear = histogrammerStartYear;
         this.identifier = identifier;
     }
+
     /**
      * this gets called by the fish-state right after the scenario has started. It's useful to set up steppables
      * or just to percolate a reference to the model
@@ -98,17 +95,14 @@ public class LogisticLogbookInitializer implements LogbookInitializer {
 
 
         logger = new LogisticLogs();
-        logger.setFileName( identifier + logger.getFileName());
+        logger.setFileName(identifier + logger.getFileName());
         //let it build, we won't start it until it's time though
         histogrammer = new DiscretizationHistogrammer(
-                discretization,false);
-        histogrammer.setFileName( identifier + histogrammer.getFileName());
+            discretization, false);
+        histogrammer.setFileName(identifier + histogrammer.getFileName());
 
         model.getOutputPlugins().add(logger);
         model.getOutputPlugins().add(histogrammer);
-
-
-
 
 
     }
@@ -125,21 +119,20 @@ public class LogisticLogbookInitializer implements LogbookInitializer {
     public void add(Fisher fisher, FishState state) {
 
 
-
         LogisticLog log = new LogisticLog(extractorNames, fisher.getID());
 
         PseudoLogisticLogger pseudoLogger = new PseudoLogisticLogger(
-                discretization,
-                commonExtractor,
-                log,
-                fisher,
-                state,
-                state.getRandom()
+            discretization,
+            commonExtractor,
+            log,
+            fisher,
+            state,
+            state.getRandom()
         );
 
         fisher.addTripListener(pseudoLogger);
         //add histogrammer now or when it is time!
-        if(histogrammerStartYear>=0) { //don't do anything if the start year is negative!
+        if (histogrammerStartYear >= 0) { //don't do anything if the start year is negative!
             if (state.getYear() >= histogrammerStartYear)
                 fisher.addTripListener(histogrammer);
             else
@@ -154,9 +147,9 @@ public class LogisticLogbookInitializer implements LogbookInitializer {
 
 
         //todo move this somewhere less unsavory
-        if(!(fisher.getDestinationStrategy() instanceof LogitDestinationStrategy))
+        if (!(fisher.getDestinationStrategy() instanceof LogitDestinationStrategy))
             fisher.setDiscretizedLocationMemory(
-                    new DiscretizedLocationMemory(discretization));
+                new DiscretizedLocationMemory(discretization));
 
     }
 }

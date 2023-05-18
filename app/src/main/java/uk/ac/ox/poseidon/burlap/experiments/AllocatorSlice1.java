@@ -51,10 +51,10 @@ public class AllocatorSlice1 {
 //        1440 | 2539726.1800000053 | 3249050.7353333333 | {-7.059, 3.367}
 
 
-    private final static Path MAIN_DIRECTORY = Paths.get("docs","20191004 allocator","slice1");
+    private final static Path MAIN_DIRECTORY = Paths.get("docs", "20191004 allocator", "slice1");
 
     private final static Path OPTIMIZATION_YAML_PATH =
-            MAIN_DIRECTORY.resolve("calibration.yaml");
+        MAIN_DIRECTORY.resolve("calibration.yaml");
 
     private final static String CALIBRATED_SCENARIO_NAME = "slice1_calibrated_spinup";
 
@@ -67,24 +67,24 @@ public class AllocatorSlice1 {
 
 
         AllocatorSlice0.maxHoldSizeExperiment("all",
-                                              new String[]{"population0","population1"},
-                                              CALIBRATED_SCENARIO_NAME,
-                                              2000000,
-                                              50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
+            new String[]{"population0", "population1"},
+            CALIBRATED_SCENARIO_NAME,
+            2000000,
+            50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
         );
 
         AllocatorSlice0.maxHoldSizeExperiment("small",
-                                              new String[]{"population0"},
-                                              CALIBRATED_SCENARIO_NAME,
-                                              2000000,
-                                              50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
+            new String[]{"population0"},
+            CALIBRATED_SCENARIO_NAME,
+            2000000,
+            50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
         );
 
         AllocatorSlice0.maxHoldSizeExperiment("large",
-                                              new String[]{"population1"},
-                                              CALIBRATED_SCENARIO_NAME,
-                                              2000000,
-                                              50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
+            new String[]{"population1"},
+            CALIBRATED_SCENARIO_NAME,
+            2000000,
+            50000, MAIN_DIRECTORY, MAIN_DIRECTORY, "Snapper", RUNS_PER_POLICY
         );
 
     }
@@ -93,12 +93,18 @@ public class AllocatorSlice1 {
         FishYAML yaml = new FishYAML();
 
         GenericOptimization optimization =
-                yaml.loadAs(new FileReader(OPTIMIZATION_YAML_PATH.toFile()),
-                            GenericOptimization.class);
+            yaml.loadAs(
+                new FileReader(OPTIMIZATION_YAML_PATH.toFile()),
+                GenericOptimization.class
+            );
 
-        Scenario scenario = GenericOptimization.buildScenario(CALIBRATION_BEST, Paths.get(optimization.getScenarioFile()).toFile(), optimization.getParameters());
-        Path outputFile = MAIN_DIRECTORY.resolve(CALIBRATED_SCENARIO_NAME+".yaml");
-        yaml.dump(scenario,new FileWriter(outputFile.toFile()));
+        Scenario scenario = GenericOptimization.buildScenario(
+            CALIBRATION_BEST,
+            Paths.get(optimization.getScenarioFile()).toFile(),
+            optimization.getParameters()
+        );
+        Path outputFile = MAIN_DIRECTORY.resolve(CALIBRATED_SCENARIO_NAME + ".yaml");
+        yaml.dump(scenario, new FileWriter(outputFile.toFile()));
     }
 
 

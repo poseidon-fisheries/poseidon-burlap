@@ -47,22 +47,77 @@ public class NoData718Slice1Policy {
     private static final int POPULATIONS = 3;
 
 
+    private static final long SEED = 0;
+    private static final String[] ALL_TAGS = {"population0", "population1", "population2"};
+    private static Path OUTPUT_FOLDER =
+        NoData718Slice1.MAIN_DIRECTORY.resolve("output");
+    //Paths.get("docs/20191025 limited_poseidon/slice2/easier/output");
 
 
-    private static final  long SEED = 0;
+    /**
+     * give me a year and I will give you a policy
+     */
+    static private LinkedHashMap<String,
+        Function<Integer, Consumer<Scenario>>> policies = new LinkedHashMap();
+
+    static {
+
+        policies.put(
+            "BAU",
+            shockYear -> scenario -> {
+            }
+
+        );
+
+        policies.put(
+            "BAU_noentry",
+            shockYear -> NoDataPolicy.removeEntry(shockYear)
+
+        );
+
+
+//        policies.put(
+//                "100_days_noentry",
+//                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS,100).andThen(
+//                        NoDataPolicy.removeEntry(shockYear)
+//                )
+//
+//        );
+//
+
+        policies.put(
+            "180_days_noentry",
+            shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS, 180, false).andThen(
+                NoDataPolicy.removeEntry(shockYear)
+            )
+
+        );
+
+        policies.put(
+            "150_days_noentry",
+            shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS, 150, false).andThen(
+                NoDataPolicy.removeEntry(shockYear)
+            )
+
+        );
+//
+
+
+    }
 
     private static BatchRunner setupRunner(
-            Path scenarioFile,
-            final int yearsToRun,
-            Path outputFolder) {
+        Path scenarioFile,
+        final int yearsToRun,
+        Path outputFolder
+    ) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(
-                "Actual Average Cash-Flow",
-                "Actual Average Hours Out",
+            "Actual Average Cash-Flow",
+            "Actual Average Hours Out",
 
-                "Full-time fishers",
-                "Seasonal fishers",
+            "Full-time fishers",
+            "Seasonal fishers",
 
-                "Retired fishers"
+            "Retired fishers"
 
 
         );
@@ -78,102 +133,39 @@ public class NoData718Slice1Policy {
 
         }
 
-        for(int i = 0; i< POPULATIONS; i++){
-            columnsToPrint.add("Total Hours Out of population"+i);
-            columnsToPrint.add("Seasonal fishers of population"+i);
-            columnsToPrint.add("Retired fishers of population"+i);
-            columnsToPrint.add("Full-time fishers of population"+i);
-            columnsToPrint.add("Total Landings of population"+i);
-            columnsToPrint.add("Actual Average Cash-Flow of population"+i);
-            columnsToPrint.add("Average Number of Trips of population"+i);
-            columnsToPrint.add("Number Of Active Fishers of population"+i);
-            columnsToPrint.add("Average Distance From Port of population"+i);
-            columnsToPrint.add("Average Trip Duration of population"+i);
+        for (int i = 0; i < POPULATIONS; i++) {
+            columnsToPrint.add("Total Hours Out of population" + i);
+            columnsToPrint.add("Seasonal fishers of population" + i);
+            columnsToPrint.add("Retired fishers of population" + i);
+            columnsToPrint.add("Full-time fishers of population" + i);
+            columnsToPrint.add("Total Landings of population" + i);
+            columnsToPrint.add("Actual Average Cash-Flow of population" + i);
+            columnsToPrint.add("Average Number of Trips of population" + i);
+            columnsToPrint.add("Number Of Active Fishers of population" + i);
+            columnsToPrint.add("Average Distance From Port of population" + i);
+            columnsToPrint.add("Average Trip Duration of population" + i);
             for (String species : NoData718Slice1.validSpecies) {
-                columnsToPrint.add(species+ " Landings of population" + i);
-                columnsToPrint.add(species+" Landings of population" + i);
+                columnsToPrint.add(species + " Landings of population" + i);
+                columnsToPrint.add(species + " Landings of population" + i);
             }
         }
 
 
         return new BatchRunner(
-                scenarioFile,
-                yearsToRun,
-                columnsToPrint,
-                outputFolder,
-                null,
-                SEED,
-                -1
+            scenarioFile,
+            yearsToRun,
+            columnsToPrint,
+            outputFolder,
+            null,
+            SEED,
+            -1
         );
     }
-
-
-
-    private static Path OUTPUT_FOLDER =
-            NoData718Slice1.MAIN_DIRECTORY.resolve("output");
-            //Paths.get("docs/20191025 limited_poseidon/slice2/easier/output");
-
-
-    /**
-     * give me a year and I will give you a policy
-     */
-    static private LinkedHashMap<String,
-            Function<Integer, Consumer<Scenario>>> policies = new LinkedHashMap();
-
-
-    private static final String[] ALL_TAGS = {"population0", "population1","population2"};
-
-    static {
-
-        policies.put(
-                "BAU",
-                shockYear -> scenario -> { }
-
-        );
-
-        policies.put(
-                "BAU_noentry",
-                shockYear -> NoDataPolicy.removeEntry(shockYear)
-
-        );
-
-
-//        policies.put(
-//                "100_days_noentry",
-//                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS,100).andThen(
-//                        NoDataPolicy.removeEntry(shockYear)
-//                )
-//
-//        );
-//
-
-        policies.put(
-                "180_days_noentry",
-                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS,180, false).andThen(
-                        NoDataPolicy.removeEntry(shockYear)
-                )
-
-        );
-
-        policies.put(
-                "150_days_noentry",
-                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS,150, false).andThen(
-                        NoDataPolicy.removeEntry(shockYear)
-                )
-
-        );
-//
-
-
-
-    }
-
-
 
     public static void main(String[] args) throws IOException {
 
         CSVReader reader = new CSVReader(new FileReader(
-                OUTPUT_FOLDER.getParent().resolve("success.csv").toFile()
+            OUTPUT_FOLDER.getParent().resolve("success.csv").toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -181,8 +173,8 @@ public class NoData718Slice1Policy {
 
             String[] row = strings.get(i);
             sensitivity(
-                    Paths.get(row[0]),
-                    Integer.parseInt(row[1])
+                Paths.get(row[0]),
+                Integer.parseInt(row[1])
             );
         }
 
@@ -190,19 +182,12 @@ public class NoData718Slice1Policy {
     }
 
 
-
-
-
-
-
-
     private static void sensitivity(Path scenarioFile, int shockYear) throws IOException {
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists())
-        {
+        if (OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
@@ -217,18 +202,18 @@ public class NoData718Slice1Policy {
             String policyName = policyRun.getKey();
             //add some information gathering
             Consumer<Scenario> policy = policyRun.getValue().apply(shockYear).andThen(
-                    new Consumer<Scenario>() {
-                        @Override
-                        public void accept(Scenario scenario) {
-                            ((FlexibleScenario) scenario).getPlugins().add(
-                                    new FullSeasonalRetiredDataCollectorsFactory()
-                            );
-                        }
+                new Consumer<Scenario>() {
+                    @Override
+                    public void accept(Scenario scenario) {
+                        ((FlexibleScenario) scenario).getPlugins().add(
+                            new FullSeasonalRetiredDataCollectorsFactory()
+                        );
                     }
+                }
             );
 
 
-            BatchRunner runner = setupRunner(scenarioFile, shockYear+20, OUTPUT_FOLDER);
+            BatchRunner runner = setupRunner(scenarioFile, shockYear + 20, OUTPUT_FOLDER);
 
             //give it the scenario
             runner.setScenarioSetup(policy);
@@ -251,7 +236,6 @@ public class NoData718Slice1Policy {
 
 
     }
-
 
 
 }

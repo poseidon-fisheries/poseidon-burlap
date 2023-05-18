@@ -53,122 +53,59 @@ public class NoDataSlice2Policy {
 
     private static final int POPULATIONS = 2;
 
-    private static final  long SEED = 0;
-
-    private static BatchRunner setupRunner(
-            Path scenarioFile,
-            final int yearsToRun,
-            Path outputFolder) {
-        ArrayList<String> columnsToPrint = Lists.newArrayList(
-                "Actual Average Cash-Flow",
-                "Actual Average Hours Out",
-
-                "Full-time fishers",
-                "Full-time fishers of population0",
-                "Full-time fishers of population1",
-                "Seasonal fishers",
-                "Seasonal fishers of population0",
-                "Seasonal fishers of population1",
-                "Retired fishers",
-                "Retired fishers of population0",
-                "Retired fishers of population1",
-                "Total Hours Out of population0",
-                "Total Hours Out of population1",
-
-                "SPR " + "Pristipomoides multidens" + " " + "spr_agent",
-                "Biomass Pristipomoides multidens",
-                "Bt/K " + "Pristipomoides multidens",
-                "Percentage Mature Catches " + "Pristipomoides multidens" + " " + "spr_agent",
-
-                "SPR " + "Lutjanus malabaricus" + " " + "spr_agent",
-                "Biomass Lutjanus malabaricus",
-                "Bt/K " + "Lutjanus malabaricus",
-                "Percentage Mature Catches " + "Lutjanus malabaricus" + " " + "spr_agent",
-
-                "Pristipomoides multidens Earnings",
-                "Pristipomoides multidens Landings",
-
-                "Lutjanus malabaricus Earnings",
-                "Lutjanus malabaricus Landings"
-
-        );
-
-        for(int i = 0; i< POPULATIONS; i++){
-            columnsToPrint.add("Total Landings of population"+i);
-            columnsToPrint.add("Actual Average Cash-Flow of population"+i);
-            columnsToPrint.add("Average Number of Trips of population"+i);
-            columnsToPrint.add("Number Of Active Fishers of population"+i);
-            columnsToPrint.add("Average Distance From Port of population"+i);
-            columnsToPrint.add("Average Trip Duration of population"+i);
-            columnsToPrint.add("Lutjanus malabaricus Landings of population"+i);
-            columnsToPrint.add("Pristipomoides multidens Landings of population"+i);
-
-        }
-
-
-        return new BatchRunner(
-                scenarioFile,
-                yearsToRun,
-                columnsToPrint,
-                outputFolder,
-                null,
-                SEED,
-                -1
-        );
-    }
-
-
-
+    private static final long SEED = 0;
+    private static final String[] ALL_TAGS = {"population0", "population1"};
     private static Path OUTPUT_FOLDER =
-            //Paths.get("docs/20191025 limited_poseidon/slice2/easier/output");
-           // Paths.get("docs/20191025 limited_poseidon/slice2/output_priceshock");
-            Paths.get("docs/20191025 limited_poseidon/slice2/output_days");
+        //Paths.get("docs/20191025 limited_poseidon/slice2/easier/output");
+        // Paths.get("docs/20191025 limited_poseidon/slice2/output_priceshock");
+        Paths.get("docs/20191025 limited_poseidon/slice2/output_days");
 
 
     /**
      * give me a year and I will give you a policy
      */
-    static private LinkedHashMap<String, Function<Integer,Consumer<Scenario>>> policies = new LinkedHashMap();
-
-    private static final String[] ALL_TAGS = {"population0", "population1"};
-
+    static private LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies = new LinkedHashMap();
 
     static {
 
         policies.put(
-                "BAU",
-                shockYear -> scenario -> { }
+            "BAU",
+            shockYear -> scenario -> {
+            }
 
         );
 
         policies.put(
-                "BAU_noentry",
-                shockYear -> NoDataPolicy.removeEntry(shockYear)
+            "BAU_noentry",
+            shockYear -> NoDataPolicy.removeEntry(shockYear)
 
         );
 //
 
-        for(int dayLimit : new int[]{50,75,100,125,150,200,225,250}) {
+        for (int dayLimit : new int[]{50, 75, 100, 125, 150, 200, 225, 250}) {
             policies.put(
-                    dayLimit+"_days_noentry",
-                    shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS, dayLimit, false).andThen(
-                            NoDataPolicy.removeEntry(shockYear)
-                    )
+                dayLimit + "_days_noentry",
+                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, ALL_TAGS, dayLimit, false).andThen(
+                    NoDataPolicy.removeEntry(shockYear)
+                )
 
             );
 
             policies.put(
-                    dayLimit+"_days_big_noentry",
-                    shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear, new String[]{"population1"},dayLimit, false).andThen(
-                            NoDataPolicy.removeEntry(shockYear))
+                dayLimit + "_days_big_noentry",
+                shockYear -> NoDataPolicy.buildMaxDaysRegulation(
+                    shockYear,
+                    new String[]{"population1"},
+                    dayLimit,
+                    false
+                ).andThen(
+                    NoDataPolicy.removeEntry(shockYear))
 
             );
         }
 //
 //
 //
-
-
 
 
         //////////////////////////////////////////////////////////////////
@@ -398,92 +335,150 @@ public class NoDataSlice2Policy {
 
     }
 
+    private static BatchRunner setupRunner(
+        Path scenarioFile,
+        final int yearsToRun,
+        Path outputFolder
+    ) {
+        ArrayList<String> columnsToPrint = Lists.newArrayList(
+            "Actual Average Cash-Flow",
+            "Actual Average Hours Out",
+
+            "Full-time fishers",
+            "Full-time fishers of population0",
+            "Full-time fishers of population1",
+            "Seasonal fishers",
+            "Seasonal fishers of population0",
+            "Seasonal fishers of population1",
+            "Retired fishers",
+            "Retired fishers of population0",
+            "Retired fishers of population1",
+            "Total Hours Out of population0",
+            "Total Hours Out of population1",
+
+            "SPR " + "Pristipomoides multidens" + " " + "spr_agent",
+            "Biomass Pristipomoides multidens",
+            "Bt/K " + "Pristipomoides multidens",
+            "Percentage Mature Catches " + "Pristipomoides multidens" + " " + "spr_agent",
+
+            "SPR " + "Lutjanus malabaricus" + " " + "spr_agent",
+            "Biomass Lutjanus malabaricus",
+            "Bt/K " + "Lutjanus malabaricus",
+            "Percentage Mature Catches " + "Lutjanus malabaricus" + " " + "spr_agent",
+
+            "Pristipomoides multidens Earnings",
+            "Pristipomoides multidens Landings",
+
+            "Lutjanus malabaricus Earnings",
+            "Lutjanus malabaricus Landings"
+
+        );
+
+        for (int i = 0; i < POPULATIONS; i++) {
+            columnsToPrint.add("Total Landings of population" + i);
+            columnsToPrint.add("Actual Average Cash-Flow of population" + i);
+            columnsToPrint.add("Average Number of Trips of population" + i);
+            columnsToPrint.add("Number Of Active Fishers of population" + i);
+            columnsToPrint.add("Average Distance From Port of population" + i);
+            columnsToPrint.add("Average Trip Duration of population" + i);
+            columnsToPrint.add("Lutjanus malabaricus Landings of population" + i);
+            columnsToPrint.add("Pristipomoides multidens Landings of population" + i);
+
+        }
 
 
+        return new BatchRunner(
+            scenarioFile,
+            yearsToRun,
+            columnsToPrint,
+            outputFolder,
+            null,
+            SEED,
+            -1
+        );
+    }
 
-
-
-    private static Consumer<Scenario> setupPriceShock(int durationInDays,
-                                                     int yearStart,
-                                                     double percentageOfTotalPrice) {
+    private static Consumer<Scenario> setupPriceShock(
+        int durationInDays,
+        int yearStart,
+        double percentageOfTotalPrice
+    ) {
         return scenario -> {
 
             FlexibleScenario flexible = (FlexibleScenario) scenario;
 
             ((FlexibleScenario) scenario).getPlugins().add(
-                    new AlgorithmFactory<AdditionalStartable>() {
-                        @Override
-                        public AdditionalStartable apply(FishState state) {
+                new AlgorithmFactory<AdditionalStartable>() {
+                    @Override
+                    public AdditionalStartable apply(FishState state) {
 
-                            return new AdditionalStartable() {
-                                @Override
-                                public void start(FishState model) {
-                                    state.scheduleOnceAtTheBeginningOfYear(
-                                            new Steppable() {
-                                                @Override
-                                                public void step(SimState simState) {
+                        return new AdditionalStartable() {
+                            @Override
+                            public void start(FishState model) {
+                                state.scheduleOnceAtTheBeginningOfYear(
+                                    new Steppable() {
+                                        @Override
+                                        public void step(SimState simState) {
 
-                                                    //shock the prices
-                                                    for (Port port : ((FishState) simState).getPorts()) {
-                                                        for (Market market : port.getDefaultMarketMap().getMarkets()) {
-                                                            final FixedPriceMarket delegate = (FixedPriceMarket) market;
-                                                            System.out.println("old price " + delegate.getPrice());
-                                                            delegate.setPrice(
-                                                            delegate.getPrice() * percentageOfTotalPrice
+                                            //shock the prices
+                                            for (Port port : ((FishState) simState).getPorts()) {
+                                                for (Market market : port.getDefaultMarketMap().getMarkets()) {
+                                                    final FixedPriceMarket delegate = (FixedPriceMarket) market;
+                                                    System.out.println("old price " + delegate.getPrice());
+                                                    delegate.setPrice(
+                                                        delegate.getPrice() * percentageOfTotalPrice
 
-                                                            );
-                                                            System.out.println("new price " + delegate.getPrice());
+                                                    );
+                                                    System.out.println("new price " + delegate.getPrice());
 
+                                                }
+                                            }
+
+                                            //restore prices
+                                            ((FishState) simState).scheduleOnceInXDays(
+                                                new Steppable() {
+                                                    @Override
+                                                    public void step(SimState simState) {
+                                                        for (Port port : ((FishState) simState).getPorts()) {
+                                                            for (Market market : port.getDefaultMarketMap()
+                                                                .getMarkets()) {
+                                                                final FixedPriceMarket delegate = (FixedPriceMarket) market;
+                                                                delegate.setPrice(
+                                                                    delegate.getPrice() / percentageOfTotalPrice
+                                                                );
+                                                                System.out.println("new price " + delegate.getPrice());
+
+                                                            }
                                                         }
                                                     }
 
-                                                    //restore prices
-                                                    ((FishState) simState).scheduleOnceInXDays(
-                                                            new Steppable() {
-                                                                @Override
-                                                                public void step(SimState simState) {
-                                                                    for (Port port : ((FishState) simState).getPorts()) {
-                                                                        for (Market market : port.getDefaultMarketMap().getMarkets()) {
-                                                                            final FixedPriceMarket delegate = (FixedPriceMarket) market;
-                                                                            delegate.setPrice(
-                                                                                    delegate.getPrice() / percentageOfTotalPrice
-                                                                            );
-                                                                            System.out.println("new price " + delegate.getPrice());
-
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                            }
-                                                            , StepOrder.DAWN, durationInDays
-                                                    );
-
                                                 }
-                                            },
-                                            StepOrder.DAWN,
-                                            yearStart
-                                    );
+                                                , StepOrder.DAWN, durationInDays
+                                            );
 
-                                }
-                            };
+                                        }
+                                    },
+                                    StepOrder.DAWN,
+                                    yearStart
+                                );
 
-                        }
+                            }
+                        };
+
                     }
+                }
 
             );
-
 
 
         };
     }
 
 
-
-
     public static void main(String[] args) throws IOException {
 
         CSVReader reader = new CSVReader(new FileReader(
-                OUTPUT_FOLDER.getParent().resolve("success.csv").toFile()
+            OUTPUT_FOLDER.getParent().resolve("success.csv").toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -491,11 +486,11 @@ public class NoDataSlice2Policy {
 
             String[] row = strings.get(i);
             System.out.println(Integer.parseInt(row[1]));
-            if(Integer.parseInt(row[1])<30)
-            sensitivity(
+            if (Integer.parseInt(row[1]) < 30)
+                sensitivity(
                     Paths.get(row[0]),
                     Integer.parseInt(row[1])
-            );
+                );
             System.gc();
         }
 
@@ -503,19 +498,12 @@ public class NoDataSlice2Policy {
     }
 
 
-
-
-
-
-
-
     private static void sensitivity(Path scenarioFile, int shockYear) throws IOException {
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists())
-        {
+        if (OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
@@ -530,18 +518,18 @@ public class NoDataSlice2Policy {
             String policyName = policyRun.getKey();
             //add some information gathering
             Consumer<Scenario> policy = policyRun.getValue().apply(shockYear).andThen(
-                    new Consumer<Scenario>() {
-                        @Override
-                        public void accept(Scenario scenario) {
-                            ((FlexibleScenario) scenario).getPlugins().add(
-                                    new FullSeasonalRetiredDataCollectorsFactory()
-                            );
-                        }
+                new Consumer<Scenario>() {
+                    @Override
+                    public void accept(Scenario scenario) {
+                        ((FlexibleScenario) scenario).getPlugins().add(
+                            new FullSeasonalRetiredDataCollectorsFactory()
+                        );
                     }
+                }
             );
 
 
-            BatchRunner runner = setupRunner(scenarioFile, shockYear+20, null);
+            BatchRunner runner = setupRunner(scenarioFile, shockYear + 20, null);
 
             //give it the scenario
             runner.setScenarioSetup(policy);
@@ -556,7 +544,7 @@ public class NoDataSlice2Policy {
 
             StringBuffer tidy = new StringBuffer();
             runner.run(tidy);
-            runner=null;
+            runner = null;
             fileWriter.write(tidy.toString());
             fileWriter.flush();
             System.gc();
@@ -566,7 +554,6 @@ public class NoDataSlice2Policy {
 
 
     }
-
 
 
 }

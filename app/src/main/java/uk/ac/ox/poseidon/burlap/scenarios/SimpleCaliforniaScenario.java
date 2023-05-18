@@ -59,8 +59,6 @@ import static uk.ac.ox.poseidon.burlap.scenarios.CaliforniaAbstractScenario.LITE
 public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
 
 
-
-
     /**
      * comes from stock assessment inputs prepared by Kristin (sablecathts.csv) to which I remove
      * the 2000 tonnes of sablefish that are represented in this model
@@ -71,7 +69,7 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
      * if we assume all commercial landings are from this fishery and all recreational landings are exogenous
      * we get these numbers (from the YelloeyeCatchesfromAssessmentState.xlsx) report
      */
-    private double exogenousYelloweyeCatches = 10.317*1000d;
+    private double exogenousYelloweyeCatches = 10.317 * 1000d;
 
     private AlgorithmFactory<? extends Regulation> regulationsToImposeAtStartYear = new MultipleRegulationsFactory();
 
@@ -86,20 +84,20 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
         local.getFactories().clear();
         //there is a season of 213 days
         local.getTags().add("all");
-        local.getFactories().add(new FishingSeasonFactory(213,false));
+        local.getFactories().add(new FishingSeasonFactory(213, false));
         //there is a set of individual quotas
         //the average landings were 1828.92828364222
         //that would mean (ignoring tiers) 20.321425374 tonnes per boat
         //with an allocation of 2,000 tonnes a year:
         IQMonoFactory iq = new IQMonoFactory();
-        iq.setIndividualQuota(new FixedDoubleParameter((2000*1000)/90));
+        iq.setIndividualQuota(new FixedDoubleParameter((2000 * 1000) / 90));
         local.getFactories().add(iq);
         local.getTags().add("all");
 
         //RCA
         local.getTags().add("all");
         ProtectedAreasOnlyFactory factory = new ProtectedAreasOnlyFactory();
-        factory.getStartingMPAs().add(new StartingMPA(6,0,3,100));
+        factory.getStartingMPAs().add(new StartingMPA(6, 0, 3, 100));
         local.getFactories().add(factory);
 
     }
@@ -113,15 +111,110 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
 
         //2001 start, if needed!
         biologyInitializer.setHistoricalTargetBiomass(Lists.newArrayList(
-                527154000d,527105779d,527033675d,526937145d,526819309d,526679414d,526563028d,526467416d,526392560d,526337557d,526243592d,526110372d,525941820d,525738694d,525502749d,
-                525235725d,524940279d,523750897d,521807115d,519028892d,518183379d,517707156d,516809380d,516662376d,515626553d,514582427d,513397054d,512674141d,511423759d,510525199d,
-                509507192d,508278705d,508102873d,507775981d,507491398d,506569660d,505125433d,504494266d,503975133d,503628931d,502963312d,502927457d,502782061d,501560771d,499724770d,
-                497712445d,495422136d,493526237d,493495066d,492918991d,492646142d,492560761d,491204268d,491212648d,491585614d,491276018d,491098354d,489641827d,489181485d,489750949d,
-                489615770d,488813834d,489120929d,488538202d,488842424d,488890144d,489039154d,489251476d,487090459d,486562540d,483366313d,481078276d,479618827d,475399328d,472254781d,
-                466454189d,455081889d,433774184d,429505494d,421974007d,402971360d,399900476d,394650983d,381593314d,373460329d,366503129d,359845028d,354395185d,349711490d,347253956d,
-                345399509d,344891059d,343993698d,343317882d,344025143d,345403773d,346390724d,346833531d,347657176d,352224351d,354280712d,356442219d
+            527154000d,
+            527105779d,
+            527033675d,
+            526937145d,
+            526819309d,
+            526679414d,
+            526563028d,
+            526467416d,
+            526392560d,
+            526337557d,
+            526243592d,
+            526110372d,
+            525941820d,
+            525738694d,
+            525502749d,
+            525235725d,
+            524940279d,
+            523750897d,
+            521807115d,
+            519028892d,
+            518183379d,
+            517707156d,
+            516809380d,
+            516662376d,
+            515626553d,
+            514582427d,
+            513397054d,
+            512674141d,
+            511423759d,
+            510525199d,
+            509507192d,
+            508278705d,
+            508102873d,
+            507775981d,
+            507491398d,
+            506569660d,
+            505125433d,
+            504494266d,
+            503975133d,
+            503628931d,
+            502963312d,
+            502927457d,
+            502782061d,
+            501560771d,
+            499724770d,
+            497712445d,
+            495422136d,
+            493526237d,
+            493495066d,
+            492918991d,
+            492646142d,
+            492560761d,
+            491204268d,
+            491212648d,
+            491585614d,
+            491276018d,
+            491098354d,
+            489641827d,
+            489181485d,
+            489750949d,
+            489615770d,
+            488813834d,
+            489120929d,
+            488538202d,
+            488842424d,
+            488890144d,
+            489039154d,
+            489251476d,
+            487090459d,
+            486562540d,
+            483366313d,
+            481078276d,
+            479618827d,
+            475399328d,
+            472254781d,
+            466454189d,
+            455081889d,
+            433774184d,
+            429505494d,
+            421974007d,
+            402971360d,
+            399900476d,
+            394650983d,
+            381593314d,
+            373460329d,
+            366503129d,
+            359845028d,
+            354395185d,
+            349711490d,
+            347253956d,
+            345399509d,
+            344891059d,
+            343993698d,
+            343317882d,
+            344025143d,
+            345403773d,
+            346390724d,
+            346833531d,
+            347657176d,
+            352224351d,
+            354280712d,
+            356442219d
         ));
-        biologyInitializer.setHistoricalTargetSurvival(Lists.newArrayList(0.906926410977892,0.90533206481522));
+        biologyInitializer.setHistoricalTargetSurvival(Lists.newArrayList(0.906926410977892, 0.90533206481522));
         /*
         "65" 1980 5884.75390821775 7570.39464071883 80.6977521701088 0.911643504584384 267.4
         "66" 1981 5684.81400583123 7539.11477741686 80.5797120779755 0.893149367230115 368.4
@@ -147,28 +240,26 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
         "86" 2001 2423.36370656817 4213.46491242035 62.9813932752828 0.932931166788219 56.1
          */
         biologyInitializer.setHistoricalBycatchBiomass(Lists.newArrayList(
-                8883000d,8879174d,8873953d,8868155d,8864445d,8860530d,8856710d,8853086d,8849360d,
-                8845047d,8838688d,8831406d,8823224d,8813870d,8800921d,8787570d,8776476d,8765928d,
-                8757796d,8747619d,8735145d,8718657d,8702657d,8687139d,8676014d,8657811d,8635120d,
-                8606655d,8534448d,8463244d,8344813d,8248938d,8216305d,8177412d,8154640d,8129782d,
-                8097658d,8071355d,8053628d,8028939d,7995605d,7953450d,7903732d,7849827d,7802497d,
-                7760358d,7727444d,7686846d,7657372d,7639984d,7543438d,7510307d,7470365d,7428501d,
-                7320928d,7252466d,7156663d,7031742d,6914782d,6781853d,6661574d,6517739d,6371633d,
-                6108281d,5850281d,5652339d,5359377d,4978877d,4735490d,4550998d,4318958d,4199800d,
-                4051556d,3878241d,3641386d,3516316d,3264065d,3009226d,2809955d,2706916d,2572423d,
-                2472791d,2345994d,2355185d,2313621d,2385708d
+            8883000d, 8879174d, 8873953d, 8868155d, 8864445d, 8860530d, 8856710d, 8853086d, 8849360d,
+            8845047d, 8838688d, 8831406d, 8823224d, 8813870d, 8800921d, 8787570d, 8776476d, 8765928d,
+            8757796d, 8747619d, 8735145d, 8718657d, 8702657d, 8687139d, 8676014d, 8657811d, 8635120d,
+            8606655d, 8534448d, 8463244d, 8344813d, 8248938d, 8216305d, 8177412d, 8154640d, 8129782d,
+            8097658d, 8071355d, 8053628d, 8028939d, 7995605d, 7953450d, 7903732d, 7849827d, 7802497d,
+            7760358d, 7727444d, 7686846d, 7657372d, 7639984d, 7543438d, 7510307d, 7470365d, 7428501d,
+            7320928d, 7252466d, 7156663d, 7031742d, 6914782d, 6781853d, 6661574d, 6517739d, 6371633d,
+            6108281d, 5850281d, 5652339d, 5359377d, 4978877d, 4735490d, 4550998d, 4318958d, 4199800d,
+            4051556d, 3878241d, 3641386d, 3516316d, 3264065d, 3009226d, 2809955d, 2706916d, 2572423d,
+            2472791d, 2345994d, 2355185d, 2313621d, 2385708d
 
         ));
         biologyInitializer.setHistoricalBycatchSurvival(Lists.newArrayList(
-                0.932582202042579,
-                0.938156881691037
+            0.932582202042579,
+            0.938156881691037
 
         ));
 
         biologyInitializer.setVerticalSeparator(new FixedDoubleParameter(5));
         this.setBiologyInitializer(biologyInitializer);
-
-
 
 
         //assuming all agents are just long-liners a la WFS
@@ -198,7 +289,7 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
         mapInitializer.setHeight(new FixedDoubleParameter(100));
         mapInitializer.setWidth(new FixedDoubleParameter(11));
         mapInitializer.setMaxLandWidth(new FixedDoubleParameter(1));
-        mapInitializer.setCellSizeInKilometers(new FixedDoubleParameter(1547d/100d)); //1547 km from los angeles to seattle
+        mapInitializer.setCellSizeInKilometers(new FixedDoubleParameter(1547d / 100d)); //1547 km from los angeles to seattle
         this.setMapInitializer(mapInitializer);
 
 
@@ -218,9 +309,9 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
 
         PortListFactory ports = new PortListFactory();
         ports.getPorts().clear();
-        ports.getPorts().put("Washington","10,0");
-        ports.getPorts().put("Oregon","10,49");
-        ports.getPorts().put("California","10,99");
+        ports.getPorts().put("Washington", "10,0");
+        ports.getPorts().put("Oregon", "10,49");
+        ports.getPorts().put("California", "10,99");
         this.setPorts(ports);
 
         //these numbers are from the
@@ -235,7 +326,7 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
     REVIEW
          */
         this.setSmallFishers(26); //washington
-        this.setLargeFishers(90-26); //oregon + california
+        this.setLargeFishers(90 - 26); //oregon + california
         this.setSeparateRegulations(false);
 
 
@@ -244,10 +335,9 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
          * of which 15% is approximately spent on fuel,
          * that leaves 2248.675$ a day or 93.69$ an hour
          */
-        double hourlyVariableCosts=93.69;
+        double hourlyVariableCosts = 93.69;
         this.setHourlyTravellingCostLarge(new FixedDoubleParameter(hourlyVariableCosts));
         this.setHourlyTravellingCostSmall(new FixedDoubleParameter(hourlyVariableCosts));
-
 
 
         this.setRegulationSmall(new AnarchyFactory());
@@ -261,19 +351,19 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
         this.setDiscardingStrategySmall(discardStrategySmall);
 
 
-
     }
 
 
     @Override
     protected Supplier<Port> getLargePortSupplier(
-            MersenneTwisterFast random, Port[] ports) {
+        MersenneTwisterFast random, Port[] ports
+    ) {
         //choose between california and oregon
         assert ports[0].getName().equals("Washington");
         assert ports[1].getName().equals("Oregon");
         assert ports[2].getName().equals("California");
         return () -> {
-            if(ports[1].getFishersHere().size()<=40)
+            if (ports[1].getFishersHere().size() <= 40)
                 return ports[1];
             else
                 return ports[2];
@@ -282,7 +372,8 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
 
     @Override
     protected Supplier<Port> getSmallPortSupplier(
-            MersenneTwisterFast random, Port[] ports) {
+        MersenneTwisterFast random, Port[] ports
+    ) {
         assert ports[0].getName().equals("Washington");
         assert ports[1].getName().equals("Oregon");
         assert ports[2].getName().equals("California");
@@ -302,30 +393,28 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
 
         //prepare a "real" start of the model
         model.scheduleOnceInXDays(
-                new Steppable() {
-                    @Override
-                    public void step(SimState simState) {
-                        //reset local biology
-                        for(Species species : model.getSpecies())
-                            ((YellowBycatchWithHistoryFactory) getBiologyInitializer()).retrieveLastMade().resetLocalBiology(species);
+            new Steppable() {
+                @Override
+                public void step(SimState simState) {
+                    //reset local biology
+                    for (Species species : model.getSpecies())
+                        ((YellowBycatchWithHistoryFactory) getBiologyInitializer()).retrieveLastMade()
+                            .resetLocalBiology(species);
 
-                        //put real regulations in!
-                        for(Fisher fisher : model.getFishers())
-                        {
-                            fisher.setRegulation(regulationsToImposeAtStartYear.apply(model));
-                        }
+                    //put real regulations in!
+                    for (Fisher fisher : model.getFishers()) {
+                        fisher.setRegulation(regulationsToImposeAtStartYear.apply(model));
                     }
-                },
-                StepOrder.DAWN,
-                364
+                }
+            },
+            StepOrder.DAWN,
+            364
         );
 
         //change all the tags!
-        for(Fisher fisher : population.getPopulation())
-        {
+        for (Fisher fisher : population.getPopulation()) {
             fisher.getTags().clear();
-            switch (fisher.getHomePort().getName())
-            {
+            switch (fisher.getHomePort().getName()) {
                 case "Washington":
                     fisher.getTags().add("ship");
                     fisher.getTags().add("Washington");
@@ -348,16 +437,15 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
         }
 
 
-
-
         //add exogenous mortality
         Preconditions.checkArgument(model.getSpecies().get(0).getName().equals("Sablefish"));
         LinkedHashMap<Species, Double> exogenousMortality = new LinkedHashMap<>();
-        exogenousMortality.put(model.getSpecies().get(0),exogenousSablefishCatches);
-        exogenousMortality.put(model.getSpecies().get(1),exogenousYelloweyeCatches);
+        exogenousMortality.put(model.getSpecies().get(0), exogenousSablefishCatches);
+        exogenousMortality.put(model.getSpecies().get(1), exogenousYelloweyeCatches);
         BiomassDrivenFixedExogenousCatches mortality = new BiomassDrivenFixedExogenousCatches(
-                exogenousMortality,
-                false);
+            exogenousMortality,
+            false
+        );
         model.registerStartable(mortality);
 
 
@@ -380,7 +468,8 @@ public class SimpleCaliforniaScenario extends TwoPopulationsScenario {
      * @param regulationsToImposeAtStartYear Value to set for property 'regulationsToImposeAtStartYear'.
      */
     public void setRegulationsToImposeAtStartYear(
-            AlgorithmFactory<? extends Regulation> regulationsToImposeAtStartYear) {
+        AlgorithmFactory<? extends Regulation> regulationsToImposeAtStartYear
+    ) {
         this.regulationsToImposeAtStartYear = regulationsToImposeAtStartYear;
     }
 

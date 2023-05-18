@@ -1,7 +1,6 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import ec.util.MersenneTwisterFast;
-import uk.ac.ox.poseidon.burlap.experiments.NoDataTachiuoSlice1;
 import uk.ac.ox.oxfish.maximization.generic.OptimizationParameter;
 import uk.ac.ox.oxfish.model.AdditionalStartable;
 import uk.ac.ox.oxfish.model.BatchRunner;
@@ -11,6 +10,7 @@ import uk.ac.ox.oxfish.utility.AlgorithmFactory;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.Pair;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.experiments.NoDataTachiuoSlice1;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -29,28 +29,33 @@ public class RejectionSampling {
      * given a baseline scenario and a yaml containing a big list of parameters we can randomize. Run th e model
      * "many" times, collecting all the variables in "listOfColumnsToPrint" in a big summary file.
      * All this takes place in the "main directory"
+     *
      * @throws IOException
      */
     public static void runSlice(
-            Path baselineScenarioFile,
-            Path parameterFile,
-            Path listOfColumnsToPrintFile,
-            Path mainDirectory, long seed, int maxYearsToRun, List<Predicate<FishState>> modelInterruptors
+        Path baselineScenarioFile,
+        Path parameterFile,
+        Path listOfColumnsToPrintFile,
+        Path mainDirectory, long seed, int maxYearsToRun, List<Predicate<FishState>> modelInterruptors
     ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         final List<String> columnsToPrint =
-                yaml.loadAs(new FileReader(
-                                listOfColumnsToPrintFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    listOfColumnsToPrintFile.toFile()
+                ),
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                parameterFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    parameterFile.toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
@@ -63,7 +68,7 @@ public class RejectionSampling {
 
 
         FileWriter summaryStatisticsWriter =
-                new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
+            new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
         summaryStatisticsWriter.write("run,year,scenario,variable,value\n");
         summaryStatisticsWriter.flush();
 
@@ -74,20 +79,21 @@ public class RejectionSampling {
 
 
         for (int i = 0; i < 50000; i++) {
-            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(scenarioDirectory,
-                    parameters,
-                    baselineScenarioFile,
-                    parameterMasterFile,
-                    new MersenneTwisterFast(),
-                    i
+            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(
+                scenarioDirectory,
+                parameters,
+                baselineScenarioFile,
+                parameterMasterFile,
+                new MersenneTwisterFast(),
+                i
             );
             NoDataTachiuoSlice1.runOneScenario(
-                    seed,
-                    columnsToPrint,
-                    summaryStatisticsWriter,
-                    writtenScenario,
-                    maxYearsToRun,
-                    modelInterruptors
+                seed,
+                columnsToPrint,
+                summaryStatisticsWriter,
+                writtenScenario,
+                maxYearsToRun,
+                modelInterruptors
             );
         }
 
@@ -96,70 +102,73 @@ public class RejectionSampling {
 
     /**
      * runs one accepted scenario provided
-     * @param scenarioFile the scenario file
-     * @param shockYear the year at which policy occurs
+     *
+     * @param scenarioFile         the scenario file
+     * @param shockYear            the year at which policy occurs
      * @param yearsToRunAfterShock how many years to simulate AFTER the shock
-     * @param seed the random seed
-     * @param outputFolder where to store results
-     * @param policyMap a list of names--->additional_startable_factory where the factory will be called when shock year occurs
-     * @param columnsToPrint columns to print
-     * @param printYAMLScenario flag: shall we print the scenario in the new folder
-     * @param commonPolicy in optional (nullable) consumer that sets up the scenario and is called whatever policy we are currently simulating
-     * @param additionalPlugins additional plugins that are not part of the policy but should be started at some given years anyway!
+     * @param seed                 the random seed
+     * @param outputFolder         where to store results
+     * @param policyMap            a list of names--->additional_startable_factory where the factory will be called when shock year occurs
+     * @param columnsToPrint       columns to print
+     * @param printYAMLScenario    flag: shall we print the scenario in the new folder
+     * @param commonPolicy         in optional (nullable) consumer that sets up the scenario and is called whatever policy we are currently simulating
+     * @param additionalPlugins    additional plugins that are not part of the policy but should be started at some given years anyway!
      * @throws IOException
      */
     public static void runOneAcceptedScenario(
-            Path scenarioFile, int shockYear, int yearsToRunAfterShock,
-            long seed,
-            Path outputFolder,
-            LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> policyMap,
-            List<String> columnsToPrint,
-            boolean printYAMLScenario,
-                    Consumer<Scenario> commonPolicy,
-            //the problem with adding plugins through scenario is that they may screw up the seed as the stack has to randomize it
-            //the solution then is simply not to start anything until the right year arrives. This will make the seed
-            //still inconsistent after the startable... starts, but at least until then it's okay
-                    LinkedList<Pair<Integer,
-                                                AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins) throws IOException {
+        Path scenarioFile,
+        int shockYear,
+        int yearsToRunAfterShock,
+        long seed,
+        Path outputFolder,
+        LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> policyMap,
+        List<String> columnsToPrint,
+        boolean printYAMLScenario,
+        Consumer<Scenario> commonPolicy,
+        //the problem with adding plugins through scenario is that they may screw up the seed as the stack has to randomize it
+        //the solution then is simply not to start anything until the right year arrives. This will make the seed
+        //still inconsistent after the startable... starts, but at least until then it's okay
+        LinkedList<Pair<Integer,
+            AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins
+    ) throws IOException {
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(outputFolder.resolve(filename + ".csv").toFile().exists())
-        {
+        if (outputFolder.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
         }
-        if(printYAMLScenario && !outputFolder.resolve(filename).toFile().exists())
-            Files.copy(scenarioFile,outputFolder.resolve(filename));
+        if (printYAMLScenario && !outputFolder.resolve(filename).toFile().exists())
+            Files.copy(scenarioFile, outputFolder.resolve(filename));
 
 
         FileWriter fileWriter = new FileWriter(outputFolder.resolve(filename + ".csv").toFile());
         fileWriter.write("run,year,policy,variable,value\n");
         fileWriter.flush();
 
-        for (Map.Entry<String,  AlgorithmFactory<? extends AdditionalStartable>> policyRun : policyMap.entrySet()) {
+        for (Map.Entry<String, AlgorithmFactory<? extends AdditionalStartable>> policyRun : policyMap.entrySet()) {
             String policyName = policyRun.getKey();
             //add some information gathering
 
             BatchRunner runner = new BatchRunner(
-                    scenarioFile,
-                    shockYear + yearsToRunAfterShock,
-                    columnsToPrint,
-                    outputFolder,
-                    null,
-                    seed,
-                    -1
+                scenarioFile,
+                shockYear + yearsToRunAfterShock,
+                columnsToPrint,
+                outputFolder,
+                null,
+                seed,
+                -1
             );
 
             //if there needs to be a consumer, do it now!
-            if(commonPolicy!=null)
+            if (commonPolicy != null)
                 runner.setScenarioSetup(commonPolicy);
 
             LinkedList<Pair<Integer, AlgorithmFactory<? extends AdditionalStartable>>> plugins = new LinkedList<>();
-            plugins.add(new Pair<>(shockYear,policyRun.getValue()));
-            if(additionalPlugins!=null)
+            plugins.add(new Pair<>(shockYear, policyRun.getValue()));
+            if (additionalPlugins != null)
                 plugins.addAll(additionalPlugins);
             runner.setOutsidePlugins(plugins);
 
@@ -182,7 +191,6 @@ public class RejectionSampling {
         fileWriter.close();
 
     }
-
 
 
 }

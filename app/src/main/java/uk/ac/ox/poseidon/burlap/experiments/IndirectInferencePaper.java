@@ -32,7 +32,6 @@ import uk.ac.ox.oxfish.fisher.strategies.destination.factory.*;
 import uk.ac.ox.oxfish.geography.discretization.SquaresMapDiscretizerFactory;
 import uk.ac.ox.oxfish.geography.mapmakers.SimpleMapInitializerFactory;
 import uk.ac.ox.oxfish.model.FishState;
-import uk.ac.ox.poseidon.burlap.scenarios.DerisoCaliforniaScenario;
 import uk.ac.ox.oxfish.model.scenario.PrototypeScenario;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
@@ -42,6 +41,7 @@ import uk.ac.ox.oxfish.utility.adaptation.probability.factory.SocialAnnealingPro
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.parameters.UniformDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.scenarios.DerisoCaliforniaScenario;
 import uk.ac.ox.poseidon.burlap.strategies.LogitRPUEDestinationFactory;
 import uk.ac.ox.poseidon.burlap.strategies.SoftmaxBanditFactory;
 

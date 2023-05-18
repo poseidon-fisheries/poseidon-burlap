@@ -36,14 +36,51 @@ public class NoData718Slice4Policy {
     public static final String CANDIDATES_CSV_FILE = "total_successes.csv";
     public static final int SEED = 0;
     private static Path OUTPUT_FOLDER =
-            NoData718Slice4.MAIN_DIRECTORY.resolve("outputs");
+        NoData718Slice4.MAIN_DIRECTORY.resolve("outputs");
 
 
+    static private LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies = new LinkedHashMap();
 
-    static private LinkedHashMap<String, Function<Integer,Consumer<Scenario>>> policies = new LinkedHashMap();
+    static {
+
+        policies.put(
+            "BAU",
+            shockYear -> scenario -> {
+            }
+
+        );
 
 
-    private static Function<Integer,Consumer<Scenario>> decreasePricesForAllSpeciesByAPercentage(double taxRate) {
+        policies.put(
+            "noentry",
+            shockYear -> NoDataPolicy.removeEntry(shockYear)
+
+        );
+
+
+        policies.put(
+            "150_days_noentry",
+            shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear,
+                new String[]{"population0", "population1", "population2"}
+                , 100, false
+            ).andThen(
+                NoDataPolicy.removeEntry(shockYear)
+            )
+
+        );
+
+        policies.put(
+            "tax_20",
+            shockYear -> NoDataPolicy.removeEntry(shockYear).andThen(
+                decreasePricesForAllSpeciesByAPercentage(.2d).apply(shockYear)
+            )
+
+        );
+
+
+    }
+
+    private static Function<Integer, Consumer<Scenario>> decreasePricesForAllSpeciesByAPercentage(double taxRate) {
 
         return new Function<Integer, Consumer<Scenario>>() {
             public Consumer<Scenario> apply(Integer shockYear) {
@@ -55,48 +92,48 @@ public class NoData718Slice4Policy {
                     public void accept(Scenario scenario) {
 
                         ((FlexibleScenario) scenario).getPlugins().add(
-                                new AlgorithmFactory<AdditionalStartable>() {
-                                    @Override
-                                    public AdditionalStartable apply(FishState state) {
+                            new AlgorithmFactory<AdditionalStartable>() {
+                                @Override
+                                public AdditionalStartable apply(FishState state) {
 
-                                        return new AdditionalStartable() {
-                                            @Override
-                                            public void start(FishState model) {
+                                    return new AdditionalStartable() {
+                                        @Override
+                                        public void start(FishState model) {
 
-                                                model.scheduleOnceAtTheBeginningOfYear(
-                                                        new Steppable() {
-                                                            @Override
-                                                            public void step(SimState simState) {
+                                            model.scheduleOnceAtTheBeginningOfYear(
+                                                new Steppable() {
+                                                    @Override
+                                                    public void step(SimState simState) {
 
-                                                                //shock the prices
-                                                                for (Port port : ((FishState) simState).getPorts()) {
-                                                                    for (Market market : port.getDefaultMarketMap().getMarkets()) {
+                                                        //shock the prices
+                                                        for (Port port : ((FishState) simState).getPorts()) {
+                                                            for (Market market : port.getDefaultMarketMap()
+                                                                .getMarkets()) {
 
-                                                                        if(port.getName().equals("Port 0")) {
-                                                                            final FixedPriceMarket delegate = (FixedPriceMarket) ((MarketProxy) market).getDelegate();
-                                                                            delegate.setPrice(
-                                                                                    delegate.getPrice() * (1 - taxRate)
-                                                                            );
-                                                                        }
-                                                                        else {
+                                                                if (port.getName().equals("Port 0")) {
+                                                                    final FixedPriceMarket delegate = (FixedPriceMarket) ((MarketProxy) market).getDelegate();
+                                                                    delegate.setPrice(
+                                                                        delegate.getPrice() * (1 - taxRate)
+                                                                    );
+                                                                } else {
 
-                                                                            final FixedPriceMarket delegate = ((FixedPriceMarket) ((MarketProxy) ((MarketProxy) market).getDelegate()).getDelegate());
-                                                                            delegate.setPrice(
-                                                                                    delegate.getPrice() * (1 - taxRate)
-                                                                            );
-                                                                        }
-                                                                    }
+                                                                    final FixedPriceMarket delegate = ((FixedPriceMarket) ((MarketProxy) ((MarketProxy) market).getDelegate()).getDelegate());
+                                                                    delegate.setPrice(
+                                                                        delegate.getPrice() * (1 - taxRate)
+                                                                    );
                                                                 }
-
                                                             }
-                                                        }, StepOrder.DAWN, shockYear);
+                                                        }
 
-                                            }
-                                        };
+                                                    }
+                                                }, StepOrder.DAWN, shockYear);
+
+                                        }
+                                    };
 
 
-                                    }
-                                });
+                                }
+                            });
 
 
                     }
@@ -108,50 +145,10 @@ public class NoData718Slice4Policy {
         };
     }
 
-
-    static {
-
-        policies.put(
-                "BAU",
-                shockYear -> scenario -> {
-                }
-
-        );
-
-
-        policies.put(
-                "noentry",
-                shockYear -> NoDataPolicy.removeEntry(shockYear)
-
-        );
-
-
-        policies.put(
-                "150_days_noentry",
-                shockYear -> NoDataPolicy.buildMaxDaysRegulation(shockYear,
-                        new String[]{"population0","population1","population2"}
-                        ,100, false).andThen(
-                        NoDataPolicy.removeEntry(shockYear)
-                )
-
-        );
-
-        policies.put(
-                "tax_20",
-                shockYear -> NoDataPolicy.removeEntry(shockYear).andThen(
-                        decreasePricesForAllSpeciesByAPercentage(.2d).apply(shockYear)
-                )
-
-        );
-
-
-    }
-
-
     public static void main(String[] args) throws IOException {
 
         CSVReader reader = new CSVReader(new FileReader(
-                OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
+            OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE).toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -159,9 +156,9 @@ public class NoData718Slice4Policy {
 
             String[] row = strings.get(i);
             runOnePolicySimulation(
-                    Paths.get(row[0]),
-                    Integer.parseInt(row[1]),
-                    Integer.parseInt(row[2])
+                Paths.get(row[0]),
+                Integer.parseInt(row[1]),
+                Integer.parseInt(row[2])
             );
         }
 
@@ -169,18 +166,19 @@ public class NoData718Slice4Policy {
     }
 
 
-    private static void runOnePolicySimulation(Path scenarioFile,
-                                               int yearOfPriceShock,
-                                               int yearOfPolicyShock) throws IOException {
+    private static void runOnePolicySimulation(
+        Path scenarioFile,
+        int yearOfPriceShock,
+        int yearOfPolicyShock
+    ) throws IOException {
 
 
-        Preconditions.checkArgument(yearOfPolicyShock>yearOfPriceShock);
+        Preconditions.checkArgument(yearOfPolicyShock > yearOfPriceShock);
 
-        String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');
+        String filename = scenarioFile.toAbsolutePath().toString().replace('/', '$');
 
         System.out.println(filename);
-        if(OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists())
-        {
+        if (OUTPUT_FOLDER.resolve(filename + ".csv").toFile().exists()) {
             System.out.println(filename + " already exists!");
             return;
 
@@ -196,20 +194,22 @@ public class NoData718Slice4Policy {
 
             //add the price shock
             final Consumer<Scenario> priceShockConsumer =
-                    NoData718Slice4PriceIncrease.priceShockAndSeedingGenerator(0).apply(yearOfPriceShock);
+                NoData718Slice4PriceIncrease.priceShockAndSeedingGenerator(0).apply(yearOfPriceShock);
 
             //add policy!
             final Consumer<Scenario> totalConsumer = priceShockConsumer.andThen(
-                    policyRun.getValue().apply(yearOfPolicyShock)
+                policyRun.getValue().apply(yearOfPolicyShock)
             ).andThen(
-                    //collect full-time vs part-time stuff
-                    scenario -> ((FlexibleScenario) scenario).getPlugins().add(
-                            new FullSeasonalRetiredDataCollectorsFactory()
-                    )
-            );;
+                //collect full-time vs part-time stuff
+                scenario -> ((FlexibleScenario) scenario).getPlugins().add(
+                    new FullSeasonalRetiredDataCollectorsFactory()
+                )
+            );
+            ;
 
-            BatchRunner runner =  NoData718Slice2PriceIncrease.setupRunner(scenarioFile,
-                    yearOfPolicyShock+15, null, SEED, null);
+            BatchRunner runner = NoData718Slice2PriceIncrease.setupRunner(scenarioFile,
+                yearOfPolicyShock + 15, null, SEED, null
+            );
 
             //give it the scenario
             runner.setScenarioSetup(totalConsumer);
@@ -232,8 +232,6 @@ public class NoData718Slice4Policy {
 
 
     }
-
-
 
 
 }

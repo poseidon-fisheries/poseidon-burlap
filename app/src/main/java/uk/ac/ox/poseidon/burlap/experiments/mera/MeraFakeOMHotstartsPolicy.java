@@ -12,45 +12,47 @@ import java.util.Map;
 public class MeraFakeOMHotstartsPolicy {
 
 
-    public static final Path COLUMNS_TO_PRINT = MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve("full_columns_to_print.yaml");
+    public static final Path COLUMNS_TO_PRINT = MeraOMHotstartsCalibration.MAIN_DIRECTORY.resolve(
+        "full_columns_to_print.yaml");
     static private LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> selectedPolicies =
-            new LinkedHashMap<>();
+        new LinkedHashMap<>();
+
     static {
         selectedPolicies.put(
-                "250_days",
-                fishState -> {
-                    return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(250, true);
-                }
+            "250_days",
+            fishState -> {
+                return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(250, true);
+            }
         );
         selectedPolicies.put(
-                "333_days",
-                fishState -> {
-                    return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(333, true);
-                }
+            "333_days",
+            fishState -> {
+                return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(333, true);
+            }
         );
         selectedPolicies.put(
-                "0_days",
-                fishState -> {
-                    return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(0, true);
-                }
+            "0_days",
+            fishState -> {
+                return MeraOneSpeciesSlice1.buildMaxDaysOutPolicy(0, true);
+            }
         );
         String[] otherPolicies = {
-                "BAU",
-                "lastcatch",
-                "lastcatch_70",
-                "closed_multi_itarget1cpue",
-                "LBSPR_season",
-                "LTARGETE_1_fleet",
-                "LTARGETE_1_season",
-                "LTARGETE_4_fleet",
-                "LTARGETE_4_season"};
+            "BAU",
+            "lastcatch",
+            "lastcatch_70",
+            "closed_multi_itarget1cpue",
+            "LBSPR_season",
+            "LTARGETE_1_fleet",
+            "LTARGETE_1_season",
+            "LTARGETE_4_fleet",
+            "LTARGETE_4_season"};
 
-        for(String policy : otherPolicies){
+        for (String policy : otherPolicies) {
             final AlgorithmFactory<? extends AdditionalStartable> factory = MeraOneSpeciesSlice1.ALL_OF_THEM.get(policy);
-            Preconditions.checkArgument(factory!=null,policy);
+            Preconditions.checkArgument(factory != null, policy);
             selectedPolicies.put(
-                    policy,
-                    factory
+                policy,
+                factory
             );
         }
 
@@ -77,22 +79,22 @@ public class MeraFakeOMHotstartsPolicy {
         final LinkedHashMap<String, AlgorithmFactory<? extends AdditionalStartable>> adjustedPolicies = new LinkedHashMap<>();
         for (Map.Entry<String, AlgorithmFactory<? extends AdditionalStartable>> policyFactory : selectedPolicies.entrySet()) {
             adjustedPolicies.put(
-                    policyFactory.getKey(),
-                    fishState -> {
-                        MeraOneSpeciesSlice1Negative.prepareHotstartScenarioForPolicy(true).accept(fishState);
-                        return policyFactory.getValue().apply(fishState);
+                policyFactory.getKey(),
+                fishState -> {
+                    MeraOneSpeciesSlice1Negative.prepareHotstartScenarioForPolicy(true).accept(fishState);
+                    return policyFactory.getValue().apply(fishState);
 
 
-                    }
+                }
             );
         }
         MeraOneSpeciesSlice1.runSetOfScenarios(pathToScenarioFiles,
-                pathToOutput,
-                adjustedPolicies, 50, COLUMNS_TO_PRINT, null);
+            pathToOutput,
+            adjustedPolicies, 50, COLUMNS_TO_PRINT, null
+        );
 
 
     }
-
 
 
 }

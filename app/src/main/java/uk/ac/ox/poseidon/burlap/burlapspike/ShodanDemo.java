@@ -23,10 +23,10 @@ package uk.ac.ox.poseidon.burlap.burlapspike;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.regs.factory.AnarchyFactory;
 import uk.ac.ox.oxfish.model.regs.factory.RandomOpenCloseController;
-import uk.ac.ox.poseidon.burlap.regs.ShodanFromFileFactory;
 import uk.ac.ox.oxfish.model.scenario.PrototypeScenario;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.regs.ShodanFromFileFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -46,8 +46,9 @@ public class ShodanDemo {
         FishYAML yaml = new FishYAML();
 
         PrototypeScenario scenario = yaml.loadAs(
-                new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
-                PrototypeScenario.class);
+            new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
+            PrototypeScenario.class
+        );
         RandomOpenCloseController random = new RandomOpenCloseController();
         scenario.setRegulation(random);
 
@@ -55,8 +56,9 @@ public class ShodanDemo {
         runSimulation(scenario, "random80", 80, Paths.get("docs", "20170103 shodan_test", "random80" + ".csv"));
 
         scenario = yaml.loadAs(
-                new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
-                PrototypeScenario.class);
+            new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
+            PrototypeScenario.class
+        );
         AnarchyFactory anarchy = new AnarchyFactory();
         scenario.setRegulation(anarchy);
 
@@ -116,7 +118,6 @@ public class ShodanDemo {
         runSimulation(scenario, "shodan_general_B80", 80,
                       Paths.get("docs", "20170103 shodan_test", "shodan_general_B80" + ".csv"));
 */
-
 
 
     }
@@ -195,64 +196,69 @@ public class ShodanDemo {
                              "999_sarsa_cashdistanceclosed_9lambda_fourier"), "agent_400");
                              */
 
-        generalRun(Paths.get("runs",
-                             "burlap_infinity",
-                             "999_sarsa_cashdistanceclosed_9lambda_fourier_baseline_highepsilon2"), "agent_1160");
+        generalRun(Paths.get(
+            "runs",
+            "burlap_infinity",
+            "999_sarsa_cashdistanceclosed_9lambda_fourier_baseline_highepsilon2"
+        ), "agent_1160");
     }
 
     private static void generalRun(final Path containerPath, final String agentName) throws FileNotFoundException {
         FishYAML yaml = new FishYAML();
         //policy optimal
         PrototypeScenario scenario = yaml.loadAs(
-                new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
-                PrototypeScenario.class);
+            new FileReader(Paths.get("docs", "20170103 shodan_test", "scenario.yaml").toFile()),
+            PrototypeScenario.class
+        );
         ShodanFromFileFactory shodan = new ShodanFromFileFactory();
-        shodan.setPathToXml(containerPath.resolve(agentName+".xml").toAbsolutePath().toString());
+        shodan.setPathToXml(containerPath.resolve(agentName + ".xml").toAbsolutePath().toString());
         scenario.setRegulation(shodan);
         runSimulation(scenario, agentName, 20,
-                      containerPath.resolve(agentName+".csv"));
-        runSimulation(scenario, "80_"+agentName, 80,
-                      containerPath.resolve("80_"+agentName+".csv"));
+            containerPath.resolve(agentName + ".csv")
+        );
+        runSimulation(scenario, "80_" + agentName, 80,
+            containerPath.resolve("80_" + agentName + ".csv")
+        );
 
 
     }
 
     private static void runSimulation(
-            PrototypeScenario scenario, final String name, final int yearsToRun, final Path outputPath) {
+        PrototypeScenario scenario, final String name, final int yearsToRun, final Path outputPath
+    ) {
         FishState state = new FishState(0);
         state.setScenario(scenario);
         state.start();
         state.attachAdditionalGatherers();
-        while(state.getYear()< yearsToRun)
+        while (state.getYear() < yearsToRun)
             state.schedule.step(state);
 
         //ugly
-        if(scenario.getRegulation() instanceof ShodanFromFileFactory)
+        if (scenario.getRegulation() instanceof ShodanFromFileFactory)
             FishStateUtilities.printCSVColumnsToFile(
-                    outputPath.toFile(),
-                    state.getDailyDataSet().getColumn("Biomass Species 0"),
-                    state.getDailyDataSet().getColumn("Species 0 Landings"),
-                    state.getDailyDataSet().getColumn("Average Cash-Flow"),
-                    state.getDailyDataSet().getColumn("Shodan Policy"), //add this when it's a shodan run
-                    state.getDailyDataSet().getColumn("Average Distance From Port")
+                outputPath.toFile(),
+                state.getDailyDataSet().getColumn("Biomass Species 0"),
+                state.getDailyDataSet().getColumn("Species 0 Landings"),
+                state.getDailyDataSet().getColumn("Average Cash-Flow"),
+                state.getDailyDataSet().getColumn("Shodan Policy"), //add this when it's a shodan run
+                state.getDailyDataSet().getColumn("Average Distance From Port")
             );
         else
             FishStateUtilities.printCSVColumnsToFile(
-                    outputPath.toFile(),
-                    state.getDailyDataSet().getColumn("Biomass Species 0"),
-                    state.getDailyDataSet().getColumn("Species 0 Landings"),
-                    state.getDailyDataSet().getColumn("Average Cash-Flow"),
-                    state.getDailyDataSet().getColumn("Average Distance From Port")
+                outputPath.toFile(),
+                state.getDailyDataSet().getColumn("Biomass Species 0"),
+                state.getDailyDataSet().getColumn("Species 0 Landings"),
+                state.getDailyDataSet().getColumn("Average Cash-Flow"),
+                state.getDailyDataSet().getColumn("Average Distance From Port")
             );
         System.out.println(name + ": " + reward(state));
     }
 
 
-    public static double reward(FishState state)
-    {
+    public static double reward(FishState state) {
         double initialScore = 0;
-        for(Double cashflow : state.getYearlyDataSet().getColumn("Average Cash-Flow"))
-            initialScore+=cashflow;
+        for (Double cashflow : state.getYearlyDataSet().getColumn("Average Cash-Flow"))
+            initialScore += cashflow;
         return initialScore;
     }
 }

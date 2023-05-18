@@ -9,7 +9,9 @@ import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
 import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice3;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -24,24 +26,24 @@ import java.util.function.Consumer;
 public class NoData718Slice6 {
 
     final static public Path MAIN_DIRECTORY =
-            Paths.get("docs", "indonesia_hub",
-                    "runs", "718",
-                    "slice6limited");
+        Paths.get("docs", "indonesia_hub",
+            "runs", "718",
+            "slice6limited"
+        );
 
 
     final static public int MAX_YEARS_TO_RUN = 40;
 
 
-
     public static void main(String[] args) throws IOException {
 
         runSlice(
-                MAIN_DIRECTORY.resolve("base.yaml"),
-                MAIN_DIRECTORY.resolve("parameters.yaml"),
-                MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
-                MAIN_DIRECTORY,
-                0L,
-                MAX_YEARS_TO_RUN
+            MAIN_DIRECTORY.resolve("base.yaml"),
+            MAIN_DIRECTORY.resolve("parameters.yaml"),
+            MAIN_DIRECTORY.resolve("columnsToPrint.yaml"),
+            MAIN_DIRECTORY,
+            0L,
+            MAX_YEARS_TO_RUN
 
 
         );
@@ -58,43 +60,44 @@ public class NoData718Slice6 {
     }
 
 
-
     public static void runSliceIntegrated(
-            Path baselineScenarioFile,
-            Path parameterFile,
-            Path listOfColumnsToPrintFile,
-            Path mainDirectory, long seed, int maxYearsToRun
+        Path baselineScenarioFile,
+        Path parameterFile,
+        Path listOfColumnsToPrintFile,
+        Path mainDirectory, long seed, int maxYearsToRun
     ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         final List<String> columnsToPrint =
-                yaml.loadAs(new FileReader(
-                                listOfColumnsToPrintFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    listOfColumnsToPrintFile.toFile()
+                ),
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                parameterFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    parameterFile.toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
         MersenneTwisterFast random = new MersenneTwisterFast();
-        int directoryIndex =  random.nextInt(999999);
+        int directoryIndex = random.nextInt(999999);
         Path scenarioDirectory = mainDirectory.resolve("scenarios_integrated").
-                resolve(computerName+"_"+directoryIndex);
+            resolve(computerName + "_" + directoryIndex);
         scenarioDirectory.toFile().mkdirs();
         Path summaryDirectory = scenarioDirectory.resolve("summaries");
         summaryDirectory.toFile().mkdir();
 
 
-
-
         FileWriter summaryStatisticsWriter =
-                new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
+            new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
         summaryStatisticsWriter.write("run,year,scenario,price_shock_year,variable,value\n");
         summaryStatisticsWriter.flush();
 
@@ -104,21 +107,22 @@ public class NoData718Slice6 {
         FileWriter parameterMasterFile = NoData718Slice3.initializeParameterMasterFile(summaryDirectory, parameters);
 
 
-        for(int i=0; i<50000; i++) {
-            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(scenarioDirectory,
-                    parameters,
-                    baselineScenarioFile,
-                    parameterMasterFile,
-                    new MersenneTwisterFast(),
-                    i
+        for (int i = 0; i < 50000; i++) {
+            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(
+                scenarioDirectory,
+                parameters,
+                baselineScenarioFile,
+                parameterMasterFile,
+                new MersenneTwisterFast(),
+                i
             );
             runOneScenarioIntegrated(
-                    seed,
-                    columnsToPrint,
-                    summaryStatisticsWriter,
-                    writtenScenario,
-                    maxYearsToRun,
-                    random.nextInt(10)+25
+                seed,
+                columnsToPrint,
+                summaryStatisticsWriter,
+                writtenScenario,
+                maxYearsToRun,
+                random.nextInt(10) + 25
 
             );
         }
@@ -126,42 +130,43 @@ public class NoData718Slice6 {
     }
 
 
-
     public static void runSlice(
-            Path baselineScenarioFile,
-            Path parameterFile,
-            Path listOfColumnsToPrintFile,
-            Path mainDirectory, long seed, int maxYearsToRun
+        Path baselineScenarioFile,
+        Path parameterFile,
+        Path listOfColumnsToPrintFile,
+        Path mainDirectory, long seed, int maxYearsToRun
     ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         final List<String> columnsToPrint =
-                yaml.loadAs(new FileReader(
-                                listOfColumnsToPrintFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    listOfColumnsToPrintFile.toFile()
+                ),
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                parameterFile.toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    parameterFile.toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
         MersenneTwisterFast random = new MersenneTwisterFast();
-        int directoryIndex =  random.nextInt(999999);
-        Path scenarioDirectory = mainDirectory.resolve("scenarios").resolve(computerName+"_"+directoryIndex);
+        int directoryIndex = random.nextInt(999999);
+        Path scenarioDirectory = mainDirectory.resolve("scenarios").resolve(computerName + "_" + directoryIndex);
         scenarioDirectory.toFile().mkdirs();
         Path summaryDirectory = scenarioDirectory.resolve("summaries");
         summaryDirectory.toFile().mkdir();
 
 
-
-
         FileWriter summaryStatisticsWriter =
-                new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
+            new FileWriter(summaryDirectory.resolve("summary_statistics_" + seed + ".csv").toFile());
         summaryStatisticsWriter.write("run,year,scenario,variable,value\n");
         summaryStatisticsWriter.flush();
 
@@ -171,38 +176,36 @@ public class NoData718Slice6 {
         FileWriter parameterMasterFile = NoData718Slice3.initializeParameterMasterFile(summaryDirectory, parameters);
 
 
-        for(int i=0; i<50000; i++) {
-            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(scenarioDirectory,
-                    parameters,
-                    baselineScenarioFile,
-                    parameterMasterFile,
-                    new MersenneTwisterFast(),
-                    i
+        for (int i = 0; i < 50000; i++) {
+            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(
+                scenarioDirectory,
+                parameters,
+                baselineScenarioFile,
+                parameterMasterFile,
+                new MersenneTwisterFast(),
+                i
             );
             runOneScenario(
-                    seed,
-                    columnsToPrint,
-                    summaryStatisticsWriter,
-                    writtenScenario,
-                    maxYearsToRun
+                seed,
+                columnsToPrint,
+                summaryStatisticsWriter,
+                writtenScenario,
+                maxYearsToRun
             );
         }
 
     }
 
 
-
-
-
-
-    public static StringBuffer runOneScenario(long randomSeed,
-                                              List<String> columns,
-                                              FileWriter summaryStatisticsWriter,
-                                              Path scenarioFile,
-                                              int maxYearsToRun
+    public static StringBuffer runOneScenario(
+        long randomSeed,
+        List<String> columns,
+        FileWriter summaryStatisticsWriter,
+        Path scenarioFile,
+        int maxYearsToRun
     ) throws IOException {
 
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
         StringBuffer tidy = new StringBuffer();
 
         try {
@@ -210,13 +213,13 @@ public class NoData718Slice6 {
 
 
             final BatchRunner batchRunner = new BatchRunner(
-                    scenarioFile,
-                    maxYearsToRun,
-                    columns,
-                    null,
-                    null,
-                    randomSeed,
-                    -1
+                scenarioFile,
+                maxYearsToRun,
+                columns,
+                null,
+                null,
+                randomSeed,
+                -1
             );
 
             batchRunner.setColumnModifier(new BatchRunner.ColumnModifier() {
@@ -228,54 +231,48 @@ public class NoData718Slice6 {
 
             batchRunner.run(tidy);
 
-            if(summaryStatisticsWriter!=null) {
+            if (summaryStatisticsWriter != null) {
                 summaryStatisticsWriter.write(tidy.toString());
                 summaryStatisticsWriter.flush();
             }
             long end = System.currentTimeMillis();
-            System.out.println( "Run lasted: " + (end-start)/1000 + " seconds");
+            System.out.println("Run lasted: " + (end - start) / 1000 + " seconds");
+        } catch (OutOfMemoryError e) {
         }
-        catch (OutOfMemoryError e){
-        }
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
         System.out.println("--------------------------------------------------------------");
         return tidy;
     }
 
 
-
-
-
-
     public static void runOneScenarioIntegrated(
-            long randomSeed,
-                                      List<String> columns,
-                                      FileWriter summaryStatisticsWriter,
-                                      Path scenarioFile,
-                                      int maxYearsToRun,
-            int shockYear
+        long randomSeed,
+        List<String> columns,
+        FileWriter summaryStatisticsWriter,
+        Path scenarioFile,
+        int maxYearsToRun,
+        int shockYear
     ) throws IOException {
 
-        
 
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
 
         try {
             long start = System.currentTimeMillis();
 
 
             final BatchRunner batchRunner = new BatchRunner(
-                    scenarioFile,
-                    maxYearsToRun,
-                    columns,
-                    null,
-                    null,
-                    randomSeed,
-                    -1
+                scenarioFile,
+                maxYearsToRun,
+                columns,
+                null,
+                null,
+                randomSeed,
+                -1
             );
             //add price shock and seeding to this
             final Consumer<Scenario> priceShockPolicy =
-                    NoData718Slice6PriceIncrease.slice6PriceJump.get("Price Shock plus seeding").apply(shockYear);
+                NoData718Slice6PriceIncrease.slice6PriceJump.get("Price Shock plus seeding").apply(shockYear);
             batchRunner.setScenarioSetup(priceShockPolicy);
 
 
@@ -293,11 +290,10 @@ public class NoData718Slice6 {
             summaryStatisticsWriter.flush();
 
             long end = System.currentTimeMillis();
-            System.out.println( "Run lasted: " + (end-start)/1000 + " seconds");
+            System.out.println("Run lasted: " + (end - start) / 1000 + " seconds");
+        } catch (OutOfMemoryError e) {
         }
-        catch (OutOfMemoryError e){
-        }
-        System.out.println(scenarioFile.toFile().getAbsolutePath() );
+        System.out.println(scenarioFile.toFile().getAbsolutePath());
         System.out.println("--------------------------------------------------------------");
     }
 

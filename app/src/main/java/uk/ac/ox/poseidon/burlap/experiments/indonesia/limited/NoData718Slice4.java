@@ -19,65 +19,72 @@ import java.util.List;
 public class NoData718Slice4 {
 
 
-
     final static public Path MAIN_DIRECTORY =
-            Paths.get("docs", "indonesia_hub",
-                    "runs", "718",
-                    "slice4limited");
+        Paths.get("docs", "indonesia_hub",
+            "runs", "718",
+            "slice4limited"
+        );
 
     final static public Path BASELINE_SCENARIO_FILE = MAIN_DIRECTORY.resolve("base.yaml");
 
     final static public int MAX_YEARS_TO_RUN = 30;
 
-    public static void  main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         FishYAML yaml = new FishYAML();
         final List<AcceptableRangePredicate> predicates =
-                yaml.loadAs(new FileReader(
-                        MAIN_DIRECTORY.resolve("predicates.yaml").toFile()
+            yaml.loadAs(
+                new FileReader(
+                    MAIN_DIRECTORY.resolve("predicates.yaml").toFile()
                 ),
-                LinkedList.class);
+                LinkedList.class
+            );
 
         final List<OptimizationParameter> parameters =
-                yaml.loadAs(new FileReader(
-                                MAIN_DIRECTORY.resolve("parameters.yaml").toFile()
-                        ),
-                        LinkedList.class);
+            yaml.loadAs(
+                new FileReader(
+                    MAIN_DIRECTORY.resolve("parameters.yaml").toFile()
+                ),
+                LinkedList.class
+            );
 
 
         String computerName = FishStateUtilities.getComputerName();
         MersenneTwisterFast random = new MersenneTwisterFast();
-        int directoryIndex =  random.nextInt(999999);
-        Path scenarioDirectory = MAIN_DIRECTORY.resolve("scenarios").resolve(computerName+"_"+directoryIndex);
+        int directoryIndex = random.nextInt(999999);
+        Path scenarioDirectory = MAIN_DIRECTORY.resolve("scenarios").resolve(computerName + "_" + directoryIndex);
         scenarioDirectory.toFile().mkdirs();
         Path summaryDirectory = scenarioDirectory.resolve("summaries");
         summaryDirectory.toFile().mkdir();
 
 
         final FileWriter summaryStatisticsWriter =
-                NoData718Slice1.prepareSummaryStatisticsMasterFile(summaryDirectory,
-                        0l,
-                        predicates);
+            NoData718Slice1.prepareSummaryStatisticsMasterFile(
+                summaryDirectory,
+                0l,
+                predicates
+            );
 
         System.out.println("working in directory: " + scenarioDirectory);
 
         FileWriter parameterMasterFile = NoData718Slice3.initializeParameterMasterFile(summaryDirectory, parameters);
 
 
-        for(int i=0; i<50000; i++) {
-            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(scenarioDirectory,
-                    parameters,
-                    BASELINE_SCENARIO_FILE,
-                    parameterMasterFile,
-                    new MersenneTwisterFast(),
-                    i
+        for (int i = 0; i < 50000; i++) {
+            final Path writtenScenario = NoData718Slice3.writeToFileOneScenario(
+                scenarioDirectory,
+                parameters,
+                BASELINE_SCENARIO_FILE,
+                parameterMasterFile,
+                new MersenneTwisterFast(),
+                i
             );
             NoData718Slice1.runOneScenario(
-                    0l,
-                    predicates,
-                    summaryStatisticsWriter,
-                    writtenScenario.toFile(),
-                    MAX_YEARS_TO_RUN
+                0l,
+                predicates,
+                summaryStatisticsWriter,
+                writtenScenario.toFile(),
+                MAX_YEARS_TO_RUN
             );
         }
 

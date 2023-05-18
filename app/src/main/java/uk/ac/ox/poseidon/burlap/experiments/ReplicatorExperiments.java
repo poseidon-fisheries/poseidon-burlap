@@ -21,7 +21,6 @@
 package uk.ac.ox.poseidon.burlap.experiments;
 
 import com.google.common.base.Preconditions;
-import uk.ac.ox.poseidon.burlap.strategies.ReplicatorDestinationFactory;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.data.collectors.DataColumn;
 import uk.ac.ox.oxfish.model.regs.Regulation;
@@ -32,6 +31,7 @@ import uk.ac.ox.oxfish.model.scenario.PrototypeScenario;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.strategies.ReplicatorDestinationFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -47,17 +47,14 @@ import java.nio.file.StandardOpenOption;
 public class ReplicatorExperiments {
 
 
-
+    public static final int NUMBER_OF_RUNS = 100;
+    public static final int YEARS_TO_RUN = 15;
+    public static final int NUMBER_OF_FISHERS = 100;
     //private final static Path INPUT_FILE = Paths.get("runs", "replicator", "fixed_dynamic.yaml");
     private final static Path INPUT_FILE = Paths.get("runs", "replicator", "chaser.yaml");
     private static final Path OUTPUT_FILE = Paths.get("docs", "20170301 replicator", "results.csv");
     private static final Path DYNAMIC_FILE = Paths.get("docs", "20170301 replicator", "dynamics.csv");
-
     private static final Path EFFICIENCY_FILE = Paths.get("docs", "20170301 replicator", "efficiency.csv");
-
-    public static final int NUMBER_OF_RUNS = 100;
-    public static final int YEARS_TO_RUN = 15;
-    public static final int NUMBER_OF_FISHERS = 100;
 
     public static void main(String[] args) throws IOException {
 
@@ -69,24 +66,26 @@ public class ReplicatorExperiments {
 
         File covarianceFile = DYNAMIC_FILE.toFile();
         if (!covarianceFile.exists()) {
-            Files.write(DYNAMIC_FILE,
-                        "scenario,id,time,strategy1,strategy2,fitness1,fitness2,name\n".getBytes());
+            Files.write(
+                DYNAMIC_FILE,
+                "scenario,id,time,strategy1,strategy2,fitness1,fitness2,name\n".getBytes()
+            );
         }
 
         File efficencyFile = EFFICIENCY_FILE.toFile();
         if (!efficencyFile.exists()) {
-            Files.write(EFFICIENCY_FILE,
-                        "scenario,fishers,name,landings,effort\n".getBytes());
+            Files.write(
+                EFFICIENCY_FILE,
+                "scenario,fishers,name,landings,effort\n".getBytes()
+            );
         }
         System.out.println(INPUT_FILE);
 
 
-    //    efficiencyRuns();
+        //    efficiencyRuns();
 
 
-         runs();
-
-
+        runs();
 
 
     }
@@ -97,7 +96,8 @@ public class ReplicatorExperiments {
             INPUT_FILE,
             new AnarchyFactory(),
             NUMBER_OF_RUNS,
-            OUTPUT_FILE, DYNAMIC_FILE);
+            OUTPUT_FILE, DYNAMIC_FILE
+        );
 
 
         ITQMonoFactory itq = new ITQMonoFactory();
@@ -108,7 +108,8 @@ public class ReplicatorExperiments {
             INPUT_FILE,
             itq,
             NUMBER_OF_RUNS,
-            OUTPUT_FILE, DYNAMIC_FILE);
+            OUTPUT_FILE, DYNAMIC_FILE
+        );
 
 
         itq.setIndividualQuota(new FixedDoubleParameter(2000));
@@ -118,7 +119,8 @@ public class ReplicatorExperiments {
             INPUT_FILE,
             itq,
             NUMBER_OF_RUNS,
-            OUTPUT_FILE, DYNAMIC_FILE);
+            OUTPUT_FILE, DYNAMIC_FILE
+        );
 
 
         itq.setIndividualQuota(new FixedDoubleParameter(8000));
@@ -128,54 +130,64 @@ public class ReplicatorExperiments {
             INPUT_FILE,
             itq,
             NUMBER_OF_RUNS,
-            OUTPUT_FILE, DYNAMIC_FILE);
+            OUTPUT_FILE, DYNAMIC_FILE
+        );
 
 
         TACMonoFactory tac = new TACMonoFactory();
-        tac.setQuota(new FixedDoubleParameter(4000* NUMBER_OF_FISHERS));
+        tac.setQuota(new FixedDoubleParameter(4000 * NUMBER_OF_FISHERS));
 
         run("tac",
             YEARS_TO_RUN,
             INPUT_FILE,
             tac,
             NUMBER_OF_RUNS,
-            OUTPUT_FILE, DYNAMIC_FILE);
+            OUTPUT_FILE, DYNAMIC_FILE
+        );
     }
 
     private static void efficiencyRuns() throws IOException {
-        efficiency("anarchy",
-                   YEARS_TO_RUN,
-                   INPUT_FILE,
-                   new AnarchyFactory(),
-                   NUMBER_OF_RUNS,
-                   EFFICIENCY_FILE);
+        efficiency(
+            "anarchy",
+            YEARS_TO_RUN,
+            INPUT_FILE,
+            new AnarchyFactory(),
+            NUMBER_OF_RUNS,
+            EFFICIENCY_FILE
+        );
         TACMonoFactory tac = new TACMonoFactory();
-        tac.setQuota(new FixedDoubleParameter(4000* NUMBER_OF_FISHERS));
+        tac.setQuota(new FixedDoubleParameter(4000 * NUMBER_OF_FISHERS));
 
-        efficiency("tac",
-                   YEARS_TO_RUN,
-                   INPUT_FILE,
-                   tac,
-                   NUMBER_OF_RUNS,
-                   EFFICIENCY_FILE);
+        efficiency(
+            "tac",
+            YEARS_TO_RUN,
+            INPUT_FILE,
+            tac,
+            NUMBER_OF_RUNS,
+            EFFICIENCY_FILE
+        );
     }
 
 
-    public static void run(String name,
-                    int yearsToRun,
-                    Path inputYamlPath,
-                    AlgorithmFactory<? extends Regulation> regulation,
-                    int numberOfRuns,
-                    Path outputPath,
-                    Path dynamicPath) throws IOException {
-        for(int run = 0; run<numberOfRuns; run++) {
+    public static void run(
+        String name,
+        int yearsToRun,
+        Path inputYamlPath,
+        AlgorithmFactory<? extends Regulation> regulation,
+        int numberOfRuns,
+        Path outputPath,
+        Path dynamicPath
+    ) throws IOException {
+        for (int run = 0; run < numberOfRuns; run++) {
             FishYAML yaml = new FishYAML();
             PrototypeScenario scenario = yaml.loadAs(
-                    new FileReader(inputYamlPath.toFile()),
-                    PrototypeScenario.class);
+                new FileReader(inputYamlPath.toFile()),
+                PrototypeScenario.class
+            );
 
             Preconditions.checkState(scenario.getDestinationStrategy() instanceof ReplicatorDestinationFactory);
-            Preconditions.checkState(((ReplicatorDestinationFactory) scenario.getDestinationStrategy()).getOptions().size()==2);
+            Preconditions.checkState(((ReplicatorDestinationFactory) scenario.getDestinationStrategy()).getOptions()
+                .size() == 2);
 
             scenario.setRegulation(regulation);
             scenario.setFishers(NUMBER_OF_FISHERS);
@@ -187,19 +199,19 @@ public class ReplicatorExperiments {
 
             double profits = 0d;
             for (Double cash : state.getYearlyDataSet().getColumn("Average Cash-Flow")) {
-                profits+=cash;
+                profits += cash;
             }
             int strategy0 = state.getDailyDataSet().getLatestObservation("Fishers using strategy " + 0).intValue();
             int strategy1 = state.getDailyDataSet().getLatestObservation("Fishers using strategy " + 1).intValue();
 
             //"scenario,fishers,name,profits,strategy1,strategy2\n"
             String output =
-                    inputYamlPath.getFileName().toString() + "," +
-                            NUMBER_OF_FISHERS + "," +
-                            name + "," +
-                            profits + "," +
-                            strategy0 + "," +
-                            strategy1 + "\n";
+                inputYamlPath.getFileName().toString() + "," +
+                    NUMBER_OF_FISHERS + "," +
+                    name + "," +
+                    profits + "," +
+                    strategy0 + "," +
+                    strategy1 + "\n";
 
             Files.write(outputPath, output.getBytes(), StandardOpenOption.APPEND);
 
@@ -207,20 +219,19 @@ public class ReplicatorExperiments {
             DataColumn column1 = state.getDailyDataSet().getColumn("Fishers using strategy " + 1);
             DataColumn fitness0 = state.getDailyDataSet().getColumn("Fitness of strategy " + 0);
             DataColumn fitness1 = state.getDailyDataSet().getColumn("Fitness of strategy " + 1);
-            final  long id = System.currentTimeMillis();
+            final long id = System.currentTimeMillis();
             //second output is more complicated
-            for(int t=0; t<column0.size(); t+=60)
-            {
+            for (int t = 0; t < column0.size(); t += 60) {
                 //"scenario,id,time,strategy1,strategy2,fitness1,fitness2,name\n"
                 output =
-                        inputYamlPath.getFileName().toString() + "," +
-                                id + "," +
-                                t + "," +
-                                column0.get(t) + "," +
-                                column1.get(t) + "," +
-                                fitness0.get(t) + "," +
-                                fitness1.get(t) + "," +
-                                name + "\n";
+                    inputYamlPath.getFileName().toString() + "," +
+                        id + "," +
+                        t + "," +
+                        column0.get(t) + "," +
+                        column1.get(t) + "," +
+                        fitness0.get(t) + "," +
+                        fitness1.get(t) + "," +
+                        name + "\n";
 
                 Files.write(dynamicPath, output.getBytes(), StandardOpenOption.APPEND);
 
@@ -230,23 +241,25 @@ public class ReplicatorExperiments {
     }
 
 
-    public static void efficiency(String name,
-                           int yearsToRun,
-                           Path inputYamlPath,
-                           AlgorithmFactory<? extends Regulation> regulation,
-                           int numberOfRuns,
-                           Path efficiencyPath) throws IOException
-    {
-        for(int run = 0; run<numberOfRuns; run++) {
+    public static void efficiency(
+        String name,
+        int yearsToRun,
+        Path inputYamlPath,
+        AlgorithmFactory<? extends Regulation> regulation,
+        int numberOfRuns,
+        Path efficiencyPath
+    ) throws IOException {
+        for (int run = 0; run < numberOfRuns; run++) {
 
             FishYAML yaml = new FishYAML();
             PrototypeScenario scenario = yaml.loadAs(
-                    new FileReader(inputYamlPath.toFile()),
-                    PrototypeScenario.class);
+                new FileReader(inputYamlPath.toFile()),
+                PrototypeScenario.class
+            );
 
             Preconditions.checkState(scenario.getDestinationStrategy() instanceof ReplicatorDestinationFactory);
             Preconditions.checkState(
-                    ((ReplicatorDestinationFactory) scenario.getDestinationStrategy()).getOptions().size() == 2);
+                ((ReplicatorDestinationFactory) scenario.getDestinationStrategy()).getOptions().size() == 2);
 
             scenario.setRegulation(regulation);
             scenario.setFishers(NUMBER_OF_FISHERS);
@@ -266,11 +279,11 @@ public class ReplicatorExperiments {
             }
 
             String output =
-                    inputYamlPath.getFileName().toString() + "," +
-                            NUMBER_OF_FISHERS + "," +
-                            name + "," +
-                            profits + "," +
-                            efforts + "\n";
+                inputYamlPath.getFileName().toString() + "," +
+                    NUMBER_OF_FISHERS + "," +
+                    name + "," +
+                    profits + "," +
+                    efforts + "\n";
 
             Files.write(efficiencyPath, output.getBytes(), StandardOpenOption.APPEND);
         }

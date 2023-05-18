@@ -38,36 +38,28 @@ import java.util.Iterator;
 /**
  * Created by carrknight on 12/19/16.
  */
-public class ShodanEnvironment implements Environment
-{
-
-
-
-    public static int YEARS_PER_EPISODE = 20;
-
-
-    private FishState state;
-
-    private ExternalOpenCloseSeason shodan;
+public class ShodanEnvironment implements Environment {
 
 
     public static final String ACTION_OPEN = "open";
-
     public static final String ACTION_CLOSE = "close";
+    public static int YEARS_PER_EPISODE = 20;
     private final PrototypeScenario scenario;
-    private Steppable additionalSteppable;
-
     /**
      * year when the episode ends, if this is negative the scenario never ends!
      */
     private final int lastYear;
+    private FishState state;
+    private ExternalOpenCloseSeason shodan;
+    private Steppable additionalSteppable;
 
 
     /**
      * create an environment object that stores the prototype scenario
+     *
      * @param scenario
      * @param additionalSteppable
-     * @param lastYear if negative the episode never ends
+     * @param lastYear            if negative the episode never ends
      */
     public ShodanEnvironment(PrototypeScenario scenario, Steppable additionalSteppable, int lastYear) {
         this.scenario = scenario;
@@ -76,10 +68,8 @@ public class ShodanEnvironment implements Environment
     }
 
     public ShodanEnvironment(final PrototypeScenario scenario, final Steppable additionalSteppable) {
-        this(scenario,additionalSteppable,YEARS_PER_EPISODE);
+        this(scenario, additionalSteppable, YEARS_PER_EPISODE);
     }
-
-
 
 
     /**
@@ -89,7 +79,7 @@ public class ShodanEnvironment implements Environment
      */
     @Override
     public ShodanStateOil currentObservation() {
-            return ShodanStateOil.fromState(state);
+        return ShodanStateOil.fromState(state);
     }
 
     /**
@@ -99,14 +89,13 @@ public class ShodanEnvironment implements Environment
      */
     @Override
     public double lastReward() {
-        if(state.getDay() <29)
+        if (state.getDay() < 29)
             return 0d;
-        else
-        {
+        else {
             Iterator<Double> record = state.getDailyDataSet().getColumn(
-                    "Average Cash-Flow").descendingIterator();
+                "Average Cash-Flow").descendingIterator();
             double reward = 0;
-            for(int i=0; i<30; i++)
+            for (int i = 0; i < 30; i++)
                 reward += record.next();
             return reward;
         }
@@ -122,17 +111,17 @@ public class ShodanEnvironment implements Environment
     @Override
     public EnvironmentOutcome executeAction(Action a) {
 
-        ShodanStateOil currentState =  currentObservation();
+        ShodanStateOil currentState = currentObservation();
 
 
-        if(a.actionName().equals(ACTION_OPEN))
+        if (a.actionName().equals(ACTION_OPEN))
             shodan.setOpen(true);
         else {
             assert a.actionName().equals(ACTION_CLOSE);
             shodan.setOpen(false);
         }
         //lspiRun the model for another 30 days
-        for(int day=0; day<30; day++)
+        for (int day = 0; day < 30; day++)
             state.schedule.step(state);
 
         /*
@@ -141,15 +130,15 @@ public class ShodanEnvironment implements Environment
         );
 */
 
-        ShodanStateOil newState =  currentObservation();
+        ShodanStateOil newState = currentObservation();
 
 
         return new EnvironmentOutcome(
-                currentState,
-                a,
-                newState,
-                lastReward(),
-                isInTerminalState()
+            currentState,
+            a,
+            newState,
+            lastReward(),
+            isInTerminalState()
         );
 
     }
@@ -185,17 +174,19 @@ public class ShodanEnvironment implements Environment
         state.scheduleEveryXDay(additionalSteppable, StepOrder.POLICY_UPDATE, 30);
 
         state.getDailyDataSet().registerGatherer("Shodan Policy",
-                                                 new Gatherer<FishState>() {
-                                                     @Override
-                                                     public Double apply(FishState state) {
-                                                         if(shodan.isOpen()) return  0d;
-                                                         else
-                                                             return 1d;
-                                                     }
-                                                 },shodan.isOpen() ? 0 : 1);
+            new Gatherer<FishState>() {
+                @Override
+                public Double apply(FishState state) {
+                    if (shodan.isOpen()) return 0d;
+                    else
+                        return 1d;
+                }
+            }, shodan.isOpen() ? 0 : 1
+        );
 
 
     }
+
     /**
      * Returns whether the environment is in a terminal state that prevents further action by the agent.
      *
@@ -203,13 +194,13 @@ public class ShodanEnvironment implements Environment
      */
     @Override
     public boolean isInTerminalState() {
-        return lastYear >0 && state.getYear()>=lastYear;
+        return lastYear > 0 && state.getYear() >= lastYear;
     }
 
-    public double totalReward(){
+    public double totalReward() {
         double initialScore = 0;
-        for(Double cashflow : state.getYearlyDataSet().getColumn("Average Cash-Flow"))
-            initialScore+=cashflow;
+        for (Double cashflow : state.getYearlyDataSet().getColumn("Average Cash-Flow"))
+            initialScore += cashflow;
         return initialScore;
     }
 
@@ -222,7 +213,6 @@ public class ShodanEnvironment implements Environment
     public FishState getState() {
         return state;
     }
-
 
 
     /**

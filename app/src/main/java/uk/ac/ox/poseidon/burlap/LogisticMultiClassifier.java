@@ -47,75 +47,74 @@ public class LogisticMultiClassifier {
 
     /**
      * pick an arm given your beta and the input matrix
-     * @param x the input matrix
+     *
+     * @param x      the input matrix
      * @param random the randomizer
      * @return choice in terms of index
      */
-    public Integer choose(final double[][] x, MersenneTwisterFast random)
-    {
+    public Integer choose(final double[][] x, MersenneTwisterFast random) {
 
 
         return SoftmaxBanditAlgorithm.drawFromSoftmax(
-                random,
-                getNumberOfOptions(),
-                new Function<Integer, Double>() {
-                    @Override
-                    public Double apply(Integer arm) {
-                        double[] beta = betas[arm];
-                        assert beta.length == x[0].length;
-                        //sum them up
-                        double sum = 0;
-                        for(int i=0; i<beta.length ;i++)
-                            sum += beta[i] *  x[arm][i];
-                        //there might be some very invalid ones
-                        if(Double.isFinite(sum))
-                            return sum;
-                        else
-                            return INVALID_PENALTY;
-                    }
+            random,
+            getNumberOfOptions(),
+            new Function<Integer, Double>() {
+                @Override
+                public Double apply(Integer arm) {
+                    double[] beta = betas[arm];
+                    assert beta.length == x[0].length;
+                    //sum them up
+                    double sum = 0;
+                    for (int i = 0; i < beta.length; i++)
+                        sum += beta[i] * x[arm][i];
+                    //there might be some very invalid ones
+                    if (Double.isFinite(sum))
+                        return sum;
+                    else
+                        return INVALID_PENALTY;
                 }
+            }
 
         );
 
     }
 
 
-
-
-
     /**
      * the probability of making a particular choice
+     *
      * @param arm index of the arm you want to know the probability of picking
-     * @param x input matrix
+     * @param x   input matrix
      * @return the probability
      */
-    public double getProbability(int arm, final double[][] x){
+    public double getProbability(int arm, final double[][] x) {
 
 
         return SoftmaxBanditAlgorithm.getProbabilities(
-                getNumberOfOptions(),
-                new Function<Integer, Double>()
-                {
-                    @Override
-                    public Double apply(Integer arm) {
-                        double[] beta = betas[arm];
-                        assert beta.length == x[0].length;
-                        //sum them up
-                        double sum = 0;
-                        for(int i=0; i<beta.length ;i++)
-                            sum += beta[i] *  x[arm][i];
-                        return sum;
-                    }
-                },
-                1d)[arm];
+            getNumberOfOptions(),
+            new Function<Integer, Double>() {
+                @Override
+                public Double apply(Integer arm) {
+                    double[] beta = betas[arm];
+                    assert beta.length == x[0].length;
+                    //sum them up
+                    double sum = 0;
+                    for (int i = 0; i < beta.length; i++)
+                        sum += beta[i] * x[arm][i];
+                    return sum;
+                }
+            },
+            1d
+        )[arm];
 
     }
 
     /**
      * how many Y can this classifier guess
+     *
      * @return
      */
-    public int getNumberOfOptions(){
+    public int getNumberOfOptions() {
         return betas.length;
     }
 

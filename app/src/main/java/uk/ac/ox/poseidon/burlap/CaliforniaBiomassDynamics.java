@@ -36,13 +36,13 @@ public class CaliforniaBiomassDynamics {
 
 
     public static final Path MAIN_DIRECTORY =
-            Paths.get("docs", "20170730 validation", "best");
+        Paths.get("docs", "20170730 validation", "best");
 
     public static void main(String[] args) throws IOException {
 
         CaliforniaAbundanceScenario scenario = new CaliforniaAbundanceScenario();
         scenario.setResetBiologyAtYear1(false);
-        scenario.setRegulationPreReset(new FishingSeasonFactory(0,true));
+        scenario.setRegulationPreReset(new FishingSeasonFactory(0, true));
         scenario.setUsePremadeInput(false);
         scenario.setSablefishDiffusingRate(0);
         scenario.setCountFileName("count_2011.csv");
@@ -64,10 +64,9 @@ public class CaliforniaBiomassDynamics {
         state.schedule.step(state);
         StringBuilder demography = new StringBuilder();
         demography.append("year,age,abundance").append("\n");
-        for(int age=0; age<sablefish.getNumberOfBins(); age++)
-        {
+        for (int age = 0; age < sablefish.getNumberOfBins(); age++) {
             demography.append(state.getYear()).append(",").append(age).append(",").append(
-                    state.getTotalAbundance(sablefish,age)
+                state.getTotalAbundance(sablefish, age)
             ).append("\n");
         }
 
@@ -77,36 +76,35 @@ public class CaliforniaBiomassDynamics {
         writer.write("\n");
 
 
-        while(state.getYear()<500)
-        {
+        while (state.getYear() < 500) {
             state.schedule.step(state);
-            if(state.getDayOfTheYear()==2) {
+            if (state.getDayOfTheYear() == 2) {
                 System.out.println(state.getYear() + "," +
-                                           state.getTotalBiomass(sablefish) / 1000 + ","
-                                           +
-                                           state.getTotalBiomass(rockfish) / 1000 +
-                                           ","
-                                           +
-                                           state.getTotalBiomass(shortThornyhead) / 1000 +
-                                           ","
-                                           +
-                                           state.getTotalBiomass(longspineThornyhead) / 1000 + ","
-                                           +
-                                           state.getTotalBiomass(doverSole) / 1000
+                    state.getTotalBiomass(sablefish) / 1000 + ","
+                    +
+                    state.getTotalBiomass(rockfish) / 1000 +
+                    ","
+                    +
+                    state.getTotalBiomass(shortThornyhead) / 1000 +
+                    ","
+                    +
+                    state.getTotalBiomass(longspineThornyhead) / 1000 + ","
+                    +
+                    state.getTotalBiomass(doverSole) / 1000
 
                 );
                 writer.write(state.getYear() + "," +
-                                     state.getTotalBiomass(sablefish) / 1000 + ","
-                                     +
-                                     state.getTotalBiomass(rockfish) / 1000 +
-                                     ","
-                                     +
-                                     state.getTotalBiomass(shortThornyhead) / 1000 +
-                                     ","
-                                     +
-                                     state.getTotalBiomass(longspineThornyhead) / 1000 + ","
-                                     +
-                                     state.getTotalBiomass(doverSole) / 1000);
+                    state.getTotalBiomass(sablefish) / 1000 + ","
+                    +
+                    state.getTotalBiomass(rockfish) / 1000 +
+                    ","
+                    +
+                    state.getTotalBiomass(shortThornyhead) / 1000 +
+                    ","
+                    +
+                    state.getTotalBiomass(longspineThornyhead) / 1000 + ","
+                    +
+                    state.getTotalBiomass(doverSole) / 1000);
 
                 writer.write("\n");
                 writer.flush();
@@ -115,16 +113,13 @@ public class CaliforniaBiomassDynamics {
 
         writer.close();
         demography.append("year,age,abundance").append("\n");
-        for(int age=0; age<sablefish.getNumberOfBins(); age++)
-        {
+        for (int age = 0; age < sablefish.getNumberOfBins(); age++) {
             demography.append(state.getYear()).append(",").append(age).append(",").append(
-                    state.getTotalAbundance(sablefish,age)
+                state.getTotalAbundance(sablefish, age)
             ).append("\n");
         }
 
-        Files.write(MAIN_DIRECTORY.resolve("demography.csv"),demography.toString().getBytes());
-
-
+        Files.write(MAIN_DIRECTORY.resolve("demography.csv"), demography.toString().getBytes());
 
 
     }

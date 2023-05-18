@@ -31,8 +31,7 @@ import java.nio.file.Paths;
  * The simplest possible regression we fit to WFS data
  * Created by carrknight on 4/18/17.
  */
-public class BarebonesFloridaDestinationFactory extends BarebonesLogitDestinationFactory
-{
+public class BarebonesFloridaDestinationFactory extends BarebonesLogitDestinationFactory {
 
 
     //variables here are the handliner default

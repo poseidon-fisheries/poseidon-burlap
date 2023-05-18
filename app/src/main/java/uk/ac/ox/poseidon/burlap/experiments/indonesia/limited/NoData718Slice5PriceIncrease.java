@@ -23,30 +23,27 @@ public class NoData718Slice5PriceIncrease {
 
     private static final String CANDIDATES_CSV_FILE = "price_shock_candidates_max.csv";
     private static Path OUTPUT_FOLDER =
-            NoData718Slice5.MAIN_DIRECTORY.resolve("price_shock_max");
+        NoData718Slice5.MAIN_DIRECTORY.resolve("price_shock_max");
 
 
     static private LinkedHashMap<String,
-            Function<Integer, Consumer<Scenario>>> slice5PriceJump = new LinkedHashMap();
-
-
-
+        Function<Integer, Consumer<Scenario>>> slice5PriceJump = new LinkedHashMap();
 
 
     static {
 
 
         slice5PriceJump.put(
-                "Price Shock plus seeding",
-                priceShockAndSeedingGenerator(0)
+            "Price Shock plus seeding",
+            priceShockAndSeedingGenerator(0)
 
         );
 
 
         slice5PriceJump.put(
-                "BAU",
-                shockYear -> scenario -> {
-                }
+            "BAU",
+            shockYear -> scenario -> {
+            }
 
         );
 
@@ -56,17 +53,20 @@ public class NoData718Slice5PriceIncrease {
     public static void main(String[] args) throws IOException {
 
         runDirectoryPriceIncrease(OUTPUT_FOLDER,
-                OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE), slice5PriceJump, null);
+            OUTPUT_FOLDER.getParent().resolve(CANDIDATES_CSV_FILE), slice5PriceJump, null
+        );
 
 
     }
 
-    public static void runDirectoryPriceIncrease(Path outputFolder,
-                                                 Path candidateCSVFile,
-                                                 LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
-                                                 List<String> additionalColumnsToPrint) throws IOException {
+    public static void runDirectoryPriceIncrease(
+        Path outputFolder,
+        Path candidateCSVFile,
+        LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policies,
+        List<String> additionalColumnsToPrint
+    ) throws IOException {
         CSVReader reader = new CSVReader(new FileReader(
-                candidateCSVFile.toFile()
+            candidateCSVFile.toFile()
         ));
 
         List<String[]> strings = reader.readAll();
@@ -79,18 +79,17 @@ public class NoData718Slice5PriceIncrease {
             System.out.println(Arrays.toString(row));
 
             final Path scenarioPath = Paths.get(row[0]);
-            if(Files.exists(scenarioPath))
-            {
+            if (Files.exists(scenarioPath)) {
 
                 priceIncreaseOneRun(
-                        scenarioPath,
-                        Integer.parseInt(row[1]),
-                        outputFolder,
-                        policies, additionalColumnsToPrint,
-                        false, 5,
-                        null,null, null);
-            }
-            else {
+                    scenarioPath,
+                    Integer.parseInt(row[1]),
+                    outputFolder,
+                    policies, additionalColumnsToPrint,
+                    false, 5,
+                    null, null, null
+                );
+            } else {
                 System.err.println("Couldn't find scenario " + scenarioPath);
             }
         }

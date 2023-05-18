@@ -27,26 +27,23 @@ import java.nio.file.Paths;
 public class PartialSubsidy {
 
 
-    private static final Path DIRECTORY = Paths.get("docs","20180214 indonesia");
-    private static final Path SCENARIO_FILE = DIRECTORY.resolve("partial.yaml");
     public static final int DISCARDING_BIN = 56;
     public static final int MAXIMUM_FINED_BIN = 55;
     public static final int EXPECTED_NUMBER_OF_BINS = 100;
     public static final int NUMBER_OF_RUNS = 5;
     public static final int NUMBER_OF_YEARS_NO_FISHING = 0;
     public static final int NUMBER_OF_YEARS_FISHING = 5;
-
+    private static final Path DIRECTORY = Paths.get("docs", "20180214 indonesia");
+    private static final Path SCENARIO_FILE = DIRECTORY.resolve("partial.yaml");
 
     public static FileWriter prepWriter(File outputFile) throws IOException {
         FileWriter writer = new FileWriter(outputFile);
         writer.write("run,price_low,price_high,landings,earnings,biomass,kupang,benoa,");
-        for(int i=0; i<EXPECTED_NUMBER_OF_BINS; i++)
-        {
+        for (int i = 0; i < EXPECTED_NUMBER_OF_BINS; i++) {
             writer.write("landings_" + i);
             writer.write(",");
         }
-        for(int i=0; i<EXPECTED_NUMBER_OF_BINS; i++)
-        {
+        for (int i = 0; i < EXPECTED_NUMBER_OF_BINS; i++) {
             writer.write(",");
             writer.write("catches_" + i);
         }
@@ -57,7 +54,13 @@ public class PartialSubsidy {
     }
 
 
-    public   static void dumpObservation(FileWriter writer, int run, double fine, FishState state, double subsidy) throws IOException {
+    public static void dumpObservation(
+        FileWriter writer,
+        int run,
+        double fine,
+        FishState state,
+        double subsidy
+    ) throws IOException {
         StringBuffer observation = new StringBuffer();
         observation.append(Integer.toString(run)).append(",");
         observation.append(fine).append(",");
@@ -66,15 +69,17 @@ public class PartialSubsidy {
         observation.append(state.getLatestYearlyObservation("Aphareus rutilans Earnings")).append(",");
         observation.append(state.getLatestYearlyObservation("Biomass Aphareus rutilans")).append(",");
         observation.append(Double.toString(
-                state.getLatestYearlyObservation("Kupang Number Of Fishers"))).append(",");
+            state.getLatestYearlyObservation("Kupang Number Of Fishers"))).append(",");
         observation.append(Double.toString(
-                state.getLatestYearlyObservation("Benoa Number Of Fishers"))).append(",");
-        for(int i=0; i<EXPECTED_NUMBER_OF_BINS; i++)
-            observation.append(state.getLatestYearlyObservation("Aphareus rutilans Landings - age bin "+i)).append(",");
+            state.getLatestYearlyObservation("Benoa Number Of Fishers"))).append(",");
+        for (int i = 0; i < EXPECTED_NUMBER_OF_BINS; i++)
+            observation.append(state.getLatestYearlyObservation("Aphareus rutilans Landings - age bin " + i))
+                .append(",");
 
 
-        for(int i=0; i<EXPECTED_NUMBER_OF_BINS; i++)
-            observation.append(",").append(state.getLatestYearlyObservation("Aphareus rutilans Catches - age bin "+i));
+        for (int i = 0; i < EXPECTED_NUMBER_OF_BINS; i++)
+            observation.append(",")
+                .append(state.getLatestYearlyObservation("Aphareus rutilans Catches - age bin " + i));
         observation.append("\n");
         writer.write(observation.toString());
         writer.flush();
@@ -82,47 +87,45 @@ public class PartialSubsidy {
     }
 
 
-
     public static void main(String[] args) throws IOException {
         //fine();
         subsidy();
-       // subsidyTotal();
-      //  seasonLength(false);
-      //  seasonLength(true);
+        // subsidyTotal();
+        //  seasonLength(false);
+        //  seasonLength(true);
     }
 
     public static void seasonLength(boolean increase) throws IOException {
         File outputFile = increase ?
-                DIRECTORY.resolve( "season_i.csv").toFile() :
-                DIRECTORY.resolve( "season.csv").toFile();
+            DIRECTORY.resolve("season_i.csv").toFile() :
+            DIRECTORY.resolve("season.csv").toFile();
         FileWriter writer = prepWriter(outputFile);
-        for(int season = 1; season<=365; season++)
-        {
-            for(int run = 0; run< 1; run++) {
+        for (int season = 1; season <= 365; season++) {
+            for (int run = 0; run < 1; run++) {
 
                 FishState state = new FishState(System.currentTimeMillis());
                 FishYAML yaml = new FishYAML();
                 IndonesiaScenario scenario = yaml.loadAs(
-                        new FileReader(
-                                DIRECTORY.resolve("season.yaml").toFile()
-                        ), IndonesiaScenario.class
+                    new FileReader(
+                        DIRECTORY.resolve("season.yaml").toFile()
+                    ), IndonesiaScenario.class
                 );
                 state.setScenario(scenario);
-                scenario.getFisherDefinitions().get(0).setRegulation(new FishingSeasonFactory(season,false));
+                scenario.getFisherDefinitions().get(0).setRegulation(new FishingSeasonFactory(season, false));
                 state.start();
 
 
-                if(increase)
+                if (increase)
                     state.scheduleEveryYear(new Steppable() {
                         @Override
                         public void step(SimState simState) {
                             FixedProportionHomogeneousGearFactory factory = new FixedProportionHomogeneousGearFactory();
                             factory.setLitersOfGasConsumed(new FixedDoubleParameter(5));
-                            factory.setAverageCatchability(new FixedDoubleParameter(.001*Math.pow(1.02,state.getYear()+1)));
+                            factory.setAverageCatchability(new FixedDoubleParameter(.001 * Math.pow(1.02,
+                                state.getYear() + 1)));
                             HoldLimitingDecoratorFactory parent = new HoldLimitingDecoratorFactory();
                             parent.setDelegate(factory);
-                            for(Fisher fisher : state.getFishers())
-                            {
+                            for (Fisher fisher : state.getFishers()) {
                                 fisher.setGear(parent.apply(state));
                             }
 
@@ -133,24 +136,23 @@ public class PartialSubsidy {
                     state.schedule.step(state);
 
 
-                dumpObservation(writer,run, -1, state, season);
+                dumpObservation(writer, run, -1, state, season);
             }
         }
     }
 
     public static void subsidy() throws IOException {
-        File outputFile = DIRECTORY.resolve( "subsidy.csv").toFile();
+        File outputFile = DIRECTORY.resolve("subsidy.csv").toFile();
         FileWriter writer = prepWriter(outputFile);
-        for(double subsidy=10; subsidy<=30; subsidy++)
-        {
+        for (double subsidy = 10; subsidy <= 30; subsidy++) {
 
-            for(int run = 0; run< NUMBER_OF_RUNS; run++) {
+            for (int run = 0; run < NUMBER_OF_RUNS; run++) {
                 FishState state = new FishState(System.currentTimeMillis());
                 FishYAML yaml = new FishYAML();
                 IndonesiaScenario scenario = yaml.loadAs(
-                        new FileReader(
-                                SCENARIO_FILE.toFile()
-                        ), IndonesiaScenario.class
+                    new FileReader(
+                        SCENARIO_FILE.toFile()
+                    ), IndonesiaScenario.class
                 );
                 state.setScenario(scenario);
 
@@ -161,9 +163,11 @@ public class PartialSubsidy {
 
                 Species species = state.getSpecies().get(0);
                 Port benoa = state.getPorts().stream().filter(port -> port.getName().
-                        equalsIgnoreCase("Benoa")).findFirst().get();
-                ((NThresholdsMarket) benoa.getDefaultMarketMap().getMarket(species)).getPricePerSegment()[1] = (subsidy);
-                ((NThresholdsMarket) benoa.getDefaultMarketMap().getMarket(species)).getPricePerSegment()[2] =(subsidy);
+                    equalsIgnoreCase("Benoa")).findFirst().get();
+                ((NThresholdsMarket) benoa.getDefaultMarketMap()
+                    .getMarket(species)).getPricePerSegment()[1] = (subsidy);
+                ((NThresholdsMarket) benoa.getDefaultMarketMap()
+                    .getMarket(species)).getPricePerSegment()[2] = (subsidy);
 
 
                 for (Fisher fisher : state.getFishers()) {
@@ -174,7 +178,7 @@ public class PartialSubsidy {
                     state.schedule.step(state);
 
 
-                dumpObservation(writer,run, 10, state, subsidy);
+                dumpObservation(writer, run, 10, state, subsidy);
 
             }
 
@@ -182,18 +186,17 @@ public class PartialSubsidy {
     }
 
     public static void subsidyTotal() throws IOException {
-        File outputFile = DIRECTORY.resolve( "subsidytotal.csv").toFile();
+        File outputFile = DIRECTORY.resolve("subsidytotal.csv").toFile();
         FileWriter writer = prepWriter(outputFile);
-        for(double subsidy=10; subsidy<=30; subsidy++)
-        {
+        for (double subsidy = 10; subsidy <= 30; subsidy++) {
 
-            for(int run = 0; run< NUMBER_OF_RUNS; run++) {
+            for (int run = 0; run < NUMBER_OF_RUNS; run++) {
                 FishState state = new FishState(System.currentTimeMillis());
                 FishYAML yaml = new FishYAML();
                 IndonesiaScenario scenario = yaml.loadAs(
-                        new FileReader(
-                                SCENARIO_FILE.toFile()
-                        ), IndonesiaScenario.class
+                    new FileReader(
+                        SCENARIO_FILE.toFile()
+                    ), IndonesiaScenario.class
                 );
                 state.setScenario(scenario);
 
@@ -203,9 +206,11 @@ public class PartialSubsidy {
                 state.start();
 
                 Species species = state.getSpecies().get(0);
-                for(Port benoa : state.getPorts()) {
-                    ((NThresholdsMarket) benoa.getDefaultMarketMap().getMarket(species)).getPricePerSegment()[1] =(subsidy);
-                    ((NThresholdsMarket) benoa.getDefaultMarketMap().getMarket(species)).getPricePerSegment()[2] =(subsidy);
+                for (Port benoa : state.getPorts()) {
+                    ((NThresholdsMarket) benoa.getDefaultMarketMap()
+                        .getMarket(species)).getPricePerSegment()[1] = (subsidy);
+                    ((NThresholdsMarket) benoa.getDefaultMarketMap()
+                        .getMarket(species)).getPricePerSegment()[2] = (subsidy);
                 }
 
                 for (Fisher fisher : state.getFishers()) {
@@ -216,7 +221,7 @@ public class PartialSubsidy {
                     state.schedule.step(state);
 
 
-                dumpObservation(writer,run, 10, state, subsidy);
+                dumpObservation(writer, run, 10, state, subsidy);
 
             }
 
@@ -224,18 +229,17 @@ public class PartialSubsidy {
     }
 
     public static void fine() throws IOException {
-        File outputFile = DIRECTORY.resolve( "fine.csv").toFile();
+        File outputFile = DIRECTORY.resolve("fine.csv").toFile();
         FileWriter writer = prepWriter(outputFile);
-        for(double fine=10; fine>=-30; fine= fine-1d)
-        {
+        for (double fine = 10; fine >= -30; fine = fine - 1d) {
 
-            for(int run = 0; run< NUMBER_OF_RUNS; run++) {
+            for (int run = 0; run < NUMBER_OF_RUNS; run++) {
                 FishState state = new FishState(System.currentTimeMillis());
                 FishYAML yaml = new FishYAML();
                 IndonesiaScenario scenario = yaml.loadAs(
-                        new FileReader(
-                                SCENARIO_FILE.toFile()
-                        ), IndonesiaScenario.class
+                    new FileReader(
+                        SCENARIO_FILE.toFile()
+                    ), IndonesiaScenario.class
                 );
                 state.setScenario(scenario);
 
@@ -246,7 +250,7 @@ public class PartialSubsidy {
 
                 Species species = state.getSpecies().get(0);
                 Port kupang = state.getPorts().stream().filter(port -> port.getName().
-                        equalsIgnoreCase("Kupang")).findFirst().get();
+                    equalsIgnoreCase("Kupang")).findFirst().get();
                 ((NThresholdsMarket) kupang.getDefaultMarketMap().getMarket(species)).getPricePerSegment()[0] = fine;
 
 
@@ -258,7 +262,7 @@ public class PartialSubsidy {
                     state.schedule.step(state);
 
 
-                dumpObservation(writer,run, fine, state, 10d);
+                dumpObservation(writer, run, fine, state, 10d);
 
             }
 

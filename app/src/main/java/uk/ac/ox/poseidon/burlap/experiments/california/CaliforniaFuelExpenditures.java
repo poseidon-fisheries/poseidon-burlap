@@ -23,8 +23,8 @@ package uk.ac.ox.poseidon.burlap.experiments.california;
 import sim.field.grid.IntGrid2D;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.data.collectors.FisherYearlyTimeSeries;
-import uk.ac.ox.poseidon.burlap.scenarios.CaliforniaAbundanceScenario;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
+import uk.ac.ox.poseidon.burlap.scenarios.CaliforniaAbundanceScenario;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -50,8 +50,7 @@ public class CaliforniaFuelExpenditures {
 
         state.start();
 
-        while(state.getYear()<5)
-        {
+        while (state.getYear() < 5) {
             state.schedule.step(state);
             IntGrid2D trawls = state.getMap().getDailyTrawlsMap();
         }
@@ -59,28 +58,28 @@ public class CaliforniaFuelExpenditures {
         state.schedule.step(state);
 
         FishStateUtilities.pollHistogramToFile(
-                state.getFishers(), MAIN_DIRECTORY.resolve("fuel.csv").toFile(),
-                fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.FUEL_EXPENDITURE)
+            state.getFishers(), MAIN_DIRECTORY.resolve("fuel.csv").toFile(),
+            fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.FUEL_EXPENDITURE)
 
         );
         FishStateUtilities.pollHistogramToFile(
-                state.getFishers(), MAIN_DIRECTORY.resolve("trips.csv").toFile(),
-                fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIPS)
+            state.getFishers(), MAIN_DIRECTORY.resolve("trips.csv").toFile(),
+            fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIPS)
 
         );
         FishStateUtilities.pollHistogramToFile(
-                state.getFishers(), MAIN_DIRECTORY.resolve("effort.csv").toFile(),
-                fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.EFFORT)
+            state.getFishers(), MAIN_DIRECTORY.resolve("effort.csv").toFile(),
+            fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.EFFORT)
 
         );
         FishStateUtilities.pollHistogramToFile(
-                state.getFishers(), MAIN_DIRECTORY.resolve("distance.csv").toFile(),
-                fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.FISHING_DISTANCE)
+            state.getFishers(), MAIN_DIRECTORY.resolve("distance.csv").toFile(),
+            fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.FISHING_DISTANCE)
 
         );
         FishStateUtilities.pollHistogramToFile(
-                state.getFishers(), MAIN_DIRECTORY.resolve("duration.csv").toFile(),
-                fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIP_DURATION)
+            state.getFishers(), MAIN_DIRECTORY.resolve("duration.csv").toFile(),
+            fisher -> fisher.getLatestYearlyObservation(FisherYearlyTimeSeries.TRIP_DURATION)
 
         );
 

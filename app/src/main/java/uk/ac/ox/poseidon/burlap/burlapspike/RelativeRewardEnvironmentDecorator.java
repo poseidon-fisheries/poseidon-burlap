@@ -43,8 +43,9 @@ public class RelativeRewardEnvironmentDecorator implements Environment {
 
 
     public RelativeRewardEnvironmentDecorator(
-            QProvider provider, Environment delegate,
-            State baselineState, Action baselineAction) {
+        QProvider provider, Environment delegate,
+        State baselineState, Action baselineAction
+    ) {
         this.provider = provider;
         this.delegate = delegate;
         this.baselineState = baselineState;
@@ -53,6 +54,7 @@ public class RelativeRewardEnvironmentDecorator implements Environment {
 
     /**
      * Returns the current observation of the environment as a {@link State}.
+     *
      * @return the current observation of the environment as a {@link State}.
      */
     public State currentObservation() {
@@ -61,25 +63,28 @@ public class RelativeRewardEnvironmentDecorator implements Environment {
 
     /**
      * Executes the specified action in this environment
+     *
      * @param a the Action that is to be performed in this environment.
      * @return the resulting observation and reward transition from applying the given GroundedAction in this environment.
      */
     public EnvironmentOutcome executeAction(Action a) {
         EnvironmentOutcome environmentOutcome = delegate.executeAction(a);
-        environmentOutcome.r = environmentOutcome.r - provider.qValue(baselineState,baselineAction);
+        environmentOutcome.r = environmentOutcome.r - provider.qValue(baselineState, baselineAction);
         return environmentOutcome;
     }
 
     /**
      * Returns the last reward returned by the environment
+     *
      * @return the last reward returned by the environment
      */
     public double lastReward() {
-        return delegate.lastReward() - provider.qValue(baselineState,baselineAction);
+        return delegate.lastReward() - provider.qValue(baselineState, baselineAction);
     }
 
     /**
      * Returns whether the environment is in a terminal state that prevents further action by the agent.
+     *
      * @return true if the current environment is in a terminal state; false otherwise.
      */
     public boolean isInTerminalState() {

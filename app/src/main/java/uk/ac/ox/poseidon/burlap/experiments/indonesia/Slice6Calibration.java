@@ -27,7 +27,6 @@ import java.util.List;
 public class Slice6Calibration {
 
 
-
 //    private static final List<AlgorithmFactory<? extends AdditionalStartable>> pluginsToAddToCalibratedScenario =
 //            new LinkedList<>();
 //    static {
@@ -100,156 +99,143 @@ public class Slice6Calibration {
 //    }
 
 
-    private static final List<String> additionalPlugins = Lists.newArrayList(
-            "SPR Oracle:\n" +
-                    "    dayOfMeasurement: 365\n" +
-                    "    lengthAtMaturity: 50.0\n" +
-                    "    virginSSB: 43871265\n" +
-                    "    speciesName: Lutjanus malabaricus",
-            "Fishing Mortality Agent:\n" +
-                    "    selexParameter1: '28.4833678576524'\n" +
-                    "    selexParameter2: '5.9742458342377'\n" +
-                    "    selectivityRounding: no\n" +
-                    "    speciesName: Lutjanus malabaricus",
-            "Fishing Mortality Agent:\n" +
-                    "    selexParameter1: '28.4833678576524'\n" +
-                    "    selexParameter2: '5.9742458342377'\n" +
-                    "    selectivityRounding: no\n" +
-                    "    speciesName: Pristipomoides multidens",
-            "Fishing Mortality Agent:\n" +
-                    "    selexParameter1: '28.4833678576524'\n" +
-                    "    selexParameter2: '5.9742458342377'\n" +
-                    "    selectivityRounding: no\n" +
-                    "    speciesName: Lutjanus erythropterus",
-            "SPR Oracle:\n" +
-                    "    dayOfMeasurement: 365\n" +
-                    "    lengthAtMaturity: 50.0\n" +
-                    "    virginSSB: 13957297\n" +
-                    "    speciesName: Pristipomoides multidens",
-            "SPR Oracle:\n" +
-                    "    dayOfMeasurement: 365\n" +
-                    "    lengthAtMaturity: 37.0\n" +
-                    "    virginSSB: 7815138\n" +
-                    "    speciesName: Lutjanus erythropterus",
-            "SPR Oracle:\n" +
-                    "    dayOfMeasurement: 365\n" +
-                    "    lengthAtMaturity: 21.0\n" +
-                    "    virginSSB: 9846038.8771707\n" +
-                    "    speciesName: Epinephelus areolatus",
-            "SPR Agent:\n" +
-                    "    assumedKParameter: '0.4438437'\n" +
-                    "    assumedLengthAtMaturity: '50.0'\n" +
-                    "    assumedLengthBinCm: '5.0'\n" +
-                    "    assumedLinf: '86.0'\n" +
-                    "    assumedNaturalMortality: '0.3775984'\n" +
-                    "    assumedVarA: '0.00853'\n" +
-                    "    assumedVarB: '3.137'\n" +
-                    "    probabilityOfSamplingEachBoat: '1.0'\n" +
-                    "    simulatedMaxAge: '100.0'\n" +
-                    "    simulatedVirginRecruits: '1000.0'\n" +
-                    "    speciesName: Lutjanus malabaricus\n" +
-                    "    surveyTag: 100_malabaricus",
-            "SPR Agent:\n" +
-                    "    assumedKParameter: '0.5508334'\n" +
-                    "    assumedLengthAtMaturity: '37.0'\n" +
-                    "    assumedLengthBinCm: '5.0'\n" +
-                    "    assumedLinf: '63.0'\n" +
-                    "    assumedNaturalMortality: '0.4721429'\n" +
-                    "    assumedVarA: '0.0244'\n" +
-                    "    assumedVarB: '2.87'\n" +
-                    "    probabilityOfSamplingEachBoat: '1.0'\n" +
-                    "    simulatedMaxAge: '100.0'\n" +
-                    "    simulatedVirginRecruits: '1000.0'\n" +
-                    "    speciesName: Lutjanus erythropterus\n" +
-                    "    surveyTag: 100_erythropterus",
-            "SPR Agent:\n" +
-                    "    assumedKParameter: '0.4438437'\n" +
-                    "    assumedLengthAtMaturity: '50.0'\n" +
-                    "    assumedLengthBinCm: '5.0'\n" +
-                    "    assumedLinf: '86.0'\n" +
-                    "    assumedNaturalMortality: '0.3775984'\n" +
-                    "    assumedVarA: '0.02'\n" +
-                    "    assumedVarB: '2.944'\n" +
-                    "    probabilityOfSamplingEachBoat: '1.0'\n" +
-                    "    simulatedMaxAge: '100.0'\n" +
-                    "    simulatedVirginRecruits: '1000.0'\n" +
-                    "    speciesName: Pristipomoides multidens\n" +
-                    "    surveyTag: 100_multidens",
-            "SPR Agent:\n" +
-                    "    assumedKParameter: '0.3300512'\n" +
-                    "    assumedLengthAtMaturity: '21.0'\n" +
-                    "    assumedLengthBinCm: '5.0'\n" +
-                    "    assumedLinf: '45.0'\n" +
-                    "    assumedNaturalMortality: '0.6011646'\n" +
-                    "    assumedVarA: '0.01142'\n" +
-                    "    assumedVarB: '3.048'\n" +
-                    "    probabilityOfSamplingEachBoat: '1.0'\n" +
-                    "    simulatedMaxAge: '100.0'\n" +
-                    "    simulatedVirginRecruits: '1000.0'\n" +
-                    "    speciesName: Epinephelus areolatus\n" +
-                    "    surveyTag: 100_areolatus"
-    );
-
     public static final String SWEEP_FOLDER = "sweeps";
-    public static Path DIRECTORY = Paths.get("/home/carrknight/code/oxfish/docs/indonesia_hub/runs/712/slice6");
     public static final double[] STEVE_LIME_OPTIMAL_PARAMETERS = new double[]{
-            -6.629, -4.648, -9.882, -2.911, -3.284, 10.000, -1.829, -8.269, 2.941, -3.988, -6.288, -7.519, -10.000, 7.238, -10.000, -6.805, -4.901, -9.386, 2.470, 4.614
+        -6.629, -4.648, -9.882, -2.911, -3.284, 10.000, -1.829, -8.269, 2.941, -3.988, -6.288, -7.519, -10.000, 7.238, -10.000, -6.805, -4.901, -9.386, 2.470, 4.614
     };
     public static final double[] STEVE_LIME_OPTIMAL_LOCAL_PARAMETERS = new double[]{
-            5.888,-2.183,-2.043,-6.014, 3.229, 6.774,-6.638, 2.246,-0.465, 5.920, 3.338,-0.546,-5.124, 1.730, 0.867,-5.435, 0.050,-2.330, 0.727,-5.152
+        5.888, -2.183, -2.043, -6.014, 3.229, 6.774, -6.638, 2.246, -0.465, 5.920, 3.338, -0.546, -5.124, 1.730, 0.867, -5.435, 0.050, -2.330, 0.727, -5.152
     };
-
     public static final double[] STEVE_TROPFISH_OPTIMAL_PARAMETERS = new double[]{
-            5.277,-0.540, 4.601, 1.717,-0.456, 10.000, 8.625,-7.547, 7.348, 3.318,-6.007,-1.607, 4.466, 0.894, 1.042,-3.342, 4.340, 7.971, 7.516,-1.232
+        5.277, -0.540, 4.601, 1.717, -0.456, 10.000, 8.625, -7.547, 7.348, 3.318, -6.007, -1.607, 4.466, 0.894, 1.042, -3.342, 4.340, 7.971, 7.516, -1.232
     };
     public static final double[] STEVE_TROPFISH_LOCAL_OPTIMAL_PARAMETERS = new double[]{
-            6.429, 5.755,-9.223,-5.932,-2.952, 3.022,-7.642,-10.000, 8.081, 8.710,-9.087, 4.748, 4.888, 2.895, 6.431, 7.175,-6.354, 3.021,-1.484, 9.445
+        6.429, 5.755, -9.223, -5.932, -2.952, 3.022, -7.642, -10.000, 8.081, 8.710, -9.087, 4.748, 4.888, 2.895, 6.431, 7.175, -6.354, 3.021, -1.484, 9.445
     };
-
     public static final double[] MONTHLY_LIME_OPTIMAL_PARAMETERS = new double[]{
-            8.946, 10.000,-2.914, 8.146,-1.634, 10.000, 5.810, 6.324,-6.252, 7.953,-7.386,-7.648,-7.094,-8.340, 0.155, 0.302, 6.034, 0.216, 3.486, 9.676
+        8.946, 10.000, -2.914, 8.146, -1.634, 10.000, 5.810, 6.324, -6.252, 7.953, -7.386, -7.648, -7.094, -8.340, 0.155, 0.302, 6.034, 0.216, 3.486, 9.676
     };
     public static final double[] MONTHLY_LIME_LOCAL_OPTIMAL_PARAMETERS = new double[]{
-            1.352, 8.034, 2.733,-2.958,-0.425, 6.255,-0.334, 3.502,-2.122, 5.870,-3.211,-0.625, 1.152, 4.244, 1.519,-0.540, 1.118, 2.364, 6.605, 3.181
+        1.352, 8.034, 2.733, -2.958, -0.425, 6.255, -0.334, 3.502, -2.122, 5.870, -3.211, -0.625, 1.152, 4.244, 1.519, -0.540, 1.118, 2.364, 6.605, 3.181
     };
-
-
     public static final double[] STEVE_TROPFISH_2YR_OPTIMAL_PARAMETERS = new double[]{
-            -6.776,-5.786,-10.000,-4.141,-1.316, 6.773, 1.075,-9.863, 9.288,-4.519, 3.554,-6.341,-9.528, 4.016, 2.727,-3.836,-2.696,-10.000, 2.857,-10.000
+        -6.776, -5.786, -10.000, -4.141, -1.316, 6.773, 1.075, -9.863, 9.288, -4.519, 3.554, -6.341, -9.528, 4.016, 2.727, -3.836, -2.696, -10.000, 2.857, -10.000
     };
-
     public static final double[] STEVE_TROPFISH_3YR_OPTIMAL_PARAMETERS = new double[]{
-            -9.059,-8.210, 6.768, 8.080, 8.390,-1.773, 8.048,-7.891, 9.976,-0.018,-0.137,-10.000, 6.631, 2.561,-4.586,-0.031,-10.000,-9.881,-10.000,-8.771
+        -9.059, -8.210, 6.768, 8.080, 8.390, -1.773, 8.048, -7.891, 9.976, -0.018, -0.137, -10.000, 6.631, 2.561, -4.586, -0.031, -10.000, -9.881, -10.000, -8.771
 
     };
-
     public static final double[] LIME_MONTHLY_IMPLIED_2YR_OPTIMAL_PARAMETERS = new double[]{
-            -7.916,-8.419,-9.450,-3.011,-2.842, 10.000,-10.000,-5.293,-10.000, 8.950, 1.558,-8.162, 1.657,-1.321,-6.061,-9.018,-8.796,-4.117, 2.576,-5.997
+        -7.916, -8.419, -9.450, -3.011, -2.842, 10.000, -10.000, -5.293, -10.000, 8.950, 1.558, -8.162, 1.657, -1.321, -6.061, -9.018, -8.796, -4.117, 2.576, -5.997
     };
-
     public static final double[] STEVE_TROPFISH_SR_OPTIMAL_PARAMETERS = new double[]{
-            -2.563,-3.677,-10.000,-10.000,-4.524, 2.777, 5.553,-6.567,-5.051,-6.634,-6.678,-10.000,-7.340, 6.825,-6.893,-10.000,-4.533,-10.000, 0.550, 10.000
+        -2.563, -3.677, -10.000, -10.000, -4.524, 2.777, 5.553, -6.567, -5.051, -6.634, -6.678, -10.000, -7.340, 6.825, -6.893, -10.000, -4.533, -10.000, 0.550, 10.000
     };
-
     public static final double[] TROPFISH_TL_2YR_OPTIMAL_PARAMETERS = new double[]{
-            -1.108,-7.843,-7.288, 2.988,-0.376,-4.638,-10.000,-3.300, 4.950, 3.011,-5.885,-2.064, 0.936, 4.905, 9.418, 10.000,-8.976,-8.513, 1.152, 10.000    };
-
+        -1.108, -7.843, -7.288, 2.988, -0.376, -4.638, -10.000, -3.300, 4.950, 3.011, -5.885, -2.064, 0.936, 4.905, 9.418, 10.000, -8.976, -8.513, 1.152, 10.000};
     public static final double[] MONTHLY_CMSY_2YR_LIME_OPTIMAL_PARAMETERS = new double[]{
-         //   -8.170, 3.979, 1.344, 4.002,-3.678, 10.000,-1.119, 5.176,-8.503, 0.405,-3.106,-7.122,-0.682, 9.191,-0.105,-8.848, 5.687,-4.989, 9.308, 4.335
-            -8.352, 5.400,-4.518,-0.534,-2.782, 9.563, 4.350, 1.451,-7.475, 2.109, 7.264,-10.000,-10.000, 2.914,-0.683,-8.505, 4.915, 3.141,-0.808, 4.917
+        //   -8.170, 3.979, 1.344, 4.002,-3.678, 10.000,-1.119, 5.176,-8.503, 0.405,-3.106,-7.122,-0.682, 9.191,-0.105,-8.848, 5.687,-4.989, 9.308, 4.335
+        -8.352, 5.400, -4.518, -0.534, -2.782, 9.563, 4.350, 1.451, -7.475, 2.109, 7.264, -10.000, -10.000, 2.914, -0.683, -8.505, 4.915, 3.141, -0.808, 4.917
     };
     public static final double[] MONTHLY_CMSY_3YR_LIME_OPTIMAL_PARAMETERS = new double[]{
-            -8.194, 9.476,-2.253,-6.935,-5.158, 3.249, 2.115, 0.332, 8.257,-3.599, 3.965, 8.621, 6.010, 3.344,-10.000,-9.037, 10.000,-0.417,-9.684, 3.634
+        -8.194, 9.476, -2.253, -6.935, -5.158, 3.249, 2.115, 0.332, 8.257, -3.599, 3.965, 8.621, 6.010, 3.344, -10.000, -9.037, 10.000, -0.417, -9.684, 3.634
     };
-
     public static final double[] TROPFISH_TL_2YR_LOCAL_OPTIMAL_SQUARE = new double[]{
-            -7.253, 2.366,-2.280,-3.153,-2.663, 10.000, 10.000,-7.961, 2.422, 10.000, 9.306,-8.707, 1.861,-7.053, 4.577,-4.178, 1.418,-3.409,-6.668, 6.566
+        -7.253, 2.366, -2.280, -3.153, -2.663, 10.000, 10.000, -7.961, 2.422, 10.000, 9.306, -8.707, 1.861, -7.053, 4.577, -4.178, 1.418, -3.409, -6.668, 6.566
     };
     public static final double[] TROPFISH_TL_2YR_OPTIMAL_SQUARE = new double[]{
-            -6.528,-7.655, 5.369, 8.138, 1.067, 10.000,-10.000,-8.403, 8.017, 4.227,-8.387,-5.921, 6.268,-9.836, 6.187,-4.136,-8.409,-10.000, 1.574, 9.737
+        -6.528, -7.655, 5.369, 8.138, 1.067, 10.000, -10.000, -8.403, 8.017, 4.227, -8.387, -5.921, 6.268, -9.836, 6.187, -4.136, -8.409, -10.000, 1.574, 9.737
     };
-
-
+    private static final List<String> additionalPlugins = Lists.newArrayList(
+        "SPR Oracle:\n" +
+            "    dayOfMeasurement: 365\n" +
+            "    lengthAtMaturity: 50.0\n" +
+            "    virginSSB: 43871265\n" +
+            "    speciesName: Lutjanus malabaricus",
+        "Fishing Mortality Agent:\n" +
+            "    selexParameter1: '28.4833678576524'\n" +
+            "    selexParameter2: '5.9742458342377'\n" +
+            "    selectivityRounding: no\n" +
+            "    speciesName: Lutjanus malabaricus",
+        "Fishing Mortality Agent:\n" +
+            "    selexParameter1: '28.4833678576524'\n" +
+            "    selexParameter2: '5.9742458342377'\n" +
+            "    selectivityRounding: no\n" +
+            "    speciesName: Pristipomoides multidens",
+        "Fishing Mortality Agent:\n" +
+            "    selexParameter1: '28.4833678576524'\n" +
+            "    selexParameter2: '5.9742458342377'\n" +
+            "    selectivityRounding: no\n" +
+            "    speciesName: Lutjanus erythropterus",
+        "SPR Oracle:\n" +
+            "    dayOfMeasurement: 365\n" +
+            "    lengthAtMaturity: 50.0\n" +
+            "    virginSSB: 13957297\n" +
+            "    speciesName: Pristipomoides multidens",
+        "SPR Oracle:\n" +
+            "    dayOfMeasurement: 365\n" +
+            "    lengthAtMaturity: 37.0\n" +
+            "    virginSSB: 7815138\n" +
+            "    speciesName: Lutjanus erythropterus",
+        "SPR Oracle:\n" +
+            "    dayOfMeasurement: 365\n" +
+            "    lengthAtMaturity: 21.0\n" +
+            "    virginSSB: 9846038.8771707\n" +
+            "    speciesName: Epinephelus areolatus",
+        "SPR Agent:\n" +
+            "    assumedKParameter: '0.4438437'\n" +
+            "    assumedLengthAtMaturity: '50.0'\n" +
+            "    assumedLengthBinCm: '5.0'\n" +
+            "    assumedLinf: '86.0'\n" +
+            "    assumedNaturalMortality: '0.3775984'\n" +
+            "    assumedVarA: '0.00853'\n" +
+            "    assumedVarB: '3.137'\n" +
+            "    probabilityOfSamplingEachBoat: '1.0'\n" +
+            "    simulatedMaxAge: '100.0'\n" +
+            "    simulatedVirginRecruits: '1000.0'\n" +
+            "    speciesName: Lutjanus malabaricus\n" +
+            "    surveyTag: 100_malabaricus",
+        "SPR Agent:\n" +
+            "    assumedKParameter: '0.5508334'\n" +
+            "    assumedLengthAtMaturity: '37.0'\n" +
+            "    assumedLengthBinCm: '5.0'\n" +
+            "    assumedLinf: '63.0'\n" +
+            "    assumedNaturalMortality: '0.4721429'\n" +
+            "    assumedVarA: '0.0244'\n" +
+            "    assumedVarB: '2.87'\n" +
+            "    probabilityOfSamplingEachBoat: '1.0'\n" +
+            "    simulatedMaxAge: '100.0'\n" +
+            "    simulatedVirginRecruits: '1000.0'\n" +
+            "    speciesName: Lutjanus erythropterus\n" +
+            "    surveyTag: 100_erythropterus",
+        "SPR Agent:\n" +
+            "    assumedKParameter: '0.4438437'\n" +
+            "    assumedLengthAtMaturity: '50.0'\n" +
+            "    assumedLengthBinCm: '5.0'\n" +
+            "    assumedLinf: '86.0'\n" +
+            "    assumedNaturalMortality: '0.3775984'\n" +
+            "    assumedVarA: '0.02'\n" +
+            "    assumedVarB: '2.944'\n" +
+            "    probabilityOfSamplingEachBoat: '1.0'\n" +
+            "    simulatedMaxAge: '100.0'\n" +
+            "    simulatedVirginRecruits: '1000.0'\n" +
+            "    speciesName: Pristipomoides multidens\n" +
+            "    surveyTag: 100_multidens",
+        "SPR Agent:\n" +
+            "    assumedKParameter: '0.3300512'\n" +
+            "    assumedLengthAtMaturity: '21.0'\n" +
+            "    assumedLengthBinCm: '5.0'\n" +
+            "    assumedLinf: '45.0'\n" +
+            "    assumedNaturalMortality: '0.6011646'\n" +
+            "    assumedVarA: '0.01142'\n" +
+            "    assumedVarB: '3.048'\n" +
+            "    probabilityOfSamplingEachBoat: '1.0'\n" +
+            "    simulatedMaxAge: '100.0'\n" +
+            "    simulatedVirginRecruits: '1000.0'\n" +
+            "    speciesName: Epinephelus areolatus\n" +
+            "    surveyTag: 100_areolatus"
+    );
+    public static Path DIRECTORY = Paths.get("/home/carrknight/code/oxfish/docs/indonesia_hub/runs/712/slice6");
 
     public static void main(String[] args) throws IOException {
 
@@ -303,7 +289,6 @@ public class Slice6Calibration {
 //                                 MONTHLY_LIME_LOCAL_OPTIMAL_PARAMETERS);
 
 
-
         ///////////////////////////////
 
 
@@ -312,8 +297,6 @@ public class Slice6Calibration {
 //        buildDumpAndRun("steve_lime_specialreset_calibrationproblem.yaml",
 //                        "steve_limesr.yaml",
 //                        STEVE_TROPFISH_SR_OPTIMAL_PARAMETERS);
-
-
 
 
 /////////////////////////
@@ -352,7 +335,6 @@ public class Slice6Calibration {
 //        buildDumpAndRun("LIME_monthly2yr_implied_calibrationproblem.yaml",
 //                        "lime_implied_monthly_2yr.yaml",
 //                        LIME_MONTHLY_IMPLIED_2YR_OPTIMAL_PARAMETERS);
-
 
 
         ////////////////////////////
@@ -476,17 +458,19 @@ public class Slice6Calibration {
 //                LIME1yrmonthly
 //
 //        );
-        double[] LIME2yrmonthly = {-7.255, 4.413,-7.207, 3.353,-3.222, 9.547,-9.115, 8.571, 8.844, 0.873,-3.995,-8.569,-4.873,-2.593, 5.986,-4.296, 3.977,-8.123, 6.935, 3.333};
-        buildDumpAndRun("LIME_monthly2yr_actualcmsy_calibrationproblem.yaml",
-                        "test.yaml",
-                        LIME2yrmonthly);
+        double[] LIME2yrmonthly = {-7.255, 4.413, -7.207, 3.353, -3.222, 9.547, -9.115, 8.571, 8.844, 0.873, -3.995, -8.569, -4.873, -2.593, 5.986, -4.296, 3.977, -8.123, 6.935, 3.333};
+        buildDumpAndRun(
+            "LIME_monthly2yr_actualcmsy_calibrationproblem.yaml",
+            "test.yaml",
+            LIME2yrmonthly
+        );
 
 
         buildVariants(
 
-                "LIME_monthly2yr_actualcmsy_calibrationproblem.yaml",
-                "lime_monthly2yr",
-                LIME2yrmonthly
+            "LIME_monthly2yr_actualcmsy_calibrationproblem.yaml",
+            "lime_monthly2yr",
+            LIME2yrmonthly
 
         );
 
@@ -494,56 +478,74 @@ public class Slice6Calibration {
 
     /**
      * generates the new scenario given the best parameters for it, saves it to file and runs it
+     *
      * @param calibrationFileName
      * @param calibratedScenarioFileName
      * @param optimalParameters
      */
-    public static void buildDumpAndRun(String calibrationFileName,
-                                       String calibratedScenarioFileName,
-                                       double[] optimalParameters) throws IOException {
+    public static void buildDumpAndRun(
+        String calibrationFileName,
+        String calibratedScenarioFileName,
+        double[] optimalParameters
+    ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         Path optimizationFile = DIRECTORY.resolve("calibration").resolve(calibrationFileName);
-        GenericOptimization optimization = yaml.loadAs(new FileReader(optimizationFile.toFile()), GenericOptimization.class);
+        GenericOptimization optimization = yaml.loadAs(
+            new FileReader(optimizationFile.toFile()),
+            GenericOptimization.class
+        );
 
 
-
-        Scenario scenario = GenericOptimization.buildScenario(optimalParameters, Paths.get(optimization.getScenarioFile()).toFile(), optimization.getParameters());
+        Scenario scenario = GenericOptimization.buildScenario(
+            optimalParameters,
+            Paths.get(optimization.getScenarioFile()).toFile(),
+            optimization.getParameters()
+        );
         Path outputFile = optimizationFile.getParent().resolve(calibratedScenarioFileName);
         yaml.dump(scenario, new FileWriter(outputFile.toFile()));
 
 
-        FixedDataLastStepTarget.VERBOSE=true;
+        FixedDataLastStepTarget.VERBOSE = true;
         optimization.evaluate(optimalParameters);
-        FixedDataLastStepTarget.VERBOSE=false;
+        FixedDataLastStepTarget.VERBOSE = false;
 
 
     }
 
-    public static void buildVariants(String calibrationFileName,
-                                     String calibratedScenarioFileName,
-                                     double[] optimalParameters) throws IOException {
+    public static void buildVariants(
+        String calibrationFileName,
+        String calibratedScenarioFileName,
+        double[] optimalParameters
+    ) throws IOException {
 
 
         FishYAML yaml = new FishYAML();
         Path optimizationFile = DIRECTORY.resolve("calibration").resolve(calibrationFileName);
-        GenericOptimization optimization = yaml.loadAs(new FileReader(optimizationFile.toFile()), GenericOptimization.class);
+        GenericOptimization optimization = yaml.loadAs(
+            new FileReader(optimizationFile.toFile()),
+            GenericOptimization.class
+        );
 
         List<AlgorithmFactory<? extends AdditionalStartable>> plugins = new LinkedList<>();
         for (String additionalPlugin : additionalPlugins) {
             plugins.add(
-            yaml.loadAs(additionalPlugin,AlgorithmFactory.class)
+                yaml.loadAs(additionalPlugin, AlgorithmFactory.class)
             );
 
         }
 
 
         //variants with steepness
-        for(double steepness : new double[]{0.6,0.7,0.8}) {
+        for (double steepness : new double[]{0.6, 0.7, 0.8}) {
 
             int printName = (int) (steepness * 10);
-            Scenario scenario = GenericOptimization.buildScenario(optimalParameters, Paths.get(optimization.getScenarioFile()).toFile(), optimization.getParameters());
+            Scenario scenario = GenericOptimization.buildScenario(
+                optimalParameters,
+                Paths.get(optimization.getScenarioFile()).toFile(),
+                optimization.getParameters()
+            );
             FlexibleScenario modified = (FlexibleScenario) scenario;
             modified.getPlugins().add(new CatchAtBinFactory());
 
@@ -554,20 +556,26 @@ public class Slice6Calibration {
             MultipleIndependentSpeciesAbundanceFactory bio = (MultipleIndependentSpeciesAbundanceFactory) modified.getBiologyInitializer();
             for (AlgorithmFactory<? extends SingleSpeciesAbundanceInitializer> factory : bio.getFactories()) {
                 ((RecruitmentBySpawningJackKnifeMaturity) ((SingleSpeciesAbundanceFactory) factory).getRecruitment()).
-                        setSteepness(new FixedDoubleParameter(steepness));
+                    setSteepness(new FixedDoubleParameter(steepness));
             }
-            Path outputFile = optimizationFile.getParent().resolve(SWEEP_FOLDER).resolve(calibratedScenarioFileName + "_"+printName+"h.yaml");
+            Path outputFile = optimizationFile.getParent()
+                .resolve(SWEEP_FOLDER)
+                .resolve(calibratedScenarioFileName + "_" + printName + "h.yaml");
             yaml.dump(modified, new FileWriter(outputFile.toFile()));
         }
         //variants with linear recruitment
-        Scenario scenario = GenericOptimization.buildScenario(optimalParameters, Paths.get(optimization.getScenarioFile()).toFile(), optimization.getParameters());
+        Scenario scenario = GenericOptimization.buildScenario(
+            optimalParameters,
+            Paths.get(optimization.getScenarioFile()).toFile(),
+            optimization.getParameters()
+        );
         FlexibleScenario modified = (FlexibleScenario) scenario;
         modified.getPlugins().add(new CatchAtBinFactory());
         for (AlgorithmFactory<? extends AdditionalStartable> plugin : plugins) {
             modified.getPlugins().add(plugin);
         }
         MultipleIndependentSpeciesAbundanceFactory bio = (MultipleIndependentSpeciesAbundanceFactory) modified.getBiologyInitializer();
-        for(AlgorithmFactory<? extends SingleSpeciesAbundanceInitializer> factory : bio.getFactories()) {
+        for (AlgorithmFactory<? extends SingleSpeciesAbundanceInitializer> factory : bio.getFactories()) {
             final RecruitmentBySpawningJackKnifeMaturity oldRecruitment = (RecruitmentBySpawningJackKnifeMaturity) ((SingleSpeciesAbundanceFactory) factory).getRecruitment();
 
 
@@ -575,21 +583,21 @@ public class Slice6Calibration {
             newRecruitment.setHinge(new FixedDoubleParameter(.2));
             newRecruitment.setLengthAtMaturity(new FixedDoubleParameter(oldRecruitment.getLengthAtMaturity()));
             final double r0 = ((FixedDoubleParameter) oldRecruitment.getVirginRecruits()).getFixedValue();
-            final double ssb0 = r0* ((FixedDoubleParameter) oldRecruitment.getCumulativePhi()).getFixedValue();
+            final double ssb0 = r0 * ((FixedDoubleParameter) oldRecruitment.getCumulativePhi()).getFixedValue();
             newRecruitment.setVirginRecruits(new FixedDoubleParameter(r0));
 
             newRecruitment.setVirginSpawningBiomass(
-                    new FixedDoubleParameter(
-                            ssb0
-                    )
+                new FixedDoubleParameter(
+                    ssb0
+                )
             );
 
             ((SingleSpeciesAbundanceFactory) factory).setRecruitment(newRecruitment);
         }
-        Path outputFile = optimizationFile.getParent().resolve(SWEEP_FOLDER).resolve(calibratedScenarioFileName + "_hs.yaml");
+        Path outputFile = optimizationFile.getParent()
+            .resolve(SWEEP_FOLDER)
+            .resolve(calibratedScenarioFileName + "_hs.yaml");
         yaml.dump(modified, new FileWriter(outputFile.toFile()));
-
-
 
 
     }

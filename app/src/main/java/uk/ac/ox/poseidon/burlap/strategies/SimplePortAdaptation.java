@@ -21,7 +21,7 @@ public class SimplePortAdaptation extends AbstractAdaptation<Port> {
     public static final double DEFAULT_INERTIA = .25;
 
     public static final double DEFAULT_TEMPERATURE = 1;
-    private final double  inertia;
+    private final double inertia;
 
     public SimplePortAdaptation(double inertia) {
 
@@ -33,41 +33,41 @@ public class SimplePortAdaptation extends AbstractAdaptation<Port> {
                   }
               }
 
-                ,
-              new Actuator<Fisher, Port>() {
-                  @Override
-                  public void apply(Fisher subject, Port policy, FishState model) {
+            ,
+            new Actuator<Fisher, Port>() {
+                @Override
+                public void apply(Fisher subject, Port policy, FishState model) {
 
-                      //if you don't have to change, do nothing
-                      if (subject.getHomePort().equals(policy))
-                          return;
-                      else {
-                          //if you are at sea, return to new port
-                          if (!subject.isAtPortAndDocked())
-                              subject.setHomePort(policy);
-                          else {
-                              //otherwise teleport to new port
-                              subject.getHomePort().depart(subject);
-                              subject.setHomePort(policy);
-                              subject.teleport(policy.getLocation());
-                              policy.dock(subject);
+                    //if you don't have to change, do nothing
+                    if (subject.getHomePort().equals(policy))
+                        return;
+                    else {
+                        //if you are at sea, return to new port
+                        if (!subject.isAtPortAndDocked())
+                            subject.setHomePort(policy);
+                        else {
+                            //otherwise teleport to new port
+                            subject.getHomePort().depart(subject);
+                            subject.setHomePort(policy);
+                            subject.teleport(policy.getLocation());
+                            policy.dock(subject);
 
-                          }
-                          //reset friendships
-                          subject.getSocialNetwork().removeFisher(subject,model);
-                          subject.getSocialNetwork().addFisher(subject,model);
+                        }
+                        //reset friendships
+                        subject.getSocialNetwork().removeFisher(subject, model);
+                        subject.getSocialNetwork().addFisher(subject, model);
 
-                      }
-                  }
-              }
+                    }
+                }
+            }
 
-                ,
-              new Predicate<Fisher>() {
-                  @Override
-                  public boolean test(Fisher fisher) {
-                      return true;
-                  }
-              });
+            ,
+            new Predicate<Fisher>() {
+                @Override
+                public boolean test(Fisher fisher) {
+                    return true;
+                }
+            });
 
         this.inertia = inertia;
     }
@@ -86,24 +86,24 @@ public class SimplePortAdaptation extends AbstractAdaptation<Port> {
 
         ArrayList<Port> ports = new ArrayList<>(state.getPorts());
 
-        if(state.getYear()<1 || random.nextDouble() < inertia)
+        if (state.getYear() < 1 || random.nextDouble() < inertia)
             return null;
 
         Integer portSelected = SoftmaxBanditAlgorithm.drawFromSoftmax(
-                new MersenneTwisterFast(),
-                ports.size(),
-                new Function<Integer, Double>() {
-                    @Override
-                    public Double apply(Integer integer) {
+            new MersenneTwisterFast(),
+            ports.size(),
+            new Function<Integer, Double>() {
+                @Override
+                public Double apply(Integer integer) {
 
-                        final Double latestProfitsAtPort = state.getYearlyDataSet().
-                                getLatestObservation("Average Cash-Flow at " + ports.get(integer).getName()) /(365d);
+                    final Double latestProfitsAtPort = state.getYearlyDataSet().
+                        getLatestObservation("Average Cash-Flow at " + ports.get(integer).getName()) / (365d);
 
-                        return Double.isFinite(latestProfitsAtPort) ? latestProfitsAtPort : 0
-                                ;
-                    }
-                },
-                DEFAULT_TEMPERATURE
+                    return Double.isFinite(latestProfitsAtPort) ? latestProfitsAtPort : 0
+                        ;
+                }
+            },
+            DEFAULT_TEMPERATURE
 
         );
 

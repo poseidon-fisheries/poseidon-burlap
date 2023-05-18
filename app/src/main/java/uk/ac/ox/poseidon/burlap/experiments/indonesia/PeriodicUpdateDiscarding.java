@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.fisher.selfanalysis.CashFlowObjective;
 import uk.ac.ox.oxfish.fisher.selfanalysis.DiscreteRandomAlgorithm;
-import uk.ac.ox.oxfish.fisher.strategies.discarding.*;
+import uk.ac.ox.oxfish.fisher.strategies.discarding.DiscardingStrategy;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.FisherStartable;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
@@ -40,26 +40,23 @@ import java.util.List;
 import java.util.function.Predicate;
 
 
-class PeriodicUpdateDiscarding implements FisherStartable
-{
+class PeriodicUpdateDiscarding implements FisherStartable {
 
 
     private final BiMap<Class<? extends DiscardingStrategy>,
-            AlgorithmFactory<? extends DiscardingStrategy>> options;
+        AlgorithmFactory<? extends DiscardingStrategy>> options;
 
 
-
-
-    public PeriodicUpdateDiscarding(List<Class<? extends DiscardingStrategy>> discards,
-                                    List<AlgorithmFactory<? extends DiscardingStrategy>> factories)
-    {
+    public PeriodicUpdateDiscarding(
+        List<Class<? extends DiscardingStrategy>> discards,
+        List<AlgorithmFactory<? extends DiscardingStrategy>> factories
+    ) {
 
         Preconditions.checkArgument(discards.size() == factories.size());
 
         options = HashBiMap.create(discards.size());
-        for(int i=0; i<discards.size(); i++)
-        {
-            options.put(discards.get(i),factories.get(i));
+        for (int i = 0; i < discards.size(); i++) {
+            options.put(discards.get(i), factories.get(i));
 
         }
 
@@ -70,41 +67,42 @@ class PeriodicUpdateDiscarding implements FisherStartable
     public void start(FishState model, Fisher fisher) {
 
         fisher.addBiMonthlyAdaptation(
-                new ExploreImitateAdaptation<Class<? extends DiscardingStrategy>>(
-                        new Predicate<Fisher>() {
-                            @Override
-                            public boolean test(Fisher fisher1) {
-                                return true;
-                            }
-                        },
-                        new DiscreteRandomAlgorithm<Class<? extends DiscardingStrategy>>(
-                                Lists.newArrayList(options.keySet())),
-                        new Actuator<Fisher, Class<? extends DiscardingStrategy>>() {
-                            @Override
-                            public void apply(
-                                    Fisher subject, Class<? extends DiscardingStrategy> policy, FishState model) {
+            new ExploreImitateAdaptation<Class<? extends DiscardingStrategy>>(
+                new Predicate<Fisher>() {
+                    @Override
+                    public boolean test(Fisher fisher1) {
+                        return true;
+                    }
+                },
+                new DiscreteRandomAlgorithm<Class<? extends DiscardingStrategy>>(
+                    Lists.newArrayList(options.keySet())),
+                new Actuator<Fisher, Class<? extends DiscardingStrategy>>() {
+                    @Override
+                    public void apply(
+                        Fisher subject, Class<? extends DiscardingStrategy> policy, FishState model
+                    ) {
 
-                                subject.setDiscardingStrategy(
-                                        options.get(policy).apply(model)
-                                );
-                            }
-                        },
-                        new Sensor<Fisher, Class<? extends DiscardingStrategy>>() {
-                            @Override
-                            public Class<? extends DiscardingStrategy> scan(Fisher system) {
-                                return system.getDiscardingStrategy().getClass();
-                            }
-                        },
-                        new CashFlowObjective(60),
-                        new FixedProbability(.1, .8),
-                        new Predicate<Class<? extends DiscardingStrategy>>() {
-                            @Override
-                            public boolean test(Class<? extends DiscardingStrategy> aClass) {
-                                return true;
-                            }
-                        }
+                        subject.setDiscardingStrategy(
+                            options.get(policy).apply(model)
+                        );
+                    }
+                },
+                new Sensor<Fisher, Class<? extends DiscardingStrategy>>() {
+                    @Override
+                    public Class<? extends DiscardingStrategy> scan(Fisher system) {
+                        return system.getDiscardingStrategy().getClass();
+                    }
+                },
+                new CashFlowObjective(60),
+                new FixedProbability(.1, .8),
+                new Predicate<Class<? extends DiscardingStrategy>>() {
+                    @Override
+                    public boolean test(Class<? extends DiscardingStrategy> aClass) {
+                        return true;
+                    }
+                }
 
-                )
+            )
         );
 
 

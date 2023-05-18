@@ -31,29 +31,31 @@ public class MeraOMHotstartsCalibration {
     public static final int PARALLEL_THREADS = 4;
 
     public static Path MAIN_DIRECTORY =
-            Paths.get("docs/mera_hub/slice5_yesgeography_twospecies/");
-            //Paths.get("docs/mera_hub/slice4_nogeography_twospecies/");
-         //   Paths.get("docs/mera_hub/slice3_yesgeography_onespecies/");
-            //Paths.get("docs/mera_hub/slice2_nogeography_onespecies/");
+        Paths.get("docs/mera_hub/slice5_yesgeography_twospecies/");
+    //Paths.get("docs/mera_hub/slice4_nogeography_twospecies/");
+    //   Paths.get("docs/mera_hub/slice3_yesgeography_onespecies/");
+    //Paths.get("docs/mera_hub/slice2_nogeography_onespecies/");
     //      Paths.get("docs/mera_hub/fakeom/");
 
     public static void main(String[] args) throws IOException {
 
         //calibration
         for (int hotstart = 1; hotstart < SCENARIOS_TO_RUN; hotstart++) {
-            if(
+            if (
                 //the folder may have not been created if the R script thought that particular simulation was absolutely batshit crazy
 
-                    MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).
+                MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).
                     resolve(String.valueOf(hotstart)).toFile().exists() &&
-                            //also don't re-optimize a directory you have already done!
+                    //also don't re-optimize a directory you have already done!
                     !(MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).
-                            resolve(String.valueOf(hotstart)).resolve("optimization_log.log").
-                            toFile().exists())
+                        resolve(String.valueOf(hotstart)).resolve("optimization_log.log").
+                        toFile().exists())
             ) {
                 System.out.println(MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).resolve(String.valueOf(hotstart)));
 
-                calibrate(MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).resolve(String.valueOf(hotstart)).resolve("optimization.yaml"), 30, 20, 1);
+                calibrate(MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS)
+                    .resolve(String.valueOf(hotstart))
+                    .resolve("optimization.yaml"), 30, 20, 1);
             }
         }
 
@@ -62,17 +64,18 @@ public class MeraOMHotstartsCalibration {
         final FileWriter writer = new FileWriter(scenarioList.toFile());
         writer.write("scenario,year");
         writer.flush();
-        for (int hotstart = 1; hotstart < SCENARIOS_TO_RUN; hotstart++){
-            if(!MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).resolve(String.valueOf(hotstart)).toFile().exists())
+        for (int hotstart = 1; hotstart < SCENARIOS_TO_RUN; hotstart++) {
+            if (!MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).resolve(String.valueOf(hotstart)).toFile().exists())
                 continue;
-            final Path optimized = MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS).resolve(String.valueOf(hotstart)).resolve("optimized.yaml");
-            if(checkError(optimized)<10) {
+            final Path optimized = MAIN_DIRECTORY.resolve(DIRECTORY_OF_HOTSTARTS)
+                .resolve(String.valueOf(hotstart))
+                .resolve("optimized.yaml");
+            if (checkError(optimized) < 10) {
                 System.out.println("Accepted!");
                 writer.write("\n");
-                writer.write(optimized.toString()+",2");
+                writer.write(optimized.toString() + ",2");
                 writer.flush();
-            }
-            else{
+            } else {
                 System.out.println("Rejected!");
             }
         }
@@ -83,8 +86,10 @@ public class MeraOMHotstartsCalibration {
     static double checkError(Path finalScenario) throws IOException {
 
         //look at the log!
-        final List<String> allLines = Files.readLines(finalScenario.getParent().resolve("optimization_log.log").toFile(),
-                Charset.defaultCharset());
+        final List<String> allLines = Files.readLines(
+            finalScenario.getParent().resolve("optimization_log.log").toFile(),
+            Charset.defaultCharset()
+        );
         final String fitLine = allLines.get(allLines.size() - 4);
 
 
@@ -96,12 +101,17 @@ public class MeraOMHotstartsCalibration {
     }
 
 
-    public static void calibrate(Path optimizationFile, int populationSize, int defaultRange, int acceptableFitness) throws IOException {
+    public static void calibrate(
+        Path optimizationFile,
+        int populationSize,
+        int defaultRange,
+        int acceptableFitness
+    ) throws IOException {
 
         //read the yaml
         Yaml reader = new Yaml();
         GenericOptimization optimization = (GenericOptimization) reader.loadAs(
-                new FileReader(optimizationFile.toFile()),GenericOptimization.class);
+            new FileReader(optimizationFile.toFile()), GenericOptimization.class);
 
 
         SimpleProblemWrapper problem = new SimpleProblemWrapper();
@@ -114,20 +124,22 @@ public class MeraOMHotstartsCalibration {
         NelderMeadSimplex opt = new NelderMeadSimplex(populationSize);
         opt.setCheckRange(false);
         OptimizationParameters params = OptimizerFactory.makeParams(
-                opt,
-                populationSize,problem
+            opt,
+            populationSize, problem
 
         );
 
         params.setTerminator(new CombinedTerminator(
-                new EvaluationTerminator(MAX_EVALUATIONS),
-                new FitnessValueTerminator(new double[]{acceptableFitness}),
-                false
+            new EvaluationTerminator(MAX_EVALUATIONS),
+            new FitnessValueTerminator(new double[]{acceptableFitness}),
+            false
         ));
 
         //set up the runnable object that actually run the optimizer
-        OptimizerRunnable runnable = new OptimizerRunnable(params,
-                "eva"); //ignored, we are outputting to window
+        OptimizerRunnable runnable = new OptimizerRunnable(
+            params,
+            "eva"
+        ); //ignored, we are outputting to window
         runnable.setOutputFullStatsToText(true);
         runnable.setVerbosityLevel(InterfaceStatisticsParameters.OutputVerbosity.ALL);
         runnable.setOutputTo(InterfaceStatisticsParameters.OutputTo.WINDOW);
@@ -163,9 +175,10 @@ public class MeraOMHotstartsCalibration {
         });
         runnable.run();
         final double[] solution = runnable.getDoubleSolution();
-        GenericOptimization.saveCalibratedScenario(solution,
-                optimizationFile,
-                optimizationFile.getParent().resolve("optimized.yaml")
+        GenericOptimization.saveCalibratedScenario(
+            solution,
+            optimizationFile,
+            optimizationFile.getParent().resolve("optimized.yaml")
         );
     }
 

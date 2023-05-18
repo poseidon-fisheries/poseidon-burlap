@@ -17,12 +17,23 @@ repositories {
 }
 
 dependencies {
+
+    implementation("edu.brown.cs.burlap:burlap:3.0.1")
+    implementation(fileTree(mapOf("dir" to "libs/xstream/lib", "include" to listOf("*.jar"))))
+    implementation("com.beust:jcommander:1.81")
+    implementation("com.opencsv:opencsv:3.8")
+    implementation("de.openea:eva2:2.2.0")
+
     // Use JUnit test framework.
     testImplementation("junit:junit:4.13.2")
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
     implementation("uk.ac.ox.oxfish:POSEIDON")
+
+    // Reference implementation of JSR-385 for units of measure
+    implementation("si.uom:si-quantity:2.1")
+    implementation("si.uom:si-units:2.1")
 }
 
 tasks.withType<Test> {

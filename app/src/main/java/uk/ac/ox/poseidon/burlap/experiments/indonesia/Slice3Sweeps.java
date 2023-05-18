@@ -25,7 +25,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.biology.Species;
@@ -846,7 +845,6 @@ public class Slice3Sweeps {
 
 
 
-    @NotNull
     public static BatchRunner setupRunner(String filename, final int yearsToRun,
                                           final int populations) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(

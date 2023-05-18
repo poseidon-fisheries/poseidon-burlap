@@ -1,7 +1,6 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.fisher.Fisher;
@@ -632,7 +631,6 @@ public class SliceBiomassSweeps {
 
 
 
-    @NotNull
     public static BatchRunner setupRunner(String filename, final int yearsToRun,
                                           final int populations) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(

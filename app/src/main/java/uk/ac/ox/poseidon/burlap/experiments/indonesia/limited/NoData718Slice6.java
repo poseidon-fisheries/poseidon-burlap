@@ -1,14 +1,13 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import ec.util.MersenneTwisterFast;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ox.oxfish.maximization.generic.OptimizationParameter;
 import uk.ac.ox.oxfish.model.BatchRunner;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice3;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -196,10 +195,8 @@ public class NoData718Slice6 {
 
 
 
-    @NotNull
     public static StringBuffer runOneScenario(long randomSeed,
                                               List<String> columns,
-                                              @Nullable
                                               FileWriter summaryStatisticsWriter,
                                               Path scenarioFile,
                                               int maxYearsToRun
@@ -250,7 +247,6 @@ public class NoData718Slice6 {
 
 
 
-    @NotNull
     public static void runOneScenarioIntegrated(
             long randomSeed,
                                       List<String> columns,

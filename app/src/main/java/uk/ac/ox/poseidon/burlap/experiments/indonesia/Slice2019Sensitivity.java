@@ -2,7 +2,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.model.AdditionalStartable;
@@ -57,7 +56,6 @@ public class Slice2019Sensitivity {
             flexibleScenario.getPlugins().removeAll(toRemove);
         }
     };
-    @NotNull
     private static Consumer<Scenario> buildMaxDaysRegulation(String[] tagsToRegulate, int daysOut) {
         return scenario -> {
 
@@ -221,7 +219,6 @@ public class Slice2019Sensitivity {
 
 
 
-    @NotNull
     public static BatchRunner setupRunner(String filename, final int yearsToRun,
                                           final int populations) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(

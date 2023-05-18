@@ -21,14 +21,12 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.base.Preconditions;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.biology.Species;
 import uk.ac.ox.oxfish.biology.boxcars.SPRAgentBuilder;
 import uk.ac.ox.oxfish.biology.initializer.factory.MultipleIndependentSpeciesAbundanceFactory;
 import uk.ac.ox.oxfish.biology.initializer.factory.SingleSpeciesBoxcarAbstractFactory;
-import uk.ac.ox.oxfish.experiments.indonesia.Slice6Sweeps;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.geography.NauticalMap;
 import uk.ac.ox.oxfish.geography.SeaTile;
@@ -49,6 +47,7 @@ import uk.ac.ox.oxfish.utility.AlgorithmFactory;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.Slice6Sweeps;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -462,7 +461,6 @@ public class NoData718Utilities {
 
         }
 
-        @NotNull
         public static Function<Integer, Consumer<Scenario>> bauWithSprAgent(String s) {
                 return new Function<Integer, Consumer<Scenario>>() {
                         @Override

@@ -2,7 +2,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.biology.Species;
@@ -162,7 +161,6 @@ public class Slice2019Sweeps {
         fileWriter.close();
     }
 
-    @NotNull
     public static Consumer<Scenario> setupEffortControlConsumer(
             String[] modifiedTags, int shockYear, int finalMaxDaysOut) {
         return scenario -> {
@@ -253,7 +251,6 @@ public class Slice2019Sweeps {
         fileWriter.close();
     }
 
-    @NotNull
     public static Consumer<Scenario> setupDelaysConsumer(String[] modifiedTags,
                                                          int shockYear, int finalWaitTime) {
         return scenario -> {
@@ -454,7 +451,6 @@ public class Slice2019Sweeps {
         fileWriter.close();
     }
 
-    @NotNull
     public static Consumer<Scenario> setupFleetReductionConsumer(int shockYear,
                                                                   double yearlyReductionProbability) {
         return scenario -> {
@@ -551,7 +547,6 @@ public class Slice2019Sweeps {
         fileWriter.close();
     }
 
-    @NotNull
     public static Consumer<Scenario>
     setupPremiumConsumer(int maturityBin,
                          String premiumSpecies,
@@ -820,7 +815,6 @@ public class Slice2019Sweeps {
 
 
 
-    @NotNull
     public static BatchRunner setupRunner(String filename, final int yearsToRun,
                                           final int populations) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(

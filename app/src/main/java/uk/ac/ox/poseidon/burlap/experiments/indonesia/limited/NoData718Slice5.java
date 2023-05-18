@@ -5,6 +5,8 @@ import uk.ac.ox.oxfish.experiments.noisespike.AcceptableRangePredicate;
 import uk.ac.ox.oxfish.maximization.generic.OptimizationParameter;
 import uk.ac.ox.oxfish.utility.FishStateUtilities;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice1;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice3;
 
 import java.io.FileReader;
 import java.io.FileWriter;

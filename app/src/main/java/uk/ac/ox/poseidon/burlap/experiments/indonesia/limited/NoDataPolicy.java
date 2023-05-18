@@ -22,7 +22,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.collect.Lists;
 import com.opencsv.CSVReader;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.fisher.Fisher;
@@ -463,7 +462,6 @@ public class NoDataPolicy {
 
 
 
-    @NotNull
     private static BatchRunner setupRunner(
             Path scenarioFile,
             final int yearsToRun,

@@ -2,8 +2,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.base.Preconditions;
 import com.opencsv.CSVReader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.model.AdditionalStartable;
@@ -47,7 +45,6 @@ public class NoData718Slice4PriceIncrease {
      * @param shockYear
      * @return
      */
-    @NotNull
     public static AlgorithmFactory<AdditionalStartable> farOffPortsSeedingEvent(Integer shockYear,
                                                                                 final int minPopulation0Boats) {
         return new AlgorithmFactory<AdditionalStartable>() {
@@ -112,7 +109,6 @@ public class NoData718Slice4PriceIncrease {
 
     }
 
-    @NotNull
     public static Function<Integer, Consumer<Scenario>> priceShockAndSeedingGenerator(final int lead) {
         return new Function<Integer, Consumer<Scenario>>() {
             @Override
@@ -146,15 +142,12 @@ public class NoData718Slice4PriceIncrease {
             LinkedHashMap<String, Function<Integer, Consumer<Scenario>>> policyMap,
             List<String> additionalColumnsToPrint,
             boolean printYAMLScenario, final int additionalYearsToRun,
-            @Nullable
                     Consumer<Scenario> commonPolicy,
             //the problem with adding plugins through scenario is that they may screw up the seed as the stack has to randomize it
             //the solution then is simply not to start anything until the right year arrives. This will make the seed
             //still inconsistent after the startable... starts, but at least until then it's okay
-            @Nullable
                     LinkedList<Pair<Integer,
                             AlgorithmFactory<? extends AdditionalStartable>>> additionalPlugins,
-            @Nullable
             List<String> dailyColumnsToPrint) throws IOException {
 
         String filename =      scenarioFile.toAbsolutePath().toString().replace('/','$');

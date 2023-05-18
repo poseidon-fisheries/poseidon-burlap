@@ -1,7 +1,6 @@
 package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.collect.Lists;
-import uk.ac.ox.oxfish.experiments.PeriodicUpdateDiscarding;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.fisher.strategies.discarding.DiscardUnderaged;
 import uk.ac.ox.oxfish.fisher.strategies.discarding.DiscardUnderagedFactory;
@@ -12,7 +11,7 @@ import uk.ac.ox.oxfish.model.market.factory.ThreePricesMarketFactory;
 import uk.ac.ox.oxfish.model.regs.Anarchy;
 import uk.ac.ox.oxfish.utility.parameters.FixedDoubleParameter;
 import uk.ac.ox.oxfish.utility.yaml.FishYAML;
-import uk.ac.ox.poseidon.burlap.experiments.PeriodicUpdateDiscarding;
+import uk.ac.ox.poseidon.burlap.scenarios.IndonesiaScenario;
 
 import java.io.File;
 import java.io.FileReader;
@@ -102,7 +101,6 @@ public class IndonesiaDiscarding {
 
     }
 
-    @NotNull
     public static FileWriter prepWriter(File outputFile) throws IOException {
         FileWriter writer = new FileWriter(outputFile);
         //writer.write("price_low,price_high,landings,earnings,cash-flow,landings_0,landings_1,landings_2,discarding_agents,catches_0");

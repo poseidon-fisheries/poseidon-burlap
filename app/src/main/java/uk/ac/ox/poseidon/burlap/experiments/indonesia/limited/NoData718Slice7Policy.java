@@ -22,7 +22,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.biology.Species;
@@ -275,7 +274,6 @@ public class NoData718Slice7Policy {
 
     }
 
-    @NotNull
     private static Function<Integer, Consumer<Scenario>> selectivityShiftSimulations(
         int finalCmShift, final int howManyPopulations,
         double probabilityOfAdoptingGear
@@ -423,7 +421,6 @@ public class NoData718Slice7Policy {
         };
     }
 
-    @NotNull
     private static Function<Integer, Consumer<Scenario>> addSPRAgents(boolean monitorGillnetters) {
 
 
@@ -512,7 +509,6 @@ public class NoData718Slice7Policy {
         };
     }
 
-    @NotNull
     private static Function<Integer, Consumer<Scenario>> addSPRAgentsPercentage() {
 
 

@@ -7,7 +7,6 @@ import ec.util.MersenneTwisterFast;
 import org.checkerframework.checker.units.qual.C;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import uk.ac.ox.oxfish.experiments.indonesia.limited.*;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.fisher.equipment.gear.factory.HeterogeneousGearFactory;
 import uk.ac.ox.oxfish.fisher.equipment.gear.factory.SimpleLogisticGearFactory;

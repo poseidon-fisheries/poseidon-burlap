@@ -22,7 +22,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.collect.Lists;
 import com.opencsv.CSVReader;
-import org.jetbrains.annotations.NotNull;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.geography.ports.Port;
@@ -56,7 +55,6 @@ public class NoDataSlice2Policy {
 
     private static final  long SEED = 0;
 
-    @NotNull
     private static BatchRunner setupRunner(
             Path scenarioFile,
             final int yearsToRun,
@@ -405,7 +403,6 @@ public class NoDataSlice2Policy {
 
 
 
-    @NotNull
     private static Consumer<Scenario> setupPriceShock(int durationInDays,
                                                      int yearStart,
                                                      double percentageOfTotalPrice) {

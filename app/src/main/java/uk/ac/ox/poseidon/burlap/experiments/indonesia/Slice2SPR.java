@@ -22,7 +22,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia;
 
 import com.google.common.collect.Lists;
 import ec.util.MersenneTwisterFast;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ox.oxfish.biology.boxcars.SPRAgentBuilder;
 import uk.ac.ox.oxfish.biology.boxcars.SprOracle;
 import uk.ac.ox.oxfish.model.AdditionalStartable;
@@ -294,7 +293,6 @@ public class Slice2SPR {
             FlexibleScenario scenario,
             String surveyTag,
             double probability,
-            @Nullable
                     List<String> columns) {
         String speciesName = "Epinephelus areolatus";
 
@@ -318,7 +316,6 @@ public class Slice2SPR {
             FlexibleScenario scenario,
             String surveyTag,
             double probability,
-            @Nullable
                     List<String> columns) {
         String speciesName = "Pristipomoides multidens";
 
@@ -344,7 +341,6 @@ public class Slice2SPR {
             FlexibleScenario scenario,
             String surveyTag,
             double probability,
-            @Nullable
                     List<String> columns) {
         String speciesName = "Lutjanus erythropterus";
 
@@ -369,7 +365,6 @@ public class Slice2SPR {
             FlexibleScenario scenario,
             String surveyTag,
             double probability,
-            @Nullable
                     List<String> columns) {
         String speciesName = "Lutjanus malabaricus";
 

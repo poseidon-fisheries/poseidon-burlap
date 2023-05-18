@@ -2,12 +2,13 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 
 import com.google.common.collect.Lists;
 import com.opencsv.CSVReader;
-import org.jetbrains.annotations.NotNull;
 import uk.ac.ox.oxfish.model.BatchRunner;
 import uk.ac.ox.oxfish.model.FishState;
 import uk.ac.ox.oxfish.model.plugins.FullSeasonalRetiredDataCollectorsFactory;
 import uk.ac.ox.oxfish.model.scenario.FlexibleScenario;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice1;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice2;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,7 +38,6 @@ public class NoData718Slice2Policy {
 
     private static final  long SEED = 0;
 
-    @NotNull
     private static BatchRunner setupRunner(
             Path scenarioFile,
             final int yearsToRun,

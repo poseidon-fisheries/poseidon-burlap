@@ -3,8 +3,6 @@ package uk.ac.ox.poseidon.burlap.experiments.indonesia.limited;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.opencsv.CSVReader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import uk.ac.ox.oxfish.geography.ports.Port;
@@ -17,6 +15,8 @@ import uk.ac.ox.oxfish.model.plugins.FullSeasonalRetiredDataCollectorsFactory;
 import uk.ac.ox.oxfish.model.scenario.FlexibleScenario;
 import uk.ac.ox.oxfish.model.scenario.Scenario;
 import uk.ac.ox.oxfish.utility.AlgorithmFactory;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice1;
+import uk.ac.ox.poseidon.burlap.experiments.indonesia.NoData718Slice2;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -46,12 +46,10 @@ public class NoData718Slice2PriceIncrease {
 
     private static final  long SEED = 0;
 
-    @NotNull
     public static BatchRunner setupRunner(
             Path scenarioFile,
             final int yearsToRun,
             Path outputFolder, long seed,
-            @Nullable
             List<String> additionalColumnsToPrint) {
         ArrayList<String> columnsToPrint = Lists.newArrayList(
                 "Actual Average Cash-Flow",
@@ -201,7 +199,6 @@ public class NoData718Slice2PriceIncrease {
         );
     }
 
-    @NotNull
     public static AlgorithmFactory<AdditionalStartable> priceIncreaseEvent(Integer shockYear) {
         return new AlgorithmFactory<AdditionalStartable>() {
             @Override

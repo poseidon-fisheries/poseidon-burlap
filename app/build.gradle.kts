@@ -34,6 +34,8 @@ dependencies {
     // Reference implementation of JSR-385 for units of measure
     implementation("si.uom:si-quantity:2.1")
     implementation("si.uom:si-units:2.1")
+
+    testImplementation("org.mockito:mockito-core:4.3.1")
 }
 
 tasks.withType<Test> {

@@ -22,7 +22,6 @@ package uk.ac.ox.poseidon.burlap.strategies;
 
 import burlap.datastructures.BoltzmannDistribution;
 import ec.util.MersenneTwisterFast;
-import org.jfree.util.Log;
 import uk.ac.ox.oxfish.utility.bandit.BanditAlgorithm;
 import uk.ac.ox.oxfish.utility.bandit.BanditAverage;
 

@@ -1,6 +1,5 @@
 package uk.ac.ox.poseidon.burlap.strategies;
 
-import burlap.datastructures.BoltzmannDistribution;
 import ec.util.MersenneTwisterFast;
 import uk.ac.ox.oxfish.fisher.Fisher;
 import uk.ac.ox.oxfish.geography.ports.Port;
